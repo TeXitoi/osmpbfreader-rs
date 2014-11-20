@@ -1,0 +1,9 @@
+[package]
+
+name = "osmpbfreader-rs"
+version = "0.0.1"
+authors = ["Guillaume Pinot <texitoi@texitoi.eu>"]
+
+[dependencies.protobuf]
+
+git = "https://github.com/stepancheg/rust-protobuf.git"
