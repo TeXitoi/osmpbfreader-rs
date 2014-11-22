@@ -1,6 +1,6 @@
 [package]
 
-name = "osmpbfreader-rs"
+name = "osmpbfreader"
 version = "0.0.1"
 authors = ["Guillaume Pinot <texitoi@texitoi.eu>"]
 
