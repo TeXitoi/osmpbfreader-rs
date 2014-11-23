@@ -193,30 +193,29 @@ impl Node {
         }
     }
 }
-fn make_string(k: u32, block: &osmformat::PrimitiveBlock) -> String {
-    String::from_utf8_lossy(block.get_stringtable().get_s()[k as uint].as_slice())
+fn make_string(k: uint, block: &osmformat::PrimitiveBlock) -> String {
+    String::from_utf8_lossy(block.get_stringtable().get_s()[k].as_slice())
         .into_string()
 }
 fn make_tags(n: &osmformat::Node, b: &osmformat::PrimitiveBlock) -> Tags {
     let mut tags = BTreeMap::new();
     for (&k, &v) in n.get_keys().iter().zip(n.get_vals().iter()) {
-        let k = make_string(k, b);
-        let v = make_string(v, b);
+        let k = make_string(k as uint, b);
+        let v = make_string(v as uint, b);
         tags.insert(k, v);
     }
     tags
 }
 
-type RawDenseNodes<'a> = std::iter::Map<'a, ((&'a i64, (&'a i64, &'a i64)), &'a i32), RawDenseNode, std::iter::Zip<std::iter::Zip<std::slice::Items<'a, i64>, std::iter::Zip<std::slice::Items<'a, i64>, std::slice::Items<'a, i64>>>, std::slice::Items<'a, i32>>>;
+type RawDenseNodes<'a> = std::iter::Map<'a, (&'a i64, (&'a i64, &'a i64)), RawDenseNode, std::iter::Zip<std::slice::Items<'a, i64>, std::iter::Zip<std::slice::Items<'a, i64>, std::slice::Items<'a, i64>>>>;
 
 pub struct DenseNodes<'a> {
     block: &'a osmformat::PrimitiveBlock,
     groups: std::slice::Items<'a, osmformat::PrimitiveGroup>,
-    denses: Option<RawDenseNodes<'a>>,
+    denses: Option<(RawDenseNodes<'a>, std::slice::Items<'a, i32>)>,
     cur_id: i64,
     cur_lat: i64,
     cur_lon: i64,
-    cur_kv: i32,
 }
 impl<'a> DenseNodes<'a> {
     pub fn with_block(b: &'a osmformat::PrimitiveBlock) -> DenseNodes<'a> {
@@ -227,40 +226,50 @@ impl<'a> DenseNodes<'a> {
             cur_id: 0,
             cur_lat: 0,
             cur_lon: 0,
-            cur_kv: 0,
         }
     }
 }
 impl<'a> Iterator<Node> for DenseNodes<'a> {
     fn next(&mut self) -> Option<Node> {
         loop {
-            for dense in self.denses.iter_mut() {
+            for &(ref mut dense, ref mut kvs) in self.denses.iter_mut() {
                 for d in *dense {
                     self.cur_id += d.did;
                     self.cur_lat += d.dlat;
                     self.cur_lon += d.dlon;
-                    self.cur_kv += d.dkv;
+                    let mut tags = BTreeMap::new();
+                    loop {
+                        let k = match kvs.next() {
+                            None | Some(&0) => break,
+                            Some(k) => make_string(*k as uint, self.block),
+                        };
+                        let v = match kvs.next() {
+                            None => break,
+                            Some(v) => make_string(*v as uint, self.block),
+                        };
+                        tags.insert(k, v);
+                    }
                     return Some(Node {
                         id: self.cur_id,
                         lat: Node::make_lat(self.cur_lat, self.block),
                         lon: Node::make_lon(self.cur_lon, self.block),
-                        tags: BTreeMap::new(),//TODO
+                        tags: tags,
                     });
                 }
             }
             self.cur_id = 0;
             self.cur_lat = 0;
             self.cur_lon = 0;
-            self.cur_kv = 0;
             let next_chunk = self.groups.next().map(|g| {
                 let d = g.get_dense();
-                d.get_id().iter().zip(d.get_lat().iter().zip(d.get_lon().iter()))
-                    .zip(d.get_keys_vals().iter())
-                    .map(RawDenseNode::from_tuple)
+                (d.get_id().iter().zip(d.get_lat().iter().zip(d.get_lon().iter()))
+                 .map(RawDenseNode::from_tuple),
+                 g.get_dense())
             });
             match next_chunk {
                 None => return None,
-                next => self.denses = next,
+                Some((next, dense)) =>
+                    self.denses = Some((next, dense.get_keys_vals().iter())),
             }
         }
     }
@@ -270,15 +279,15 @@ struct RawDenseNode {
     did: i64,
     dlat: i64,
     dlon: i64,
-    dkv: i32,
 }
 impl RawDenseNode {
-    fn from_tuple(((&did, (&dlat, &dlon)), &dkv): ((&i64, (&i64, &i64)), &i32)) -> RawDenseNode {
+    fn from_tuple((&did, (&dlat, &dlon)): (&i64, (&i64, &i64)))
+                  -> RawDenseNode
+    {
         RawDenseNode {
             did: did,
             dlat: dlat,
             dlon: dlon,
-            dkv: dkv,
         }
     }
 }
