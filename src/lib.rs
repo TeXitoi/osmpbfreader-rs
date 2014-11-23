@@ -4,6 +4,9 @@ extern crate flate2;
 use std::error::Error;
 use std::error::FromError;
 use std::io::IoError;
+use std::collections::BTreeMap;
+
+pub type Tags = BTreeMap<String, String>;
 
 #[allow(non_snake_case)]
 pub mod fileformat;
@@ -143,4 +146,145 @@ impl<'a, R: Reader> Iterator<Result<osmformat::PrimitiveBlock, OsmPbfError>>
     fn next(&mut self) -> Option<Result<osmformat::PrimitiveBlock, OsmPbfError>> {
         self.opr.next_primitive_block()
     }
+}
+
+pub struct SimpleNodes<'a> {
+    nodes: std::iter::FlatMap<'a, &'a osmformat::PrimitiveGroup, std::slice::Items<'a, osmformat::PrimitiveGroup>, std::slice::Items<'a, osmformat::Node>>,
+    block: &'a osmformat::PrimitiveBlock,
+}
+impl<'a> SimpleNodes<'a> {
+    pub fn with_block(block: &'a osmformat::PrimitiveBlock) -> SimpleNodes<'a> {
+        SimpleNodes {
+            nodes: block.get_primitivegroup().iter().flat_map(|g| g.get_nodes().iter()),
+            block: block,
+        }
+    }
+}
+impl<'a> Iterator<Node> for SimpleNodes<'a> {
+    fn next(&mut self) -> Option<Node> {
+        self.nodes.next().map(|n| Node::with_node(n, self.block))
+    }
+    fn size_hint(&self) -> (uint, Option<uint>) {
+        self.nodes.size_hint()
+    }
+}
+
+pub struct Node {
+    pub id: i64,
+    pub lat: f64,
+    pub lon: f64,
+    pub tags: Tags,
+}
+impl Node {
+    fn make_lat(c: i64, b: &osmformat::PrimitiveBlock) -> f64 {
+        let granularity = b.get_granularity() as i64;
+        1e-9 * (b.get_lat_offset() + granularity * c) as f64
+    }
+    fn make_lon(c: i64, b: &osmformat::PrimitiveBlock) -> f64 {
+        let granularity = b.get_granularity() as i64;
+        1e-9 * (b.get_lon_offset() + granularity * c) as f64
+    }
+    pub fn with_node(n: &osmformat::Node, b: &osmformat::PrimitiveBlock) -> Node {
+        Node {
+            id: n.get_id(),
+            lat: Node::make_lat(n.get_lat(), b),
+            lon: Node::make_lat(n.get_lon(), b),
+            tags: make_tags(n, b),
+        }
+    }
+}
+fn make_string(k: u32, block: &osmformat::PrimitiveBlock) -> String {
+    String::from_utf8_lossy(block.get_stringtable().get_s()[k as uint].as_slice())
+        .into_string()
+}
+fn make_tags(n: &osmformat::Node, b: &osmformat::PrimitiveBlock) -> Tags {
+    let mut tags = BTreeMap::new();
+    for (&k, &v) in n.get_keys().iter().zip(n.get_vals().iter()) {
+        let k = make_string(k, b);
+        let v = make_string(v, b);
+        tags.insert(k, v);
+    }
+    tags
+}
+
+type RawDenseNodes<'a> = std::iter::Map<'a, ((&'a i64, (&'a i64, &'a i64)), &'a i32), RawDenseNode, std::iter::Zip<std::iter::Zip<std::slice::Items<'a, i64>, std::iter::Zip<std::slice::Items<'a, i64>, std::slice::Items<'a, i64>>>, std::slice::Items<'a, i32>>>;
+
+pub struct DenseNodes<'a> {
+    block: &'a osmformat::PrimitiveBlock,
+    groups: std::slice::Items<'a, osmformat::PrimitiveGroup>,
+    denses: Option<RawDenseNodes<'a>>,
+    cur_id: i64,
+    cur_lat: i64,
+    cur_lon: i64,
+    cur_kv: i32,
+}
+impl<'a> DenseNodes<'a> {
+    pub fn with_block(b: &'a osmformat::PrimitiveBlock) -> DenseNodes<'a> {
+        DenseNodes {
+            block: b,
+            groups: b.get_primitivegroup().iter(),
+            denses: None,
+            cur_id: 0,
+            cur_lat: 0,
+            cur_lon: 0,
+            cur_kv: 0,
+        }
+    }
+}
+impl<'a> Iterator<Node> for DenseNodes<'a> {
+    fn next(&mut self) -> Option<Node> {
+        loop {
+            for dense in self.denses.iter_mut() {
+                for d in *dense {
+                    self.cur_id += d.did;
+                    self.cur_lat += d.dlat;
+                    self.cur_lon += d.dlon;
+                    self.cur_kv += d.dkv;
+                    return Some(Node {
+                        id: self.cur_id,
+                        lat: Node::make_lat(self.cur_lat, self.block),
+                        lon: Node::make_lon(self.cur_lon, self.block),
+                        tags: BTreeMap::new(),//TODO
+                    });
+                }
+            }
+            self.cur_id = 0;
+            self.cur_lat = 0;
+            self.cur_lon = 0;
+            self.cur_kv = 0;
+            let next_chunk = self.groups.next().map(|g| {
+                let d = g.get_dense();
+                d.get_id().iter().zip(d.get_lat().iter().zip(d.get_lon().iter()))
+                    .zip(d.get_keys_vals().iter())
+                    .map(RawDenseNode::from_tuple)
+            });
+            match next_chunk {
+                None => return None,
+                next => self.denses = next,
+            }
+        }
+    }
+}
+
+struct RawDenseNode {
+    did: i64,
+    dlat: i64,
+    dlon: i64,
+    dkv: i32,
+}
+impl RawDenseNode {
+    fn from_tuple(((&did, (&dlat, &dlon)), &dkv): ((&i64, (&i64, &i64)), &i32)) -> RawDenseNode {
+        RawDenseNode {
+            did: did,
+            dlat: dlat,
+            dlon: dlon,
+            dkv: dkv,
+        }
+    }
+}
+
+pub fn nodes<'a>(block: &'a osmformat::PrimitiveBlock)
+                 -> std::iter::Chain<SimpleNodes<'a>, DenseNodes<'a>>
+{
+    SimpleNodes::with_block(block).chain(DenseNodes::with_block(block))
 }
