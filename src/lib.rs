@@ -53,6 +53,7 @@ impl FromError<protobuf::ProtobufError> for OsmPbfError {
 pub struct OsmPbfReader<R> {
     buf: Vec<u8>,
     r: R,
+    finished: bool,
 }
 
 impl<R: Reader> OsmPbfReader<R> {
@@ -60,6 +61,7 @@ impl<R: Reader> OsmPbfReader<R> {
         OsmPbfReader {
             buf: vec![],
             r: r,
+            finished: false,
         }
     }
     fn push(&mut self, sz: uint) -> Result<(), OsmPbfError> {
@@ -68,21 +70,13 @@ impl<R: Reader> OsmPbfReader<R> {
         assert_eq!(sz, readed);
         Ok(())
     }
-    pub fn read_header(&mut self) -> Result<fileformat::BlobHeader, OsmPbfError> {
-        let sz = try!(self.r.read_be_u32()) as uint;
-        try!(self.push(sz));
-        Ok(try!(protobuf::parse_from_bytes(self.buf.as_slice())))
-    }
     fn read_primitive_block(&mut self, blob: fileformat::Blob)
                             -> Result<osmformat::PrimitiveBlock, OsmPbfError>
     {
         if blob.has_raw() {
-            println!("raw");
             Ok(try!(protobuf::parse_from_bytes(blob.get_raw())))
         } else if blob.has_zlib_data() {
             use flate2::reader::ZlibDecoder;
-
-            println!("zlib");
             let r = std::io::BufReader::new(blob.get_zlib_data());
             let mut zr = ZlibDecoder::new(r);
             let buf = try!(zr.read_to_end());// TODO use self.buf
@@ -91,19 +85,62 @@ impl<R: Reader> OsmPbfReader<R> {
             Err(OsmPbfError::UnsupportedData)
         }
     }
-    pub fn read_blob(&mut self, header: &fileformat::BlobHeader)
-                     -> Result<(), OsmPbfError>
+    fn try_primitive_block(&mut self, sz: uint)
+                           -> Result<Option<osmformat::PrimitiveBlock>, OsmPbfError>
     {
+        try!(self.push(sz));
+        let header: fileformat::BlobHeader =
+            try!(protobuf::parse_from_bytes(self.buf.as_slice()));
         let sz = header.get_datasize() as uint;
         try!(self.push(sz));
         let blob: fileformat::Blob = try!(protobuf::parse_from_bytes(self.buf.as_slice()));
-        if header.get_field_type() == "OSMData" {
-            let primitive_block = try!(self.read_primitive_block(blob));
+        let primitive_opt = if header.get_field_type() == "OSMData" {
+            Some(try!(self.read_primitive_block(blob)))
         } else if header.get_field_type() == "OSMHeader" {
-            println!("OSMHeader");
+            None
         } else {
             println!("Unknown type: {}", header.get_field_type());
+            None
+        };
+        Ok(primitive_opt)
+    }
+    fn next_primitive_block(&mut self)
+                            -> Option<Result<osmformat::PrimitiveBlock, OsmPbfError>>
+    {
+        use std::io::IoErrorKind;
+        if self.finished { return None; }
+        let sz = match self.r.read_be_u32() {
+            Ok(sz) => sz,
+            Err(ref e) if e.kind == IoErrorKind::EndOfFile => {
+                self.finished = true;
+                return None;
+            }
+            Err(e) => {
+                self.finished = true;
+                return Some(Err(FromError::from_error(e)));
+            }
+        } as uint;
+        match self.try_primitive_block(sz) {
+            Ok(Some(p)) => Some(Ok(p)),
+            Ok(None) => self.next_primitive_block(),
+            Err(e) => {
+                self.finished = true;
+                Some(Err(e))
+            }
         }
-        Ok(())
+    }
+    pub fn primitive_blocks<'a>(&'a mut self) -> PrimitiveBlocks<'a, R> {
+        PrimitiveBlocks { opr: self }
+    }
+}
+
+pub struct PrimitiveBlocks<'a, R: 'a> {
+    opr: &'a mut OsmPbfReader<R>
+}
+impl<'a, R: Reader> Iterator<Result<osmformat::PrimitiveBlock, OsmPbfError>>
+    for PrimitiveBlocks<'a, R>
+{
+    fn next(&mut self) -> Option<Result<osmformat::PrimitiveBlock, OsmPbfError>> {
+        self.opr.next_primitive_block()
     }
 }
