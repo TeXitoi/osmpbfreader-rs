@@ -59,7 +59,6 @@ impl FromError<protobuf::ProtobufError> for OsmPbfError {
     }
 }
 
-
 pub struct OsmPbfReader<R> {
     buf: Vec<u8>,
     r: R,
@@ -153,11 +152,4 @@ impl<'a, R: Reader> Iterator<Result<osmformat::PrimitiveBlock, OsmPbfError>>
     fn next(&mut self) -> Option<Result<osmformat::PrimitiveBlock, OsmPbfError>> {
         self.opr.next_primitive_block()
     }
-}
-
-
-pub fn nodes<'a>(block: &'a osmformat::PrimitiveBlock)
-                 -> std::iter::Chain<blocks::SimpleNodes<'a>, blocks::DenseNodes<'a>>
-{
-    blocks::simple_nodes(block).chain(blocks::dense_nodes(block))
 }
