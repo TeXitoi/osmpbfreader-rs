@@ -1,16 +1,23 @@
+#![feature(phase, unboxed_closures)]
+
 extern crate protobuf;
 extern crate flate2;
+#[phase(plugin, link)] extern crate mdo;
+
+pub use objects::Node;
+pub use objects::Tags;
 
 use std::error::Error;
 use std::error::FromError;
 use std::io::IoError;
-use std::collections::BTreeMap;
-
-pub type Tags = BTreeMap<String, String>;
 
 #[allow(non_snake_case)]
 pub mod fileformat;
 pub mod osmformat;
+
+pub mod objects;
+pub mod groups;
+pub mod blocks;
 
 #[deriving(Show)]
 pub enum OsmPbfError {
@@ -36,7 +43,7 @@ impl Error for OsmPbfError {
     fn cause(&self) -> Option<&Error> {
         match *self {
             OsmPbfError::Io(ref e) => Some(e as &Error),
-            OsmPbfError::Pbf(_) => None,
+            OsmPbfError::Pbf(ref e) => Some(e as &Error),
             OsmPbfError::UnsupportedData => None,
         }
     }
@@ -148,152 +155,9 @@ impl<'a, R: Reader> Iterator<Result<osmformat::PrimitiveBlock, OsmPbfError>>
     }
 }
 
-pub struct SimpleNodes<'a> {
-    nodes: std::iter::FlatMap<'a, &'a osmformat::PrimitiveGroup, std::slice::Items<'a, osmformat::PrimitiveGroup>, std::slice::Items<'a, osmformat::Node>>,
-    block: &'a osmformat::PrimitiveBlock,
-}
-impl<'a> SimpleNodes<'a> {
-    pub fn with_block(block: &'a osmformat::PrimitiveBlock) -> SimpleNodes<'a> {
-        SimpleNodes {
-            nodes: block.get_primitivegroup().iter().flat_map(|g| g.get_nodes().iter()),
-            block: block,
-        }
-    }
-}
-impl<'a> Iterator<Node> for SimpleNodes<'a> {
-    fn next(&mut self) -> Option<Node> {
-        self.nodes.next().map(|n| Node::with_node(n, self.block))
-    }
-    fn size_hint(&self) -> (uint, Option<uint>) {
-        self.nodes.size_hint()
-    }
-}
-
-pub struct Node {
-    pub id: i64,
-    pub lat: f64,
-    pub lon: f64,
-    pub tags: Tags,
-}
-impl Node {
-    fn make_lat(c: i64, b: &osmformat::PrimitiveBlock) -> f64 {
-        let granularity = b.get_granularity() as i64;
-        1e-9 * (b.get_lat_offset() + granularity * c) as f64
-    }
-    fn make_lon(c: i64, b: &osmformat::PrimitiveBlock) -> f64 {
-        let granularity = b.get_granularity() as i64;
-        1e-9 * (b.get_lon_offset() + granularity * c) as f64
-    }
-    pub fn with_node(n: &osmformat::Node, b: &osmformat::PrimitiveBlock) -> Node {
-        Node {
-            id: n.get_id(),
-            lat: Node::make_lat(n.get_lat(), b),
-            lon: Node::make_lat(n.get_lon(), b),
-            tags: make_tags(n, b),
-        }
-    }
-}
-fn make_string(k: uint, block: &osmformat::PrimitiveBlock) -> String {
-    String::from_utf8_lossy(block.get_stringtable().get_s()[k].as_slice())
-        .into_string()
-}
-fn make_tags(n: &osmformat::Node, b: &osmformat::PrimitiveBlock) -> Tags {
-    let mut tags = BTreeMap::new();
-    for (&k, &v) in n.get_keys().iter().zip(n.get_vals().iter()) {
-        let k = make_string(k as uint, b);
-        let v = make_string(v as uint, b);
-        tags.insert(k, v);
-    }
-    tags
-}
-
-type RawDenseNodes<'a> = std::iter::Map<'a, (&'a i64, (&'a i64, &'a i64)), RawDenseNode, std::iter::Zip<std::slice::Items<'a, i64>, std::iter::Zip<std::slice::Items<'a, i64>, std::slice::Items<'a, i64>>>>;
-
-pub struct DenseNodes<'a> {
-    block: &'a osmformat::PrimitiveBlock,
-    groups: std::slice::Items<'a, osmformat::PrimitiveGroup>,
-    denses: Option<(RawDenseNodes<'a>, std::slice::Items<'a, i32>)>,
-    cur_id: i64,
-    cur_lat: i64,
-    cur_lon: i64,
-}
-impl<'a> DenseNodes<'a> {
-    pub fn with_block(b: &'a osmformat::PrimitiveBlock) -> DenseNodes<'a> {
-        DenseNodes {
-            block: b,
-            groups: b.get_primitivegroup().iter(),
-            denses: None,
-            cur_id: 0,
-            cur_lat: 0,
-            cur_lon: 0,
-        }
-    }
-}
-impl<'a> Iterator<Node> for DenseNodes<'a> {
-    fn next(&mut self) -> Option<Node> {
-        loop {
-            for &(ref mut dense, ref mut kvs) in self.denses.iter_mut() {
-                for d in *dense {
-                    self.cur_id += d.did;
-                    self.cur_lat += d.dlat;
-                    self.cur_lon += d.dlon;
-                    let mut tags = BTreeMap::new();
-                    loop {
-                        let k = match kvs.next() {
-                            None | Some(&0) => break,
-                            Some(k) => make_string(*k as uint, self.block),
-                        };
-                        let v = match kvs.next() {
-                            None => break,
-                            Some(v) => make_string(*v as uint, self.block),
-                        };
-                        tags.insert(k, v);
-                    }
-                    return Some(Node {
-                        id: self.cur_id,
-                        lat: Node::make_lat(self.cur_lat, self.block),
-                        lon: Node::make_lon(self.cur_lon, self.block),
-                        tags: tags,
-                    });
-                }
-            }
-            self.cur_id = 0;
-            self.cur_lat = 0;
-            self.cur_lon = 0;
-            let next_chunk = self.groups.next().map(|g| {
-                let d = g.get_dense();
-                (d.get_id().iter().zip(d.get_lat().iter().zip(d.get_lon().iter()))
-                 .map(RawDenseNode::from_tuple),
-                 g.get_dense())
-            });
-            match next_chunk {
-                None => return None,
-                Some((next, dense)) =>
-                    self.denses = Some((next, dense.get_keys_vals().iter())),
-            }
-        }
-    }
-}
-
-struct RawDenseNode {
-    did: i64,
-    dlat: i64,
-    dlon: i64,
-}
-impl RawDenseNode {
-    fn from_tuple((&did, (&dlat, &dlon)): (&i64, (&i64, &i64)))
-                  -> RawDenseNode
-    {
-        RawDenseNode {
-            did: did,
-            dlat: dlat,
-            dlon: dlon,
-        }
-    }
-}
 
 pub fn nodes<'a>(block: &'a osmformat::PrimitiveBlock)
-                 -> std::iter::Chain<SimpleNodes<'a>, DenseNodes<'a>>
+                 -> std::iter::Chain<blocks::SimpleNodes<'a>, blocks::DenseNodes<'a>>
 {
-    SimpleNodes::with_block(block).chain(DenseNodes::with_block(block))
+    blocks::simple_nodes(block).chain(blocks::dense_nodes(block))
 }
