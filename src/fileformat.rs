@@ -6,7 +6,7 @@
 #![allow(unused_imports)]
 
 
-#[deriving(Clone,PartialEq,Default,Show)]
+#[deriving(Clone,Default,Show)]
 pub struct Blob {
     raw: ::protobuf::SingularField<::std::vec::Vec<u8>>,
     raw_size: ::std::option::Option<i32>,
@@ -14,6 +14,7 @@ pub struct Blob {
     lzma_data: ::protobuf::SingularField<::std::vec::Vec<u8>>,
     OBSOLETE_bzip2_data: ::protobuf::SingularField<::std::vec::Vec<u8>>,
     unknown_fields: ::protobuf::UnknownFields,
+    cached_size: ::std::cell::Cell<u32>,
 }
 
 impl<'a> Blob {
@@ -22,7 +23,10 @@ impl<'a> Blob {
     }
 
     pub fn default_instance() -> &'static Blob {
-        static mut instance: ::protobuf::lazy::Lazy<Blob> = ::protobuf::lazy::Lazy { lock: ::protobuf::lazy::ONCE_INIT, ptr: 0 as *const Blob };
+        static mut instance: ::protobuf::lazy::Lazy<Blob> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const Blob,
+        };
         unsafe {
             instance.get(|| {
                 Blob {
@@ -32,6 +36,7 @@ impl<'a> Blob {
                     lzma_data: ::protobuf::SingularField::none(),
                     OBSOLETE_bzip2_data: ::protobuf::SingularField::none(),
                     unknown_fields: ::protobuf::UnknownFields::new(),
+                    cached_size: ::std::cell::Cell::new(0),
                 }
             })
         }
@@ -71,7 +76,7 @@ impl<'a> Blob {
     // optional int32 raw_size = 2;
 
     pub fn clear_raw_size(&mut self) {
-        self.raw_size = None;
+        self.raw_size = ::std::option::None;
     }
 
     pub fn has_raw_size(&self) -> bool {
@@ -80,7 +85,7 @@ impl<'a> Blob {
 
     // Param is passed by value, moved
     pub fn set_raw_size(&mut self, v: i32) {
-        self.raw_size = Some(v);
+        self.raw_size = ::std::option::Some(v);
     }
 
     pub fn get_raw_size(&self) -> i32 {
@@ -206,7 +211,7 @@ impl ::protobuf::Message for Blob {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int32());
-                    self.raw_size = Some(tmp);
+                    self.raw_size = ::std::option::Some(tmp);
                 },
                 3 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -239,10 +244,8 @@ impl ::protobuf::Message for Blob {
     }
 
     // Compute sizes of nested messages
-    fn compute_sizes(&self, sizes: &mut ::std::vec::Vec<u32>) -> u32 {
+    fn compute_size(&self) -> u32 {
         use protobuf::{Message};
-        let pos = sizes.len();
-        sizes.push(0);
         let mut my_size = 0;
         for value in self.raw.iter() {
             my_size += ::protobuf::rt::bytes_size(1, value.as_slice());
@@ -260,13 +263,11 @@ impl ::protobuf::Message for Blob {
             my_size += ::protobuf::rt::bytes_size(5, value.as_slice());
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        sizes[pos] = my_size;
-        // value is returned for convenience
+        self.cached_size.set(my_size);
         my_size
     }
 
-    #[allow(unused_variables)]
-    fn write_to_with_computed_sizes(&self, os: &mut ::protobuf::CodedOutputStream, sizes: &[u32], sizes_pos: &mut uint) -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         use protobuf::{Message};
         match self.raw.as_ref() {
             Some(v) => {
@@ -302,6 +303,10 @@ impl ::protobuf::Message for Blob {
         ::std::result::Ok(())
     }
 
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
     fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
         &self.unknown_fields
     }
@@ -326,12 +331,24 @@ impl ::protobuf::Clear for Blob {
     }
 }
 
-#[deriving(Clone,PartialEq,Default,Show)]
+impl ::std::cmp::PartialEq for Blob {
+    fn eq(&self, other: &Blob) -> bool {
+        self.raw == other.raw &&
+        self.raw_size == other.raw_size &&
+        self.zlib_data == other.zlib_data &&
+        self.lzma_data == other.lzma_data &&
+        self.OBSOLETE_bzip2_data == other.OBSOLETE_bzip2_data &&
+        self.unknown_fields == other.unknown_fields
+    }
+}
+
+#[deriving(Clone,Default,Show)]
 pub struct BlobHeader {
     field_type: ::protobuf::SingularField<::std::string::String>,
     indexdata: ::protobuf::SingularField<::std::vec::Vec<u8>>,
     datasize: ::std::option::Option<i32>,
     unknown_fields: ::protobuf::UnknownFields,
+    cached_size: ::std::cell::Cell<u32>,
 }
 
 impl<'a> BlobHeader {
@@ -340,7 +357,10 @@ impl<'a> BlobHeader {
     }
 
     pub fn default_instance() -> &'static BlobHeader {
-        static mut instance: ::protobuf::lazy::Lazy<BlobHeader> = ::protobuf::lazy::Lazy { lock: ::protobuf::lazy::ONCE_INIT, ptr: 0 as *const BlobHeader };
+        static mut instance: ::protobuf::lazy::Lazy<BlobHeader> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const BlobHeader,
+        };
         unsafe {
             instance.get(|| {
                 BlobHeader {
@@ -348,6 +368,7 @@ impl<'a> BlobHeader {
                     indexdata: ::protobuf::SingularField::none(),
                     datasize: ::std::option::None,
                     unknown_fields: ::protobuf::UnknownFields::new(),
+                    cached_size: ::std::cell::Cell::new(0),
                 }
             })
         }
@@ -418,7 +439,7 @@ impl<'a> BlobHeader {
     // required int32 datasize = 3;
 
     pub fn clear_datasize(&mut self) {
-        self.datasize = None;
+        self.datasize = ::std::option::None;
     }
 
     pub fn has_datasize(&self) -> bool {
@@ -427,7 +448,7 @@ impl<'a> BlobHeader {
 
     // Param is passed by value, moved
     pub fn set_datasize(&mut self, v: i32) {
-        self.datasize = Some(v);
+        self.datasize = ::std::option::Some(v);
     }
 
     pub fn get_datasize(&self) -> i32 {
@@ -473,7 +494,7 @@ impl ::protobuf::Message for BlobHeader {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int32());
-                    self.datasize = Some(tmp);
+                    self.datasize = ::std::option::Some(tmp);
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -485,10 +506,8 @@ impl ::protobuf::Message for BlobHeader {
     }
 
     // Compute sizes of nested messages
-    fn compute_sizes(&self, sizes: &mut ::std::vec::Vec<u32>) -> u32 {
+    fn compute_size(&self) -> u32 {
         use protobuf::{Message};
-        let pos = sizes.len();
-        sizes.push(0);
         let mut my_size = 0;
         for value in self.field_type.iter() {
             my_size += ::protobuf::rt::string_size(1, value.as_slice());
@@ -500,13 +519,11 @@ impl ::protobuf::Message for BlobHeader {
             my_size += ::protobuf::rt::value_size(3, *value, ::protobuf::wire_format::WireTypeVarint);
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        sizes[pos] = my_size;
-        // value is returned for convenience
+        self.cached_size.set(my_size);
         my_size
     }
 
-    #[allow(unused_variables)]
-    fn write_to_with_computed_sizes(&self, os: &mut ::protobuf::CodedOutputStream, sizes: &[u32], sizes_pos: &mut uint) -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         use protobuf::{Message};
         match self.field_type.as_ref() {
             Some(v) => {
@@ -530,6 +547,10 @@ impl ::protobuf::Message for BlobHeader {
         ::std::result::Ok(())
     }
 
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
     fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
         &self.unknown_fields
     }
@@ -549,5 +570,14 @@ impl ::protobuf::Clear for BlobHeader {
         self.clear_indexdata();
         self.clear_datasize();
         self.unknown_fields.clear();
+    }
+}
+
+impl ::std::cmp::PartialEq for BlobHeader {
+    fn eq(&self, other: &BlobHeader) -> bool {
+        self.field_type == other.field_type &&
+        self.indexdata == other.indexdata &&
+        self.datasize == other.datasize &&
+        self.unknown_fields == other.unknown_fields
     }
 }

@@ -6,7 +6,7 @@
 #![allow(unused_imports)]
 
 
-#[deriving(Clone,PartialEq,Default,Show)]
+#[deriving(Clone,Default,Show)]
 pub struct HeaderBlock {
     bbox: ::protobuf::SingularPtrField<HeaderBBox>,
     required_features: ::protobuf::RepeatedField<::std::string::String>,
@@ -17,6 +17,7 @@ pub struct HeaderBlock {
     osmosis_replication_sequence_number: ::std::option::Option<i64>,
     osmosis_replication_base_url: ::protobuf::SingularField<::std::string::String>,
     unknown_fields: ::protobuf::UnknownFields,
+    cached_size: ::std::cell::Cell<u32>,
 }
 
 impl<'a> HeaderBlock {
@@ -25,7 +26,10 @@ impl<'a> HeaderBlock {
     }
 
     pub fn default_instance() -> &'static HeaderBlock {
-        static mut instance: ::protobuf::lazy::Lazy<HeaderBlock> = ::protobuf::lazy::Lazy { lock: ::protobuf::lazy::ONCE_INIT, ptr: 0 as *const HeaderBlock };
+        static mut instance: ::protobuf::lazy::Lazy<HeaderBlock> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const HeaderBlock,
+        };
         unsafe {
             instance.get(|| {
                 HeaderBlock {
@@ -38,6 +42,7 @@ impl<'a> HeaderBlock {
                     osmosis_replication_sequence_number: ::std::option::None,
                     osmosis_replication_base_url: ::protobuf::SingularField::none(),
                     unknown_fields: ::protobuf::UnknownFields::new(),
+                    cached_size: ::std::cell::Cell::new(0),
                 }
             })
         }
@@ -176,7 +181,7 @@ impl<'a> HeaderBlock {
     // optional int64 osmosis_replication_timestamp = 32;
 
     pub fn clear_osmosis_replication_timestamp(&mut self) {
-        self.osmosis_replication_timestamp = None;
+        self.osmosis_replication_timestamp = ::std::option::None;
     }
 
     pub fn has_osmosis_replication_timestamp(&self) -> bool {
@@ -185,7 +190,7 @@ impl<'a> HeaderBlock {
 
     // Param is passed by value, moved
     pub fn set_osmosis_replication_timestamp(&mut self, v: i64) {
-        self.osmosis_replication_timestamp = Some(v);
+        self.osmosis_replication_timestamp = ::std::option::Some(v);
     }
 
     pub fn get_osmosis_replication_timestamp(&self) -> i64 {
@@ -195,7 +200,7 @@ impl<'a> HeaderBlock {
     // optional int64 osmosis_replication_sequence_number = 33;
 
     pub fn clear_osmosis_replication_sequence_number(&mut self) {
-        self.osmosis_replication_sequence_number = None;
+        self.osmosis_replication_sequence_number = ::std::option::None;
     }
 
     pub fn has_osmosis_replication_sequence_number(&self) -> bool {
@@ -204,7 +209,7 @@ impl<'a> HeaderBlock {
 
     // Param is passed by value, moved
     pub fn set_osmosis_replication_sequence_number(&mut self, v: i64) {
-        self.osmosis_replication_sequence_number = Some(v);
+        self.osmosis_replication_sequence_number = ::std::option::Some(v);
     }
 
     pub fn get_osmosis_replication_sequence_number(&self) -> i64 {
@@ -296,14 +301,14 @@ impl ::protobuf::Message for HeaderBlock {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.osmosis_replication_timestamp = Some(tmp);
+                    self.osmosis_replication_timestamp = ::std::option::Some(tmp);
                 },
                 33 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.osmosis_replication_sequence_number = Some(tmp);
+                    self.osmosis_replication_sequence_number = ::std::option::Some(tmp);
                 },
                 34 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -322,13 +327,11 @@ impl ::protobuf::Message for HeaderBlock {
     }
 
     // Compute sizes of nested messages
-    fn compute_sizes(&self, sizes: &mut ::std::vec::Vec<u32>) -> u32 {
+    fn compute_size(&self) -> u32 {
         use protobuf::{Message};
-        let pos = sizes.len();
-        sizes.push(0);
         let mut my_size = 0;
         for value in self.bbox.iter() {
-            let len = value.compute_sizes(sizes);
+            let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         for value in self.required_features.iter() {
@@ -353,19 +356,17 @@ impl ::protobuf::Message for HeaderBlock {
             my_size += ::protobuf::rt::string_size(34, value.as_slice());
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        sizes[pos] = my_size;
-        // value is returned for convenience
+        self.cached_size.set(my_size);
         my_size
     }
 
-    fn write_to_with_computed_sizes(&self, os: &mut ::protobuf::CodedOutputStream, sizes: &[u32], sizes_pos: &mut uint) -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         use protobuf::{Message};
         match self.bbox.as_ref() {
             Some(v) => {
                 try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
-                try!(os.write_raw_varint32(sizes[*sizes_pos]));
-                *sizes_pos += 1;
-                try!(v.write_to_with_computed_sizes(os, sizes.as_slice(), sizes_pos));
+                try!(os.write_raw_varint32(v.get_cached_size()));
+                try!(v.write_to_with_cached_sizes(os));
             },
             None => {},
         };
@@ -409,6 +410,10 @@ impl ::protobuf::Message for HeaderBlock {
         ::std::result::Ok(())
     }
 
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
     fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
         &self.unknown_fields
     }
@@ -436,13 +441,28 @@ impl ::protobuf::Clear for HeaderBlock {
     }
 }
 
-#[deriving(Clone,PartialEq,Default,Show)]
+impl ::std::cmp::PartialEq for HeaderBlock {
+    fn eq(&self, other: &HeaderBlock) -> bool {
+        self.bbox == other.bbox &&
+        self.required_features == other.required_features &&
+        self.optional_features == other.optional_features &&
+        self.writingprogram == other.writingprogram &&
+        self.source == other.source &&
+        self.osmosis_replication_timestamp == other.osmosis_replication_timestamp &&
+        self.osmosis_replication_sequence_number == other.osmosis_replication_sequence_number &&
+        self.osmosis_replication_base_url == other.osmosis_replication_base_url &&
+        self.unknown_fields == other.unknown_fields
+    }
+}
+
+#[deriving(Clone,Default,Show)]
 pub struct HeaderBBox {
     left: ::std::option::Option<i64>,
     right: ::std::option::Option<i64>,
     top: ::std::option::Option<i64>,
     bottom: ::std::option::Option<i64>,
     unknown_fields: ::protobuf::UnknownFields,
+    cached_size: ::std::cell::Cell<u32>,
 }
 
 impl<'a> HeaderBBox {
@@ -451,7 +471,10 @@ impl<'a> HeaderBBox {
     }
 
     pub fn default_instance() -> &'static HeaderBBox {
-        static mut instance: ::protobuf::lazy::Lazy<HeaderBBox> = ::protobuf::lazy::Lazy { lock: ::protobuf::lazy::ONCE_INIT, ptr: 0 as *const HeaderBBox };
+        static mut instance: ::protobuf::lazy::Lazy<HeaderBBox> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const HeaderBBox,
+        };
         unsafe {
             instance.get(|| {
                 HeaderBBox {
@@ -460,6 +483,7 @@ impl<'a> HeaderBBox {
                     top: ::std::option::None,
                     bottom: ::std::option::None,
                     unknown_fields: ::protobuf::UnknownFields::new(),
+                    cached_size: ::std::cell::Cell::new(0),
                 }
             })
         }
@@ -468,7 +492,7 @@ impl<'a> HeaderBBox {
     // required sint64 left = 1;
 
     pub fn clear_left(&mut self) {
-        self.left = None;
+        self.left = ::std::option::None;
     }
 
     pub fn has_left(&self) -> bool {
@@ -477,7 +501,7 @@ impl<'a> HeaderBBox {
 
     // Param is passed by value, moved
     pub fn set_left(&mut self, v: i64) {
-        self.left = Some(v);
+        self.left = ::std::option::Some(v);
     }
 
     pub fn get_left(&self) -> i64 {
@@ -487,7 +511,7 @@ impl<'a> HeaderBBox {
     // required sint64 right = 2;
 
     pub fn clear_right(&mut self) {
-        self.right = None;
+        self.right = ::std::option::None;
     }
 
     pub fn has_right(&self) -> bool {
@@ -496,7 +520,7 @@ impl<'a> HeaderBBox {
 
     // Param is passed by value, moved
     pub fn set_right(&mut self, v: i64) {
-        self.right = Some(v);
+        self.right = ::std::option::Some(v);
     }
 
     pub fn get_right(&self) -> i64 {
@@ -506,7 +530,7 @@ impl<'a> HeaderBBox {
     // required sint64 top = 3;
 
     pub fn clear_top(&mut self) {
-        self.top = None;
+        self.top = ::std::option::None;
     }
 
     pub fn has_top(&self) -> bool {
@@ -515,7 +539,7 @@ impl<'a> HeaderBBox {
 
     // Param is passed by value, moved
     pub fn set_top(&mut self, v: i64) {
-        self.top = Some(v);
+        self.top = ::std::option::Some(v);
     }
 
     pub fn get_top(&self) -> i64 {
@@ -525,7 +549,7 @@ impl<'a> HeaderBBox {
     // required sint64 bottom = 4;
 
     pub fn clear_bottom(&mut self) {
-        self.bottom = None;
+        self.bottom = ::std::option::None;
     }
 
     pub fn has_bottom(&self) -> bool {
@@ -534,7 +558,7 @@ impl<'a> HeaderBBox {
 
     // Param is passed by value, moved
     pub fn set_bottom(&mut self, v: i64) {
-        self.bottom = Some(v);
+        self.bottom = ::std::option::Some(v);
     }
 
     pub fn get_bottom(&self) -> i64 {
@@ -572,28 +596,28 @@ impl ::protobuf::Message for HeaderBBox {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_sint64());
-                    self.left = Some(tmp);
+                    self.left = ::std::option::Some(tmp);
                 },
                 2 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_sint64());
-                    self.right = Some(tmp);
+                    self.right = ::std::option::Some(tmp);
                 },
                 3 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_sint64());
-                    self.top = Some(tmp);
+                    self.top = ::std::option::Some(tmp);
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_sint64());
-                    self.bottom = Some(tmp);
+                    self.bottom = ::std::option::Some(tmp);
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -605,10 +629,8 @@ impl ::protobuf::Message for HeaderBBox {
     }
 
     // Compute sizes of nested messages
-    fn compute_sizes(&self, sizes: &mut ::std::vec::Vec<u32>) -> u32 {
+    fn compute_size(&self) -> u32 {
         use protobuf::{Message};
-        let pos = sizes.len();
-        sizes.push(0);
         let mut my_size = 0;
         for value in self.left.iter() {
             my_size += ::protobuf::rt::value_size(1, *value, ::protobuf::wire_format::WireTypeVarint);
@@ -623,13 +645,11 @@ impl ::protobuf::Message for HeaderBBox {
             my_size += ::protobuf::rt::value_size(4, *value, ::protobuf::wire_format::WireTypeVarint);
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        sizes[pos] = my_size;
-        // value is returned for convenience
+        self.cached_size.set(my_size);
         my_size
     }
 
-    #[allow(unused_variables)]
-    fn write_to_with_computed_sizes(&self, os: &mut ::protobuf::CodedOutputStream, sizes: &[u32], sizes_pos: &mut uint) -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         use protobuf::{Message};
         match self.left {
             Some(v) => {
@@ -659,6 +679,10 @@ impl ::protobuf::Message for HeaderBBox {
         ::std::result::Ok(())
     }
 
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
     fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
         &self.unknown_fields
     }
@@ -682,7 +706,17 @@ impl ::protobuf::Clear for HeaderBBox {
     }
 }
 
-#[deriving(Clone,PartialEq,Default,Show)]
+impl ::std::cmp::PartialEq for HeaderBBox {
+    fn eq(&self, other: &HeaderBBox) -> bool {
+        self.left == other.left &&
+        self.right == other.right &&
+        self.top == other.top &&
+        self.bottom == other.bottom &&
+        self.unknown_fields == other.unknown_fields
+    }
+}
+
+#[deriving(Clone,Default,Show)]
 pub struct PrimitiveBlock {
     stringtable: ::protobuf::SingularPtrField<StringTable>,
     primitivegroup: ::protobuf::RepeatedField<PrimitiveGroup>,
@@ -691,6 +725,7 @@ pub struct PrimitiveBlock {
     lon_offset: ::std::option::Option<i64>,
     date_granularity: ::std::option::Option<i32>,
     unknown_fields: ::protobuf::UnknownFields,
+    cached_size: ::std::cell::Cell<u32>,
 }
 
 impl<'a> PrimitiveBlock {
@@ -699,7 +734,10 @@ impl<'a> PrimitiveBlock {
     }
 
     pub fn default_instance() -> &'static PrimitiveBlock {
-        static mut instance: ::protobuf::lazy::Lazy<PrimitiveBlock> = ::protobuf::lazy::Lazy { lock: ::protobuf::lazy::ONCE_INIT, ptr: 0 as *const PrimitiveBlock };
+        static mut instance: ::protobuf::lazy::Lazy<PrimitiveBlock> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const PrimitiveBlock,
+        };
         unsafe {
             instance.get(|| {
                 PrimitiveBlock {
@@ -710,6 +748,7 @@ impl<'a> PrimitiveBlock {
                     lon_offset: ::std::option::None,
                     date_granularity: ::std::option::None,
                     unknown_fields: ::protobuf::UnknownFields::new(),
+                    cached_size: ::std::cell::Cell::new(0),
                 }
             })
         }
@@ -766,7 +805,7 @@ impl<'a> PrimitiveBlock {
     // optional int32 granularity = 17;
 
     pub fn clear_granularity(&mut self) {
-        self.granularity = None;
+        self.granularity = ::std::option::None;
     }
 
     pub fn has_granularity(&self) -> bool {
@@ -775,7 +814,7 @@ impl<'a> PrimitiveBlock {
 
     // Param is passed by value, moved
     pub fn set_granularity(&mut self, v: i32) {
-        self.granularity = Some(v);
+        self.granularity = ::std::option::Some(v);
     }
 
     pub fn get_granularity(&self) -> i32 {
@@ -785,7 +824,7 @@ impl<'a> PrimitiveBlock {
     // optional int64 lat_offset = 19;
 
     pub fn clear_lat_offset(&mut self) {
-        self.lat_offset = None;
+        self.lat_offset = ::std::option::None;
     }
 
     pub fn has_lat_offset(&self) -> bool {
@@ -794,7 +833,7 @@ impl<'a> PrimitiveBlock {
 
     // Param is passed by value, moved
     pub fn set_lat_offset(&mut self, v: i64) {
-        self.lat_offset = Some(v);
+        self.lat_offset = ::std::option::Some(v);
     }
 
     pub fn get_lat_offset(&self) -> i64 {
@@ -804,7 +843,7 @@ impl<'a> PrimitiveBlock {
     // optional int64 lon_offset = 20;
 
     pub fn clear_lon_offset(&mut self) {
-        self.lon_offset = None;
+        self.lon_offset = ::std::option::None;
     }
 
     pub fn has_lon_offset(&self) -> bool {
@@ -813,7 +852,7 @@ impl<'a> PrimitiveBlock {
 
     // Param is passed by value, moved
     pub fn set_lon_offset(&mut self, v: i64) {
-        self.lon_offset = Some(v);
+        self.lon_offset = ::std::option::Some(v);
     }
 
     pub fn get_lon_offset(&self) -> i64 {
@@ -823,7 +862,7 @@ impl<'a> PrimitiveBlock {
     // optional int32 date_granularity = 18;
 
     pub fn clear_date_granularity(&mut self) {
-        self.date_granularity = None;
+        self.date_granularity = ::std::option::None;
     }
 
     pub fn has_date_granularity(&self) -> bool {
@@ -832,7 +871,7 @@ impl<'a> PrimitiveBlock {
 
     // Param is passed by value, moved
     pub fn set_date_granularity(&mut self, v: i32) {
-        self.date_granularity = Some(v);
+        self.date_granularity = ::std::option::Some(v);
     }
 
     pub fn get_date_granularity(&self) -> i32 {
@@ -875,28 +914,28 @@ impl ::protobuf::Message for PrimitiveBlock {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int32());
-                    self.granularity = Some(tmp);
+                    self.granularity = ::std::option::Some(tmp);
                 },
                 19 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.lat_offset = Some(tmp);
+                    self.lat_offset = ::std::option::Some(tmp);
                 },
                 20 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.lon_offset = Some(tmp);
+                    self.lon_offset = ::std::option::Some(tmp);
                 },
                 18 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int32());
-                    self.date_granularity = Some(tmp);
+                    self.date_granularity = ::std::option::Some(tmp);
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -908,17 +947,15 @@ impl ::protobuf::Message for PrimitiveBlock {
     }
 
     // Compute sizes of nested messages
-    fn compute_sizes(&self, sizes: &mut ::std::vec::Vec<u32>) -> u32 {
+    fn compute_size(&self) -> u32 {
         use protobuf::{Message};
-        let pos = sizes.len();
-        sizes.push(0);
         let mut my_size = 0;
         for value in self.stringtable.iter() {
-            let len = value.compute_sizes(sizes);
+            let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         for value in self.primitivegroup.iter() {
-            let len = value.compute_sizes(sizes);
+            let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         for value in self.granularity.iter() {
@@ -934,27 +971,24 @@ impl ::protobuf::Message for PrimitiveBlock {
             my_size += ::protobuf::rt::value_size(18, *value, ::protobuf::wire_format::WireTypeVarint);
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        sizes[pos] = my_size;
-        // value is returned for convenience
+        self.cached_size.set(my_size);
         my_size
     }
 
-    fn write_to_with_computed_sizes(&self, os: &mut ::protobuf::CodedOutputStream, sizes: &[u32], sizes_pos: &mut uint) -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         use protobuf::{Message};
         match self.stringtable.as_ref() {
             Some(v) => {
                 try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
-                try!(os.write_raw_varint32(sizes[*sizes_pos]));
-                *sizes_pos += 1;
-                try!(v.write_to_with_computed_sizes(os, sizes.as_slice(), sizes_pos));
+                try!(os.write_raw_varint32(v.get_cached_size()));
+                try!(v.write_to_with_cached_sizes(os));
             },
             None => {},
         };
         for v in self.primitivegroup.iter() {
             try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
-            try!(os.write_raw_varint32(sizes[*sizes_pos]));
-            *sizes_pos += 1;
-            try!(v.write_to_with_computed_sizes(os, sizes.as_slice(), sizes_pos));
+            try!(os.write_raw_varint32(v.get_cached_size()));
+            try!(v.write_to_with_cached_sizes(os));
         };
         match self.granularity {
             Some(v) => {
@@ -984,6 +1018,10 @@ impl ::protobuf::Message for PrimitiveBlock {
         ::std::result::Ok(())
     }
 
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
     fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
         &self.unknown_fields
     }
@@ -1009,7 +1047,19 @@ impl ::protobuf::Clear for PrimitiveBlock {
     }
 }
 
-#[deriving(Clone,PartialEq,Default,Show)]
+impl ::std::cmp::PartialEq for PrimitiveBlock {
+    fn eq(&self, other: &PrimitiveBlock) -> bool {
+        self.stringtable == other.stringtable &&
+        self.primitivegroup == other.primitivegroup &&
+        self.granularity == other.granularity &&
+        self.lat_offset == other.lat_offset &&
+        self.lon_offset == other.lon_offset &&
+        self.date_granularity == other.date_granularity &&
+        self.unknown_fields == other.unknown_fields
+    }
+}
+
+#[deriving(Clone,Default,Show)]
 pub struct PrimitiveGroup {
     nodes: ::protobuf::RepeatedField<Node>,
     dense: ::protobuf::SingularPtrField<DenseNodes>,
@@ -1017,6 +1067,7 @@ pub struct PrimitiveGroup {
     relations: ::protobuf::RepeatedField<Relation>,
     changesets: ::protobuf::RepeatedField<ChangeSet>,
     unknown_fields: ::protobuf::UnknownFields,
+    cached_size: ::std::cell::Cell<u32>,
 }
 
 impl<'a> PrimitiveGroup {
@@ -1025,7 +1076,10 @@ impl<'a> PrimitiveGroup {
     }
 
     pub fn default_instance() -> &'static PrimitiveGroup {
-        static mut instance: ::protobuf::lazy::Lazy<PrimitiveGroup> = ::protobuf::lazy::Lazy { lock: ::protobuf::lazy::ONCE_INIT, ptr: 0 as *const PrimitiveGroup };
+        static mut instance: ::protobuf::lazy::Lazy<PrimitiveGroup> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const PrimitiveGroup,
+        };
         unsafe {
             instance.get(|| {
                 PrimitiveGroup {
@@ -1035,6 +1089,7 @@ impl<'a> PrimitiveGroup {
                     relations: ::protobuf::RepeatedField::new(),
                     changesets: ::protobuf::RepeatedField::new(),
                     unknown_fields: ::protobuf::UnknownFields::new(),
+                    cached_size: ::std::cell::Cell::new(0),
                 }
             })
         }
@@ -1207,74 +1262,70 @@ impl ::protobuf::Message for PrimitiveGroup {
     }
 
     // Compute sizes of nested messages
-    fn compute_sizes(&self, sizes: &mut ::std::vec::Vec<u32>) -> u32 {
+    fn compute_size(&self) -> u32 {
         use protobuf::{Message};
-        let pos = sizes.len();
-        sizes.push(0);
         let mut my_size = 0;
         for value in self.nodes.iter() {
-            let len = value.compute_sizes(sizes);
+            let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         for value in self.dense.iter() {
-            let len = value.compute_sizes(sizes);
+            let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         for value in self.ways.iter() {
-            let len = value.compute_sizes(sizes);
+            let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         for value in self.relations.iter() {
-            let len = value.compute_sizes(sizes);
+            let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         for value in self.changesets.iter() {
-            let len = value.compute_sizes(sizes);
+            let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        sizes[pos] = my_size;
-        // value is returned for convenience
+        self.cached_size.set(my_size);
         my_size
     }
 
-    fn write_to_with_computed_sizes(&self, os: &mut ::protobuf::CodedOutputStream, sizes: &[u32], sizes_pos: &mut uint) -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         use protobuf::{Message};
         for v in self.nodes.iter() {
             try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
-            try!(os.write_raw_varint32(sizes[*sizes_pos]));
-            *sizes_pos += 1;
-            try!(v.write_to_with_computed_sizes(os, sizes.as_slice(), sizes_pos));
+            try!(os.write_raw_varint32(v.get_cached_size()));
+            try!(v.write_to_with_cached_sizes(os));
         };
         match self.dense.as_ref() {
             Some(v) => {
                 try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
-                try!(os.write_raw_varint32(sizes[*sizes_pos]));
-                *sizes_pos += 1;
-                try!(v.write_to_with_computed_sizes(os, sizes.as_slice(), sizes_pos));
+                try!(os.write_raw_varint32(v.get_cached_size()));
+                try!(v.write_to_with_cached_sizes(os));
             },
             None => {},
         };
         for v in self.ways.iter() {
             try!(os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited));
-            try!(os.write_raw_varint32(sizes[*sizes_pos]));
-            *sizes_pos += 1;
-            try!(v.write_to_with_computed_sizes(os, sizes.as_slice(), sizes_pos));
+            try!(os.write_raw_varint32(v.get_cached_size()));
+            try!(v.write_to_with_cached_sizes(os));
         };
         for v in self.relations.iter() {
             try!(os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited));
-            try!(os.write_raw_varint32(sizes[*sizes_pos]));
-            *sizes_pos += 1;
-            try!(v.write_to_with_computed_sizes(os, sizes.as_slice(), sizes_pos));
+            try!(os.write_raw_varint32(v.get_cached_size()));
+            try!(v.write_to_with_cached_sizes(os));
         };
         for v in self.changesets.iter() {
             try!(os.write_tag(5, ::protobuf::wire_format::WireTypeLengthDelimited));
-            try!(os.write_raw_varint32(sizes[*sizes_pos]));
-            *sizes_pos += 1;
-            try!(v.write_to_with_computed_sizes(os, sizes.as_slice(), sizes_pos));
+            try!(os.write_raw_varint32(v.get_cached_size()));
+            try!(v.write_to_with_cached_sizes(os));
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
         ::std::result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
     }
 
     fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
@@ -1301,10 +1352,22 @@ impl ::protobuf::Clear for PrimitiveGroup {
     }
 }
 
-#[deriving(Clone,PartialEq,Default,Show)]
+impl ::std::cmp::PartialEq for PrimitiveGroup {
+    fn eq(&self, other: &PrimitiveGroup) -> bool {
+        self.nodes == other.nodes &&
+        self.dense == other.dense &&
+        self.ways == other.ways &&
+        self.relations == other.relations &&
+        self.changesets == other.changesets &&
+        self.unknown_fields == other.unknown_fields
+    }
+}
+
+#[deriving(Clone,Default,Show)]
 pub struct StringTable {
     s: ::protobuf::RepeatedField<::std::vec::Vec<u8>>,
     unknown_fields: ::protobuf::UnknownFields,
+    cached_size: ::std::cell::Cell<u32>,
 }
 
 impl<'a> StringTable {
@@ -1313,12 +1376,16 @@ impl<'a> StringTable {
     }
 
     pub fn default_instance() -> &'static StringTable {
-        static mut instance: ::protobuf::lazy::Lazy<StringTable> = ::protobuf::lazy::Lazy { lock: ::protobuf::lazy::ONCE_INIT, ptr: 0 as *const StringTable };
+        static mut instance: ::protobuf::lazy::Lazy<StringTable> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const StringTable,
+        };
         unsafe {
             instance.get(|| {
                 StringTable {
                     s: ::protobuf::RepeatedField::new(),
                     unknown_fields: ::protobuf::UnknownFields::new(),
+                    cached_size: ::std::cell::Cell::new(0),
                 }
             })
         }
@@ -1375,28 +1442,28 @@ impl ::protobuf::Message for StringTable {
     }
 
     // Compute sizes of nested messages
-    fn compute_sizes(&self, sizes: &mut ::std::vec::Vec<u32>) -> u32 {
+    fn compute_size(&self) -> u32 {
         use protobuf::{Message};
-        let pos = sizes.len();
-        sizes.push(0);
         let mut my_size = 0;
         for value in self.s.iter() {
             my_size += ::protobuf::rt::bytes_size(1, value.as_slice());
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        sizes[pos] = my_size;
-        // value is returned for convenience
+        self.cached_size.set(my_size);
         my_size
     }
 
-    #[allow(unused_variables)]
-    fn write_to_with_computed_sizes(&self, os: &mut ::protobuf::CodedOutputStream, sizes: &[u32], sizes_pos: &mut uint) -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         use protobuf::{Message};
         for v in self.s.iter() {
             try!(os.write_bytes(1, v.as_slice()));
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
         ::std::result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
     }
 
     fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
@@ -1419,7 +1486,14 @@ impl ::protobuf::Clear for StringTable {
     }
 }
 
-#[deriving(Clone,PartialEq,Default,Show)]
+impl ::std::cmp::PartialEq for StringTable {
+    fn eq(&self, other: &StringTable) -> bool {
+        self.s == other.s &&
+        self.unknown_fields == other.unknown_fields
+    }
+}
+
+#[deriving(Clone,Default,Show)]
 pub struct Info {
     version: ::std::option::Option<i32>,
     timestamp: ::std::option::Option<i64>,
@@ -1428,6 +1502,7 @@ pub struct Info {
     user_sid: ::std::option::Option<u32>,
     visible: ::std::option::Option<bool>,
     unknown_fields: ::protobuf::UnknownFields,
+    cached_size: ::std::cell::Cell<u32>,
 }
 
 impl<'a> Info {
@@ -1436,7 +1511,10 @@ impl<'a> Info {
     }
 
     pub fn default_instance() -> &'static Info {
-        static mut instance: ::protobuf::lazy::Lazy<Info> = ::protobuf::lazy::Lazy { lock: ::protobuf::lazy::ONCE_INIT, ptr: 0 as *const Info };
+        static mut instance: ::protobuf::lazy::Lazy<Info> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const Info,
+        };
         unsafe {
             instance.get(|| {
                 Info {
@@ -1447,6 +1525,7 @@ impl<'a> Info {
                     user_sid: ::std::option::None,
                     visible: ::std::option::None,
                     unknown_fields: ::protobuf::UnknownFields::new(),
+                    cached_size: ::std::cell::Cell::new(0),
                 }
             })
         }
@@ -1455,7 +1534,7 @@ impl<'a> Info {
     // optional int32 version = 1;
 
     pub fn clear_version(&mut self) {
-        self.version = None;
+        self.version = ::std::option::None;
     }
 
     pub fn has_version(&self) -> bool {
@@ -1464,7 +1543,7 @@ impl<'a> Info {
 
     // Param is passed by value, moved
     pub fn set_version(&mut self, v: i32) {
-        self.version = Some(v);
+        self.version = ::std::option::Some(v);
     }
 
     pub fn get_version(&self) -> i32 {
@@ -1474,7 +1553,7 @@ impl<'a> Info {
     // optional int64 timestamp = 2;
 
     pub fn clear_timestamp(&mut self) {
-        self.timestamp = None;
+        self.timestamp = ::std::option::None;
     }
 
     pub fn has_timestamp(&self) -> bool {
@@ -1483,7 +1562,7 @@ impl<'a> Info {
 
     // Param is passed by value, moved
     pub fn set_timestamp(&mut self, v: i64) {
-        self.timestamp = Some(v);
+        self.timestamp = ::std::option::Some(v);
     }
 
     pub fn get_timestamp(&self) -> i64 {
@@ -1493,7 +1572,7 @@ impl<'a> Info {
     // optional int64 changeset = 3;
 
     pub fn clear_changeset(&mut self) {
-        self.changeset = None;
+        self.changeset = ::std::option::None;
     }
 
     pub fn has_changeset(&self) -> bool {
@@ -1502,7 +1581,7 @@ impl<'a> Info {
 
     // Param is passed by value, moved
     pub fn set_changeset(&mut self, v: i64) {
-        self.changeset = Some(v);
+        self.changeset = ::std::option::Some(v);
     }
 
     pub fn get_changeset(&self) -> i64 {
@@ -1512,7 +1591,7 @@ impl<'a> Info {
     // optional int32 uid = 4;
 
     pub fn clear_uid(&mut self) {
-        self.uid = None;
+        self.uid = ::std::option::None;
     }
 
     pub fn has_uid(&self) -> bool {
@@ -1521,7 +1600,7 @@ impl<'a> Info {
 
     // Param is passed by value, moved
     pub fn set_uid(&mut self, v: i32) {
-        self.uid = Some(v);
+        self.uid = ::std::option::Some(v);
     }
 
     pub fn get_uid(&self) -> i32 {
@@ -1531,7 +1610,7 @@ impl<'a> Info {
     // optional uint32 user_sid = 5;
 
     pub fn clear_user_sid(&mut self) {
-        self.user_sid = None;
+        self.user_sid = ::std::option::None;
     }
 
     pub fn has_user_sid(&self) -> bool {
@@ -1540,7 +1619,7 @@ impl<'a> Info {
 
     // Param is passed by value, moved
     pub fn set_user_sid(&mut self, v: u32) {
-        self.user_sid = Some(v);
+        self.user_sid = ::std::option::Some(v);
     }
 
     pub fn get_user_sid(&self) -> u32 {
@@ -1550,7 +1629,7 @@ impl<'a> Info {
     // optional bool visible = 6;
 
     pub fn clear_visible(&mut self) {
-        self.visible = None;
+        self.visible = ::std::option::None;
     }
 
     pub fn has_visible(&self) -> bool {
@@ -1559,7 +1638,7 @@ impl<'a> Info {
 
     // Param is passed by value, moved
     pub fn set_visible(&mut self, v: bool) {
-        self.visible = Some(v);
+        self.visible = ::std::option::Some(v);
     }
 
     pub fn get_visible(&self) -> bool {
@@ -1585,42 +1664,42 @@ impl ::protobuf::Message for Info {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int32());
-                    self.version = Some(tmp);
+                    self.version = ::std::option::Some(tmp);
                 },
                 2 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.timestamp = Some(tmp);
+                    self.timestamp = ::std::option::Some(tmp);
                 },
                 3 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.changeset = Some(tmp);
+                    self.changeset = ::std::option::Some(tmp);
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int32());
-                    self.uid = Some(tmp);
+                    self.uid = ::std::option::Some(tmp);
                 },
                 5 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_uint32());
-                    self.user_sid = Some(tmp);
+                    self.user_sid = ::std::option::Some(tmp);
                 },
                 6 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_bool());
-                    self.visible = Some(tmp);
+                    self.visible = ::std::option::Some(tmp);
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -1632,10 +1711,8 @@ impl ::protobuf::Message for Info {
     }
 
     // Compute sizes of nested messages
-    fn compute_sizes(&self, sizes: &mut ::std::vec::Vec<u32>) -> u32 {
+    fn compute_size(&self) -> u32 {
         use protobuf::{Message};
-        let pos = sizes.len();
-        sizes.push(0);
         let mut my_size = 0;
         for value in self.version.iter() {
             my_size += ::protobuf::rt::value_size(1, *value, ::protobuf::wire_format::WireTypeVarint);
@@ -1656,13 +1733,11 @@ impl ::protobuf::Message for Info {
             my_size += 2;
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        sizes[pos] = my_size;
-        // value is returned for convenience
+        self.cached_size.set(my_size);
         my_size
     }
 
-    #[allow(unused_variables)]
-    fn write_to_with_computed_sizes(&self, os: &mut ::protobuf::CodedOutputStream, sizes: &[u32], sizes_pos: &mut uint) -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         use protobuf::{Message};
         match self.version {
             Some(v) => {
@@ -1704,6 +1779,10 @@ impl ::protobuf::Message for Info {
         ::std::result::Ok(())
     }
 
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
+    }
+
     fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
         &self.unknown_fields
     }
@@ -1729,7 +1808,19 @@ impl ::protobuf::Clear for Info {
     }
 }
 
-#[deriving(Clone,PartialEq,Default,Show)]
+impl ::std::cmp::PartialEq for Info {
+    fn eq(&self, other: &Info) -> bool {
+        self.version == other.version &&
+        self.timestamp == other.timestamp &&
+        self.changeset == other.changeset &&
+        self.uid == other.uid &&
+        self.user_sid == other.user_sid &&
+        self.visible == other.visible &&
+        self.unknown_fields == other.unknown_fields
+    }
+}
+
+#[deriving(Clone,Default,Show)]
 pub struct DenseInfo {
     version: ::std::vec::Vec<i32>,
     timestamp: ::std::vec::Vec<i64>,
@@ -1738,6 +1829,7 @@ pub struct DenseInfo {
     user_sid: ::std::vec::Vec<i32>,
     visible: ::std::vec::Vec<bool>,
     unknown_fields: ::protobuf::UnknownFields,
+    cached_size: ::std::cell::Cell<u32>,
 }
 
 impl<'a> DenseInfo {
@@ -1746,7 +1838,10 @@ impl<'a> DenseInfo {
     }
 
     pub fn default_instance() -> &'static DenseInfo {
-        static mut instance: ::protobuf::lazy::Lazy<DenseInfo> = ::protobuf::lazy::Lazy { lock: ::protobuf::lazy::ONCE_INIT, ptr: 0 as *const DenseInfo };
+        static mut instance: ::protobuf::lazy::Lazy<DenseInfo> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const DenseInfo,
+        };
         unsafe {
             instance.get(|| {
                 DenseInfo {
@@ -1757,6 +1852,7 @@ impl<'a> DenseInfo {
                     user_sid: ::std::vec::Vec::new(),
                     visible: ::std::vec::Vec::new(),
                     unknown_fields: ::protobuf::UnknownFields::new(),
+                    cached_size: ::std::cell::Cell::new(0),
                 }
             })
         }
@@ -1996,10 +2092,8 @@ impl ::protobuf::Message for DenseInfo {
     }
 
     // Compute sizes of nested messages
-    fn compute_sizes(&self, sizes: &mut ::std::vec::Vec<u32>) -> u32 {
+    fn compute_size(&self) -> u32 {
         use protobuf::{Message};
-        let pos = sizes.len();
-        sizes.push(0);
         let mut my_size = 0;
         if !self.version.is_empty() {
             my_size += ::protobuf::rt::vec_packed_varint_size(1, self.version.as_slice());
@@ -2020,16 +2114,15 @@ impl ::protobuf::Message for DenseInfo {
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(self.visible.len() as u32) + (self.visible.len() * 1) as u32;
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        sizes[pos] = my_size;
-        // value is returned for convenience
+        self.cached_size.set(my_size);
         my_size
     }
 
-    #[allow(unused_variables)]
-    fn write_to_with_computed_sizes(&self, os: &mut ::protobuf::CodedOutputStream, sizes: &[u32], sizes_pos: &mut uint) -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         use protobuf::{Message};
         if !self.version.is_empty() {
             try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.version.as_slice())));
             for v in self.version.iter() {
                 try!(os.write_int32_no_tag(*v));
@@ -2037,6 +2130,7 @@ impl ::protobuf::Message for DenseInfo {
         };
         if !self.timestamp.is_empty() {
             try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.timestamp.as_slice())));
             for v in self.timestamp.iter() {
                 try!(os.write_sint64_no_tag(*v));
@@ -2044,6 +2138,7 @@ impl ::protobuf::Message for DenseInfo {
         };
         if !self.changeset.is_empty() {
             try!(os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.changeset.as_slice())));
             for v in self.changeset.iter() {
                 try!(os.write_sint64_no_tag(*v));
@@ -2051,6 +2146,7 @@ impl ::protobuf::Message for DenseInfo {
         };
         if !self.uid.is_empty() {
             try!(os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.uid.as_slice())));
             for v in self.uid.iter() {
                 try!(os.write_sint32_no_tag(*v));
@@ -2058,6 +2154,7 @@ impl ::protobuf::Message for DenseInfo {
         };
         if !self.user_sid.is_empty() {
             try!(os.write_tag(5, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.user_sid.as_slice())));
             for v in self.user_sid.iter() {
                 try!(os.write_sint32_no_tag(*v));
@@ -2065,6 +2162,7 @@ impl ::protobuf::Message for DenseInfo {
         };
         if !self.visible.is_empty() {
             try!(os.write_tag(6, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32((self.visible.len() * 1) as u32));
             for v in self.visible.iter() {
                 try!(os.write_bool_no_tag(*v));
@@ -2072,6 +2170,10 @@ impl ::protobuf::Message for DenseInfo {
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
         ::std::result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
     }
 
     fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
@@ -2099,10 +2201,23 @@ impl ::protobuf::Clear for DenseInfo {
     }
 }
 
-#[deriving(Clone,PartialEq,Default,Show)]
+impl ::std::cmp::PartialEq for DenseInfo {
+    fn eq(&self, other: &DenseInfo) -> bool {
+        self.version == other.version &&
+        self.timestamp == other.timestamp &&
+        self.changeset == other.changeset &&
+        self.uid == other.uid &&
+        self.user_sid == other.user_sid &&
+        self.visible == other.visible &&
+        self.unknown_fields == other.unknown_fields
+    }
+}
+
+#[deriving(Clone,Default,Show)]
 pub struct ChangeSet {
     id: ::std::option::Option<i64>,
     unknown_fields: ::protobuf::UnknownFields,
+    cached_size: ::std::cell::Cell<u32>,
 }
 
 impl<'a> ChangeSet {
@@ -2111,12 +2226,16 @@ impl<'a> ChangeSet {
     }
 
     pub fn default_instance() -> &'static ChangeSet {
-        static mut instance: ::protobuf::lazy::Lazy<ChangeSet> = ::protobuf::lazy::Lazy { lock: ::protobuf::lazy::ONCE_INIT, ptr: 0 as *const ChangeSet };
+        static mut instance: ::protobuf::lazy::Lazy<ChangeSet> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const ChangeSet,
+        };
         unsafe {
             instance.get(|| {
                 ChangeSet {
                     id: ::std::option::None,
                     unknown_fields: ::protobuf::UnknownFields::new(),
+                    cached_size: ::std::cell::Cell::new(0),
                 }
             })
         }
@@ -2125,7 +2244,7 @@ impl<'a> ChangeSet {
     // required int64 id = 1;
 
     pub fn clear_id(&mut self) {
-        self.id = None;
+        self.id = ::std::option::None;
     }
 
     pub fn has_id(&self) -> bool {
@@ -2134,7 +2253,7 @@ impl<'a> ChangeSet {
 
     // Param is passed by value, moved
     pub fn set_id(&mut self, v: i64) {
-        self.id = Some(v);
+        self.id = ::std::option::Some(v);
     }
 
     pub fn get_id(&self) -> i64 {
@@ -2163,7 +2282,7 @@ impl ::protobuf::Message for ChangeSet {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.id = Some(tmp);
+                    self.id = ::std::option::Some(tmp);
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -2175,22 +2294,18 @@ impl ::protobuf::Message for ChangeSet {
     }
 
     // Compute sizes of nested messages
-    fn compute_sizes(&self, sizes: &mut ::std::vec::Vec<u32>) -> u32 {
+    fn compute_size(&self) -> u32 {
         use protobuf::{Message};
-        let pos = sizes.len();
-        sizes.push(0);
         let mut my_size = 0;
         for value in self.id.iter() {
             my_size += ::protobuf::rt::value_size(1, *value, ::protobuf::wire_format::WireTypeVarint);
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        sizes[pos] = my_size;
-        // value is returned for convenience
+        self.cached_size.set(my_size);
         my_size
     }
 
-    #[allow(unused_variables)]
-    fn write_to_with_computed_sizes(&self, os: &mut ::protobuf::CodedOutputStream, sizes: &[u32], sizes_pos: &mut uint) -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         use protobuf::{Message};
         match self.id {
             Some(v) => {
@@ -2200,6 +2315,10 @@ impl ::protobuf::Message for ChangeSet {
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
         ::std::result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
     }
 
     fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
@@ -2222,7 +2341,14 @@ impl ::protobuf::Clear for ChangeSet {
     }
 }
 
-#[deriving(Clone,PartialEq,Default,Show)]
+impl ::std::cmp::PartialEq for ChangeSet {
+    fn eq(&self, other: &ChangeSet) -> bool {
+        self.id == other.id &&
+        self.unknown_fields == other.unknown_fields
+    }
+}
+
+#[deriving(Clone,Default,Show)]
 pub struct Node {
     id: ::std::option::Option<i64>,
     keys: ::std::vec::Vec<u32>,
@@ -2231,6 +2357,7 @@ pub struct Node {
     lat: ::std::option::Option<i64>,
     lon: ::std::option::Option<i64>,
     unknown_fields: ::protobuf::UnknownFields,
+    cached_size: ::std::cell::Cell<u32>,
 }
 
 impl<'a> Node {
@@ -2239,7 +2366,10 @@ impl<'a> Node {
     }
 
     pub fn default_instance() -> &'static Node {
-        static mut instance: ::protobuf::lazy::Lazy<Node> = ::protobuf::lazy::Lazy { lock: ::protobuf::lazy::ONCE_INIT, ptr: 0 as *const Node };
+        static mut instance: ::protobuf::lazy::Lazy<Node> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const Node,
+        };
         unsafe {
             instance.get(|| {
                 Node {
@@ -2250,6 +2380,7 @@ impl<'a> Node {
                     lat: ::std::option::None,
                     lon: ::std::option::None,
                     unknown_fields: ::protobuf::UnknownFields::new(),
+                    cached_size: ::std::cell::Cell::new(0),
                 }
             })
         }
@@ -2258,7 +2389,7 @@ impl<'a> Node {
     // required sint64 id = 1;
 
     pub fn clear_id(&mut self) {
-        self.id = None;
+        self.id = ::std::option::None;
     }
 
     pub fn has_id(&self) -> bool {
@@ -2267,7 +2398,7 @@ impl<'a> Node {
 
     // Param is passed by value, moved
     pub fn set_id(&mut self, v: i64) {
-        self.id = Some(v);
+        self.id = ::std::option::Some(v);
     }
 
     pub fn get_id(&self) -> i64 {
@@ -2345,7 +2476,7 @@ impl<'a> Node {
     // required sint64 lat = 8;
 
     pub fn clear_lat(&mut self) {
-        self.lat = None;
+        self.lat = ::std::option::None;
     }
 
     pub fn has_lat(&self) -> bool {
@@ -2354,7 +2485,7 @@ impl<'a> Node {
 
     // Param is passed by value, moved
     pub fn set_lat(&mut self, v: i64) {
-        self.lat = Some(v);
+        self.lat = ::std::option::Some(v);
     }
 
     pub fn get_lat(&self) -> i64 {
@@ -2364,7 +2495,7 @@ impl<'a> Node {
     // required sint64 lon = 9;
 
     pub fn clear_lon(&mut self) {
-        self.lon = None;
+        self.lon = ::std::option::None;
     }
 
     pub fn has_lon(&self) -> bool {
@@ -2373,7 +2504,7 @@ impl<'a> Node {
 
     // Param is passed by value, moved
     pub fn set_lon(&mut self, v: i64) {
-        self.lon = Some(v);
+        self.lon = ::std::option::Some(v);
     }
 
     pub fn get_lon(&self) -> i64 {
@@ -2408,7 +2539,7 @@ impl ::protobuf::Message for Node {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_sint64());
-                    self.id = Some(tmp);
+                    self.id = ::std::option::Some(tmp);
                 },
                 2 => {
                     if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -2452,14 +2583,14 @@ impl ::protobuf::Message for Node {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_sint64());
-                    self.lat = Some(tmp);
+                    self.lat = ::std::option::Some(tmp);
                 },
                 9 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_sint64());
-                    self.lon = Some(tmp);
+                    self.lon = ::std::option::Some(tmp);
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -2471,10 +2602,8 @@ impl ::protobuf::Message for Node {
     }
 
     // Compute sizes of nested messages
-    fn compute_sizes(&self, sizes: &mut ::std::vec::Vec<u32>) -> u32 {
+    fn compute_size(&self) -> u32 {
         use protobuf::{Message};
-        let pos = sizes.len();
-        sizes.push(0);
         let mut my_size = 0;
         for value in self.id.iter() {
             my_size += ::protobuf::rt::value_size(1, *value, ::protobuf::wire_format::WireTypeVarint);
@@ -2486,7 +2615,7 @@ impl ::protobuf::Message for Node {
             my_size += ::protobuf::rt::vec_packed_varint_size(3, self.vals.as_slice());
         };
         for value in self.info.iter() {
-            let len = value.compute_sizes(sizes);
+            let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         for value in self.lat.iter() {
@@ -2496,12 +2625,11 @@ impl ::protobuf::Message for Node {
             my_size += ::protobuf::rt::value_size(9, *value, ::protobuf::wire_format::WireTypeVarint);
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        sizes[pos] = my_size;
-        // value is returned for convenience
+        self.cached_size.set(my_size);
         my_size
     }
 
-    fn write_to_with_computed_sizes(&self, os: &mut ::protobuf::CodedOutputStream, sizes: &[u32], sizes_pos: &mut uint) -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         use protobuf::{Message};
         match self.id {
             Some(v) => {
@@ -2511,6 +2639,7 @@ impl ::protobuf::Message for Node {
         };
         if !self.keys.is_empty() {
             try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.keys.as_slice())));
             for v in self.keys.iter() {
                 try!(os.write_uint32_no_tag(*v));
@@ -2518,6 +2647,7 @@ impl ::protobuf::Message for Node {
         };
         if !self.vals.is_empty() {
             try!(os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.vals.as_slice())));
             for v in self.vals.iter() {
                 try!(os.write_uint32_no_tag(*v));
@@ -2526,9 +2656,8 @@ impl ::protobuf::Message for Node {
         match self.info.as_ref() {
             Some(v) => {
                 try!(os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited));
-                try!(os.write_raw_varint32(sizes[*sizes_pos]));
-                *sizes_pos += 1;
-                try!(v.write_to_with_computed_sizes(os, sizes.as_slice(), sizes_pos));
+                try!(os.write_raw_varint32(v.get_cached_size()));
+                try!(v.write_to_with_cached_sizes(os));
             },
             None => {},
         };
@@ -2546,6 +2675,10 @@ impl ::protobuf::Message for Node {
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
         ::std::result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
     }
 
     fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
@@ -2573,7 +2706,19 @@ impl ::protobuf::Clear for Node {
     }
 }
 
-#[deriving(Clone,PartialEq,Default,Show)]
+impl ::std::cmp::PartialEq for Node {
+    fn eq(&self, other: &Node) -> bool {
+        self.id == other.id &&
+        self.keys == other.keys &&
+        self.vals == other.vals &&
+        self.info == other.info &&
+        self.lat == other.lat &&
+        self.lon == other.lon &&
+        self.unknown_fields == other.unknown_fields
+    }
+}
+
+#[deriving(Clone,Default,Show)]
 pub struct DenseNodes {
     id: ::std::vec::Vec<i64>,
     denseinfo: ::protobuf::SingularPtrField<DenseInfo>,
@@ -2581,6 +2726,7 @@ pub struct DenseNodes {
     lon: ::std::vec::Vec<i64>,
     keys_vals: ::std::vec::Vec<i32>,
     unknown_fields: ::protobuf::UnknownFields,
+    cached_size: ::std::cell::Cell<u32>,
 }
 
 impl<'a> DenseNodes {
@@ -2589,7 +2735,10 @@ impl<'a> DenseNodes {
     }
 
     pub fn default_instance() -> &'static DenseNodes {
-        static mut instance: ::protobuf::lazy::Lazy<DenseNodes> = ::protobuf::lazy::Lazy { lock: ::protobuf::lazy::ONCE_INIT, ptr: 0 as *const DenseNodes };
+        static mut instance: ::protobuf::lazy::Lazy<DenseNodes> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const DenseNodes,
+        };
         unsafe {
             instance.get(|| {
                 DenseNodes {
@@ -2599,6 +2748,7 @@ impl<'a> DenseNodes {
                     lon: ::std::vec::Vec::new(),
                     keys_vals: ::std::vec::Vec::new(),
                     unknown_fields: ::protobuf::UnknownFields::new(),
+                    cached_size: ::std::cell::Cell::new(0),
                 }
             })
         }
@@ -2803,16 +2953,14 @@ impl ::protobuf::Message for DenseNodes {
     }
 
     // Compute sizes of nested messages
-    fn compute_sizes(&self, sizes: &mut ::std::vec::Vec<u32>) -> u32 {
+    fn compute_size(&self) -> u32 {
         use protobuf::{Message};
-        let pos = sizes.len();
-        sizes.push(0);
         let mut my_size = 0;
         if !self.id.is_empty() {
             my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(1, self.id.as_slice());
         };
         for value in self.denseinfo.iter() {
-            let len = value.compute_sizes(sizes);
+            let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         if !self.lat.is_empty() {
@@ -2825,15 +2973,15 @@ impl ::protobuf::Message for DenseNodes {
             my_size += ::protobuf::rt::vec_packed_varint_size(10, self.keys_vals.as_slice());
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        sizes[pos] = my_size;
-        // value is returned for convenience
+        self.cached_size.set(my_size);
         my_size
     }
 
-    fn write_to_with_computed_sizes(&self, os: &mut ::protobuf::CodedOutputStream, sizes: &[u32], sizes_pos: &mut uint) -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         use protobuf::{Message};
         if !self.id.is_empty() {
             try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.id.as_slice())));
             for v in self.id.iter() {
                 try!(os.write_sint64_no_tag(*v));
@@ -2842,14 +2990,14 @@ impl ::protobuf::Message for DenseNodes {
         match self.denseinfo.as_ref() {
             Some(v) => {
                 try!(os.write_tag(5, ::protobuf::wire_format::WireTypeLengthDelimited));
-                try!(os.write_raw_varint32(sizes[*sizes_pos]));
-                *sizes_pos += 1;
-                try!(v.write_to_with_computed_sizes(os, sizes.as_slice(), sizes_pos));
+                try!(os.write_raw_varint32(v.get_cached_size()));
+                try!(v.write_to_with_cached_sizes(os));
             },
             None => {},
         };
         if !self.lat.is_empty() {
             try!(os.write_tag(8, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.lat.as_slice())));
             for v in self.lat.iter() {
                 try!(os.write_sint64_no_tag(*v));
@@ -2857,6 +3005,7 @@ impl ::protobuf::Message for DenseNodes {
         };
         if !self.lon.is_empty() {
             try!(os.write_tag(9, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.lon.as_slice())));
             for v in self.lon.iter() {
                 try!(os.write_sint64_no_tag(*v));
@@ -2864,6 +3013,7 @@ impl ::protobuf::Message for DenseNodes {
         };
         if !self.keys_vals.is_empty() {
             try!(os.write_tag(10, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.keys_vals.as_slice())));
             for v in self.keys_vals.iter() {
                 try!(os.write_int32_no_tag(*v));
@@ -2871,6 +3021,10 @@ impl ::protobuf::Message for DenseNodes {
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
         ::std::result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
     }
 
     fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
@@ -2897,7 +3051,18 @@ impl ::protobuf::Clear for DenseNodes {
     }
 }
 
-#[deriving(Clone,PartialEq,Default,Show)]
+impl ::std::cmp::PartialEq for DenseNodes {
+    fn eq(&self, other: &DenseNodes) -> bool {
+        self.id == other.id &&
+        self.denseinfo == other.denseinfo &&
+        self.lat == other.lat &&
+        self.lon == other.lon &&
+        self.keys_vals == other.keys_vals &&
+        self.unknown_fields == other.unknown_fields
+    }
+}
+
+#[deriving(Clone,Default,Show)]
 pub struct Way {
     id: ::std::option::Option<i64>,
     keys: ::std::vec::Vec<u32>,
@@ -2905,6 +3070,7 @@ pub struct Way {
     info: ::protobuf::SingularPtrField<Info>,
     refs: ::std::vec::Vec<i64>,
     unknown_fields: ::protobuf::UnknownFields,
+    cached_size: ::std::cell::Cell<u32>,
 }
 
 impl<'a> Way {
@@ -2913,7 +3079,10 @@ impl<'a> Way {
     }
 
     pub fn default_instance() -> &'static Way {
-        static mut instance: ::protobuf::lazy::Lazy<Way> = ::protobuf::lazy::Lazy { lock: ::protobuf::lazy::ONCE_INIT, ptr: 0 as *const Way };
+        static mut instance: ::protobuf::lazy::Lazy<Way> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const Way,
+        };
         unsafe {
             instance.get(|| {
                 Way {
@@ -2923,6 +3092,7 @@ impl<'a> Way {
                     info: ::protobuf::SingularPtrField::none(),
                     refs: ::std::vec::Vec::new(),
                     unknown_fields: ::protobuf::UnknownFields::new(),
+                    cached_size: ::std::cell::Cell::new(0),
                 }
             })
         }
@@ -2931,7 +3101,7 @@ impl<'a> Way {
     // required int64 id = 1;
 
     pub fn clear_id(&mut self) {
-        self.id = None;
+        self.id = ::std::option::None;
     }
 
     pub fn has_id(&self) -> bool {
@@ -2940,7 +3110,7 @@ impl<'a> Way {
 
     // Param is passed by value, moved
     pub fn set_id(&mut self, v: i64) {
-        self.id = Some(v);
+        self.id = ::std::option::Some(v);
     }
 
     pub fn get_id(&self) -> i64 {
@@ -3057,7 +3227,7 @@ impl ::protobuf::Message for Way {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.id = Some(tmp);
+                    self.id = ::std::option::Some(tmp);
                 },
                 2 => {
                     if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -3121,10 +3291,8 @@ impl ::protobuf::Message for Way {
     }
 
     // Compute sizes of nested messages
-    fn compute_sizes(&self, sizes: &mut ::std::vec::Vec<u32>) -> u32 {
+    fn compute_size(&self) -> u32 {
         use protobuf::{Message};
-        let pos = sizes.len();
-        sizes.push(0);
         let mut my_size = 0;
         for value in self.id.iter() {
             my_size += ::protobuf::rt::value_size(1, *value, ::protobuf::wire_format::WireTypeVarint);
@@ -3136,19 +3304,18 @@ impl ::protobuf::Message for Way {
             my_size += ::protobuf::rt::vec_packed_varint_size(3, self.vals.as_slice());
         };
         for value in self.info.iter() {
-            let len = value.compute_sizes(sizes);
+            let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         if !self.refs.is_empty() {
             my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(8, self.refs.as_slice());
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        sizes[pos] = my_size;
-        // value is returned for convenience
+        self.cached_size.set(my_size);
         my_size
     }
 
-    fn write_to_with_computed_sizes(&self, os: &mut ::protobuf::CodedOutputStream, sizes: &[u32], sizes_pos: &mut uint) -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         use protobuf::{Message};
         match self.id {
             Some(v) => {
@@ -3158,6 +3325,7 @@ impl ::protobuf::Message for Way {
         };
         if !self.keys.is_empty() {
             try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.keys.as_slice())));
             for v in self.keys.iter() {
                 try!(os.write_uint32_no_tag(*v));
@@ -3165,6 +3333,7 @@ impl ::protobuf::Message for Way {
         };
         if !self.vals.is_empty() {
             try!(os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.vals.as_slice())));
             for v in self.vals.iter() {
                 try!(os.write_uint32_no_tag(*v));
@@ -3173,14 +3342,14 @@ impl ::protobuf::Message for Way {
         match self.info.as_ref() {
             Some(v) => {
                 try!(os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited));
-                try!(os.write_raw_varint32(sizes[*sizes_pos]));
-                *sizes_pos += 1;
-                try!(v.write_to_with_computed_sizes(os, sizes.as_slice(), sizes_pos));
+                try!(os.write_raw_varint32(v.get_cached_size()));
+                try!(v.write_to_with_cached_sizes(os));
             },
             None => {},
         };
         if !self.refs.is_empty() {
             try!(os.write_tag(8, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.refs.as_slice())));
             for v in self.refs.iter() {
                 try!(os.write_sint64_no_tag(*v));
@@ -3188,6 +3357,10 @@ impl ::protobuf::Message for Way {
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
         ::std::result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
     }
 
     fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
@@ -3214,7 +3387,18 @@ impl ::protobuf::Clear for Way {
     }
 }
 
-#[deriving(Clone,PartialEq,Default,Show)]
+impl ::std::cmp::PartialEq for Way {
+    fn eq(&self, other: &Way) -> bool {
+        self.id == other.id &&
+        self.keys == other.keys &&
+        self.vals == other.vals &&
+        self.info == other.info &&
+        self.refs == other.refs &&
+        self.unknown_fields == other.unknown_fields
+    }
+}
+
+#[deriving(Clone,Default,Show)]
 pub struct Relation {
     id: ::std::option::Option<i64>,
     keys: ::std::vec::Vec<u32>,
@@ -3224,6 +3408,7 @@ pub struct Relation {
     memids: ::std::vec::Vec<i64>,
     types: ::std::vec::Vec<Relation_MemberType>,
     unknown_fields: ::protobuf::UnknownFields,
+    cached_size: ::std::cell::Cell<u32>,
 }
 
 impl<'a> Relation {
@@ -3232,7 +3417,10 @@ impl<'a> Relation {
     }
 
     pub fn default_instance() -> &'static Relation {
-        static mut instance: ::protobuf::lazy::Lazy<Relation> = ::protobuf::lazy::Lazy { lock: ::protobuf::lazy::ONCE_INIT, ptr: 0 as *const Relation };
+        static mut instance: ::protobuf::lazy::Lazy<Relation> = ::protobuf::lazy::Lazy {
+            lock: ::protobuf::lazy::ONCE_INIT,
+            ptr: 0 as *const Relation,
+        };
         unsafe {
             instance.get(|| {
                 Relation {
@@ -3244,6 +3432,7 @@ impl<'a> Relation {
                     memids: ::std::vec::Vec::new(),
                     types: ::std::vec::Vec::new(),
                     unknown_fields: ::protobuf::UnknownFields::new(),
+                    cached_size: ::std::cell::Cell::new(0),
                 }
             })
         }
@@ -3252,7 +3441,7 @@ impl<'a> Relation {
     // required int64 id = 1;
 
     pub fn clear_id(&mut self) {
-        self.id = None;
+        self.id = ::std::option::None;
     }
 
     pub fn has_id(&self) -> bool {
@@ -3261,7 +3450,7 @@ impl<'a> Relation {
 
     // Param is passed by value, moved
     pub fn set_id(&mut self, v: i64) {
-        self.id = Some(v);
+        self.id = ::std::option::Some(v);
     }
 
     pub fn get_id(&self) -> i64 {
@@ -3418,7 +3607,7 @@ impl ::protobuf::Message for Relation {
                         return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.id = Some(tmp);
+                    self.id = ::std::option::Some(tmp);
                 },
                 2 => {
                     if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -3512,10 +3701,8 @@ impl ::protobuf::Message for Relation {
     }
 
     // Compute sizes of nested messages
-    fn compute_sizes(&self, sizes: &mut ::std::vec::Vec<u32>) -> u32 {
+    fn compute_size(&self) -> u32 {
         use protobuf::{Message};
-        let pos = sizes.len();
-        sizes.push(0);
         let mut my_size = 0;
         for value in self.id.iter() {
             my_size += ::protobuf::rt::value_size(1, *value, ::protobuf::wire_format::WireTypeVarint);
@@ -3527,7 +3714,7 @@ impl ::protobuf::Message for Relation {
             my_size += ::protobuf::rt::vec_packed_varint_size(3, self.vals.as_slice());
         };
         for value in self.info.iter() {
-            let len = value.compute_sizes(sizes);
+            let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         if !self.roles_sid.is_empty() {
@@ -3540,12 +3727,11 @@ impl ::protobuf::Message for Relation {
             my_size += ::protobuf::rt::vec_packed_enum_size(10, self.types.as_slice());
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
-        sizes[pos] = my_size;
-        // value is returned for convenience
+        self.cached_size.set(my_size);
         my_size
     }
 
-    fn write_to_with_computed_sizes(&self, os: &mut ::protobuf::CodedOutputStream, sizes: &[u32], sizes_pos: &mut uint) -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         use protobuf::{Message};
         match self.id {
             Some(v) => {
@@ -3555,6 +3741,7 @@ impl ::protobuf::Message for Relation {
         };
         if !self.keys.is_empty() {
             try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.keys.as_slice())));
             for v in self.keys.iter() {
                 try!(os.write_uint32_no_tag(*v));
@@ -3562,6 +3749,7 @@ impl ::protobuf::Message for Relation {
         };
         if !self.vals.is_empty() {
             try!(os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.vals.as_slice())));
             for v in self.vals.iter() {
                 try!(os.write_uint32_no_tag(*v));
@@ -3570,14 +3758,14 @@ impl ::protobuf::Message for Relation {
         match self.info.as_ref() {
             Some(v) => {
                 try!(os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited));
-                try!(os.write_raw_varint32(sizes[*sizes_pos]));
-                *sizes_pos += 1;
-                try!(v.write_to_with_computed_sizes(os, sizes.as_slice(), sizes_pos));
+                try!(os.write_raw_varint32(v.get_cached_size()));
+                try!(v.write_to_with_cached_sizes(os));
             },
             None => {},
         };
         if !self.roles_sid.is_empty() {
             try!(os.write_tag(8, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.roles_sid.as_slice())));
             for v in self.roles_sid.iter() {
                 try!(os.write_int32_no_tag(*v));
@@ -3585,6 +3773,7 @@ impl ::protobuf::Message for Relation {
         };
         if !self.memids.is_empty() {
             try!(os.write_tag(9, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.memids.as_slice())));
             for v in self.memids.iter() {
                 try!(os.write_sint64_no_tag(*v));
@@ -3592,6 +3781,7 @@ impl ::protobuf::Message for Relation {
         };
         if !self.types.is_empty() {
             try!(os.write_tag(10, ::protobuf::wire_format::WireTypeLengthDelimited));
+            // TODO: Data size is computed again, it should be cached
             try!(os.write_raw_varint32(::protobuf::rt::vec_packed_enum_data_size(self.types.as_slice())));
             for v in self.types.iter() {
                 try!(os.write_enum_no_tag(*v as i32));
@@ -3599,6 +3789,10 @@ impl ::protobuf::Message for Relation {
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
         ::std::result::Ok(())
+    }
+
+    fn get_cached_size(&self) -> u32 {
+        self.cached_size.get()
     }
 
     fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
@@ -3624,6 +3818,19 @@ impl ::protobuf::Clear for Relation {
         self.clear_memids();
         self.clear_types();
         self.unknown_fields.clear();
+    }
+}
+
+impl ::std::cmp::PartialEq for Relation {
+    fn eq(&self, other: &Relation) -> bool {
+        self.id == other.id &&
+        self.keys == other.keys &&
+        self.vals == other.vals &&
+        self.info == other.info &&
+        self.roles_sid == other.roles_sid &&
+        self.memids == other.memids &&
+        self.types == other.types &&
+        self.unknown_fields == other.unknown_fields
     }
 }
 
