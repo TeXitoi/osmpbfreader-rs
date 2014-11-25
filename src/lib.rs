@@ -6,58 +6,18 @@ extern crate flate2;
 
 pub use objects::Node;
 pub use objects::Tags;
+pub use error::OsmPbfError;
 
-use std::error::Error;
 use std::error::FromError;
-use std::io::IoError;
 
 #[allow(non_snake_case)]
 pub mod fileformat;
 pub mod osmformat;
 
+pub mod error;
 pub mod objects;
 pub mod groups;
 pub mod blocks;
-
-#[deriving(Show)]
-pub enum OsmPbfError {
-    Io(IoError),
-    Pbf(protobuf::ProtobufError),
-    UnsupportedData,
-}
-impl Error for OsmPbfError {
-    fn description(&self) -> &str {
-        match *self {
-            OsmPbfError::Io(ref e) => e.description(),
-            OsmPbfError::Pbf(_) => "Protobuf Error",
-            OsmPbfError::UnsupportedData => "Unsupported data",
-        }
-    }
-    fn detail(&self) -> Option<String> {
-        match *self {
-            OsmPbfError::Io(ref e) => e.detail(),
-            OsmPbfError::Pbf(_) => None,
-            OsmPbfError::UnsupportedData => None,
-        }
-    }
-    fn cause(&self) -> Option<&Error> {
-        match *self {
-            OsmPbfError::Io(ref e) => Some(e as &Error),
-            OsmPbfError::Pbf(ref e) => Some(e as &Error),
-            OsmPbfError::UnsupportedData => None,
-        }
-    }
-}
-impl FromError<IoError> for OsmPbfError {
-    fn from_error(err: IoError) -> OsmPbfError {
-        OsmPbfError::Io(err)
-    }
-}
-impl FromError<protobuf::ProtobufError> for OsmPbfError {
-    fn from_error(err: protobuf::ProtobufError) -> OsmPbfError {
-        OsmPbfError::Pbf(err)
-    }
-}
 
 pub struct OsmPbfReader<R> {
     buf: Vec<u8>,
