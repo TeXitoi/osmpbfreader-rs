@@ -17,17 +17,20 @@ pub struct Way {
     pub tags: Tags,
 }
 
+#[deriving(Show)]
 pub enum RelationMember {
     Node(i64),
     Way(i64),
     Relation(i64),
 }
 
+#[deriving(Show)]
 pub struct Reference {
     pub member: RelationMember,
     pub role: String,
 }
 
+#[deriving(Show)]
 pub struct Relation {
     pub id: i64,
     pub refs: Vec<Reference>,
