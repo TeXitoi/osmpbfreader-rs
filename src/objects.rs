@@ -16,3 +16,20 @@ pub struct Way {
     pub nodes: Vec<i64>,
     pub tags: Tags,
 }
+
+pub enum RelationMember {
+    Node(i64),
+    Way(i64),
+    Relation(i64),
+}
+
+pub struct Reference {
+    pub member: RelationMember,
+    pub role: String,
+}
+
+pub struct Relation {
+    pub id: i64,
+    pub refs: Vec<Reference>,
+    pub tags: Tags,
+}

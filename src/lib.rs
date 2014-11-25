@@ -1,4 +1,4 @@
-#![feature(phase, unboxed_closures)]
+#![feature(phase, unboxed_closures, globs)]
 
 extern crate protobuf;
 extern crate flate2;
@@ -6,6 +6,10 @@ extern crate flate2;
 
 pub use objects::Node;
 pub use objects::Tags;
+pub use objects::Way;
+pub use objects::RelationMember;
+pub use objects::Reference;
+pub use objects::Relation;
 pub use error::OsmPbfError;
 
 use std::error::FromError;

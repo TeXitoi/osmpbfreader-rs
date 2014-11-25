@@ -4,6 +4,9 @@ use osmformat::PrimitiveBlock;
 use std::slice;
 use objects::Node;
 use objects::Way;
+use objects::Relation;
+use objects::Reference;
+use objects::RelationMember;
 use objects::Tags;
 use std::collections::BTreeMap;
 
@@ -103,6 +106,44 @@ impl<'a> Iterator<Way> for Ways<'a> {
                 id: w.get_id(),
                 nodes: nodes,
                 tags: make_tags(w.get_keys(), w.get_vals(), self.block),
+            }
+        })
+    }
+    fn size_hint(&self) -> (uint, Option<uint>) {
+        self.iter.size_hint()
+    }
+}
+
+pub fn relations<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock) -> Relations<'a> {
+    Relations { iter: group.get_relations().iter(), block: block }
+}
+pub struct Relations<'a> {
+    iter: slice::Items<'a, osmformat::Relation>,
+    block: &'a PrimitiveBlock,
+}
+impl<'a> Iterator<Relation> for Relations<'a> {
+    fn next(&mut self) -> Option<Relation> {
+        use osmformat::Relation_MemberType::*;
+        self.iter.next().map(|rel| {
+            let mut m = 0;
+            let refs = rel.get_memids().iter()
+                .zip(rel.get_types().iter())
+                .zip(rel.get_roles_sid().iter())
+                .map(|((&dm, &t), &role)| {
+                    m += dm;
+                    Reference {
+                        member: match t {
+                            NODE => RelationMember::Node(m),
+                            WAY => RelationMember::Way(m),
+                            RELATION => RelationMember::Relation(m),
+                        },
+                        role: make_string(role as uint, self.block),
+                    }
+                }).collect();
+            Relation {
+                id: rel.get_id(),
+                refs: refs,
+                tags: make_tags(rel.get_keys(), rel.get_vals(), self.block),
             }
         })
     }

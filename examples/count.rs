@@ -8,6 +8,8 @@ fn count(filter: |&osmpbfreader::Tags| -> bool, filename: &str) {
     let mut sum_lat = 0.;
     let mut nb_ways = 0u;
     let mut nb_way_nodes = 0;
+    let mut nb_rels = 0u;
+    let mut nb_rel_refs = 0;
     for block in pbf.primitive_blocks().map(|r| r.unwrap()) {
         for node in osmpbfreader::blocks::nodes(&block) {
             if filter(&node.tags) {
@@ -22,11 +24,19 @@ fn count(filter: |&osmpbfreader::Tags| -> bool, filename: &str) {
                 nb_way_nodes += way.nodes.len();
             }
         }
+        for rel in osmpbfreader::blocks::relations(&block) {
+            if filter(&rel.tags) {
+                nb_rels += 1;
+                nb_rel_refs += rel.refs.len();
+            }
+        }
     }
     println!("{} nodes, mean coord: {}, {}.",
              nb_nodes, sum_lat / nb_nodes as f64, sum_lon / nb_nodes as f64);
     println!("{} ways, mean |nodes|: {}",
              nb_ways, nb_way_nodes as f64 / nb_ways as f64);
+    println!("{} relations, mean |references|: {}",
+             nb_rels, nb_rel_refs as f64 / nb_rels as f64);
 }
 
 fn main() {

@@ -56,3 +56,18 @@ impl<'a> Fn(&'a PrimitiveGroup) -> groups::Ways<'a> for FnWays<'a> {
 pub fn ways<'a>(block: &'a PrimitiveBlock) -> Ways<'a> {
     bind(block.get_primitivegroup().iter(), FnWays { block: block })
 }
+
+pub type Relations<'a> = mdo::iter::UnboxedFlatMap<&'a PrimitiveGroup, slice::Items<'a, PrimitiveGroup>, groups::Relations<'a>, FnRelations<'a>>;
+
+struct FnRelations<'a> { block: &'a PrimitiveBlock }
+impl<'a> Fn(&'a PrimitiveGroup) -> groups::Relations<'a> for FnRelations<'a> {
+    extern "rust-call" fn call(&self, (group,): (&'a PrimitiveGroup,))
+                               -> groups::Relations<'a>
+    {
+        groups::relations(group, self.block)
+    }
+}
+
+pub fn relations<'a>(block: &'a PrimitiveBlock) -> Relations<'a> {
+    bind(block.get_primitivegroup().iter(), FnRelations { block: block })
+}
