@@ -1,14 +1,15 @@
 use osmformat;
-use osmformat::PrimitiveGroup;
-use osmformat::PrimitiveBlock;
+use osmformat::{PrimitiveGroup, PrimitiveBlock};
+use std;
 use std::slice;
-use objects::Node;
-use objects::Way;
-use objects::Relation;
-use objects::Ref;
-use objects::RelMem;
-use objects::Tags;
 use std::collections::BTreeMap;
+use objects::{Node, Way, Relation, Ref, RelMem, Tags};
+
+pub type Nodes<'a> = std::iter::Chain<SimpleNodes<'a>, DenseNodes<'a>>;
+
+pub fn nodes<'a>(g: &'a PrimitiveGroup, b: &'a PrimitiveBlock) -> Nodes<'a> {
+    simple_nodes(g, b).chain(dense_nodes(g, b))
+}
 
 pub fn simple_nodes<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock)
                         -> SimpleNodes<'a>

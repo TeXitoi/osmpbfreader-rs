@@ -4,12 +4,7 @@ extern crate protobuf;
 extern crate flate2;
 #[phase(plugin, link)] extern crate mdo;
 
-pub use objects::Node;
-pub use objects::Tags;
-pub use objects::Way;
-pub use objects::RelMem;
-pub use objects::Ref;
-pub use objects::Relation;
+pub use objects::{Node, Way, Relation, Ref, RelMem, Tags};
 pub use error::OsmPbfError;
 
 use std::error::FromError;
