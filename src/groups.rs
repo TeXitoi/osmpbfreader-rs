@@ -5,8 +5,8 @@ use std::slice;
 use objects::Node;
 use objects::Way;
 use objects::Relation;
-use objects::Reference;
-use objects::RelationMember;
+use objects::Ref;
+use objects::RelMem;
 use objects::Tags;
 use std::collections::BTreeMap;
 
@@ -131,11 +131,11 @@ impl<'a> Iterator<Relation> for Relations<'a> {
                 .zip(rel.get_roles_sid().iter())
                 .map(|((&dm, &t), &role)| {
                     m += dm;
-                    Reference {
+                    Ref {
                         member: match t {
-                            NODE => RelationMember::Node(m),
-                            WAY => RelationMember::Way(m),
-                            RELATION => RelationMember::Relation(m),
+                            NODE => RelMem::Node(m),
+                            WAY => RelMem::Way(m),
+                            RELATION => RelMem::Relation(m),
                         },
                         role: make_string(role as uint, self.block),
                     }

@@ -18,21 +18,21 @@ pub struct Way {
 }
 
 #[deriving(Show, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
-pub enum RelationMember {
+pub enum RelMem {
     Node(i64),
     Way(i64),
     Relation(i64),
 }
 
 #[deriving(Show, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
-pub struct Reference {
-    pub member: RelationMember,
+pub struct Ref {
+    pub member: RelMem,
     pub role: String,
 }
 
 #[deriving(Show, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
 pub struct Relation {
     pub id: i64,
-    pub refs: Vec<Reference>,
+    pub refs: Vec<Ref>,
     pub tags: Tags,
 }

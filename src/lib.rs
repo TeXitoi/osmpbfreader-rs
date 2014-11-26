@@ -7,8 +7,8 @@ extern crate flate2;
 pub use objects::Node;
 pub use objects::Tags;
 pub use objects::Way;
-pub use objects::RelationMember;
-pub use objects::Reference;
+pub use objects::RelMem;
+pub use objects::Ref;
 pub use objects::Relation;
 pub use error::OsmPbfError;
 
