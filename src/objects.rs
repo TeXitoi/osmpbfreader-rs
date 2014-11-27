@@ -3,6 +3,22 @@ use std::collections::BTreeMap;
 pub type Tags = BTreeMap<String, String>;
 
 #[deriving(Show, PartialEq, PartialOrd, Clone)]
+pub enum OsmObj {
+    Node(Node),
+    Way(Way),
+    Relation(Relation),
+}
+impl OsmObj {
+    pub fn tags(&self) -> &Tags {
+        match *self {
+            OsmObj::Node(ref node) => &node.tags,
+            OsmObj::Way(ref way) => &way.tags,
+            OsmObj::Relation(ref rel) => &rel.tags,
+        }
+    }
+}
+
+#[deriving(Show, PartialEq, PartialOrd, Clone)]
 pub struct Node {
     pub id: i64,
     pub lat: f64,

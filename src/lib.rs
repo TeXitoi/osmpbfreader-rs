@@ -4,7 +4,7 @@ extern crate protobuf;
 extern crate flate2;
 #[phase(plugin, link)] extern crate mdo;
 
-pub use objects::{Node, Way, Relation, Ref, RelMem, Tags};
+pub use objects::{OsmObj, Node, Way, Relation, Ref, RelMem, Tags};
 pub use error::OsmPbfError;
 
 use std::error::FromError;
@@ -32,6 +32,10 @@ impl<R: Reader> OsmPbfReader<R> {
             finished: false,
         }
     }
+    pub fn primitive_blocks<'a>(&'a mut self) -> PrimitiveBlocks<'a, R> {
+        PrimitiveBlocks { opr: self }
+    }
+
     fn push(&mut self, sz: uint) -> Result<(), OsmPbfError> {
         self.buf.clear();
         let readed = try!(self.r.push_at_least(sz, sz, &mut self.buf));
@@ -96,9 +100,6 @@ impl<R: Reader> OsmPbfReader<R> {
                 Some(Err(e))
             }
         }
-    }
-    pub fn primitive_blocks<'a>(&'a mut self) -> PrimitiveBlocks<'a, R> {
-        PrimitiveBlocks { opr: self }
     }
 }
 

@@ -5,6 +5,21 @@ use mdo;
 use mdo::iter::bind;
 use std::slice;
 
+pub type OsmObjs<'a> = mdo::iter::UnboxedFlatMap<&'a PrimitiveGroup, slice::Items<'a, PrimitiveGroup>, groups::OsmObjs<'a>, FnOsmObjs<'a>>;
+
+struct FnOsmObjs<'a> { block: &'a PrimitiveBlock }
+impl<'a> Fn(&'a PrimitiveGroup) -> groups::OsmObjs<'a> for FnOsmObjs<'a> {
+    extern "rust-call" fn call(&self, (group,): (&'a PrimitiveGroup,))
+                               -> groups::OsmObjs<'a>
+    {
+        groups::iter(group, self.block)
+    }
+}
+
+pub fn iter<'a>(block: &'a PrimitiveBlock) -> OsmObjs<'a> {
+    bind(block.get_primitivegroup().iter(), FnOsmObjs { block: block })
+}
+
 pub type Nodes<'a> = mdo::iter::UnboxedFlatMap<&'a PrimitiveGroup, slice::Items<'a, PrimitiveGroup>, groups::Nodes<'a>, FnNodes<'a>>;
 
 struct FnNodes<'a> { block: &'a PrimitiveBlock }

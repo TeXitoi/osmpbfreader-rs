@@ -11,23 +11,22 @@ fn count(filter: |&osmpbfreader::Tags| -> bool, filename: &str) {
     let mut nb_rels = 0u;
     let mut nb_rel_refs = 0;
     for block in pbf.primitive_blocks().map(|r| r.unwrap()) {
-        for node in osmpbfreader::blocks::nodes(&block) {
-            if filter(&node.tags) {
-                nb_nodes += 1;
-                sum_lon += node.lon;
-                sum_lat += node.lat;
-            }
-        }
-        for way in osmpbfreader::blocks::ways(&block) {
-            if filter(&way.tags) {
-                nb_ways += 1;
-                nb_way_nodes += way.nodes.len();
-            }
-        }
-        for rel in osmpbfreader::blocks::relations(&block) {
-            if filter(&rel.tags) {
-                nb_rels += 1;
-                nb_rel_refs += rel.refs.len();
+        for obj in osmpbfreader::blocks::iter(&block) {
+            if !filter(obj.tags()) { continue; }
+            match obj {
+                osmpbfreader::OsmObj::Node(node) => {
+                    nb_nodes += 1;
+                    sum_lon += node.lon;
+                    sum_lat += node.lat;
+                }
+                osmpbfreader::OsmObj::Way(way) => {
+                    nb_ways += 1;
+                    nb_way_nodes += way.nodes.len();
+                }
+                osmpbfreader::OsmObj::Relation(rel) => {
+                    nb_rels += 1;
+                    nb_rel_refs += rel.refs.len();
+                }
             }
         }
     }

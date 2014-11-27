@@ -3,7 +3,17 @@ use osmformat::{PrimitiveGroup, PrimitiveBlock};
 use std;
 use std::slice;
 use std::collections::BTreeMap;
-use objects::{Node, Way, Relation, Ref, RelMem, Tags};
+use std::iter::Chain;
+use std::iter::Map;
+use objects::{OsmObj, Node, Way, Relation, Ref, RelMem, Tags};
+
+pub type OsmObjs<'a> = Chain<Chain<Map<'a, Node, OsmObj, Nodes<'a>>, Map<'a, Way, OsmObj, Ways<'a>>>, Map<'a, Relation, OsmObj, Relations<'a>>>;
+
+pub fn iter<'a>(g: &'a PrimitiveGroup, b: &'a PrimitiveBlock) -> OsmObjs<'a> {
+    nodes(g, b).map(|n| OsmObj::Node(n))
+        .chain(ways(g, b).map(|w| OsmObj::Way(w)))
+        .chain(relations(g, b).map(|r| OsmObj::Relation(r)))
+}
 
 pub type Nodes<'a> = std::iter::Chain<SimpleNodes<'a>, DenseNodes<'a>>;
 
