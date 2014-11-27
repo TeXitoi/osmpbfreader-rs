@@ -5,6 +5,8 @@
 #![allow(non_upper_case_globals)]
 #![allow(unused_imports)]
 
+use protobuf::Message as Message_imported_for_functions;
+use protobuf::ProtobufEnum as ProtobufEnum_imported_for_functions;
 
 #[deriving(Clone,Default,Show)]
 pub struct Blob {
@@ -66,6 +68,11 @@ impl<'a> Blob {
         self.raw.as_mut().unwrap()
     }
 
+    // Take field
+    pub fn take_raw(&mut self) -> ::std::vec::Vec<u8> {
+        self.raw.take().unwrap_or_else(|| ::std::vec::Vec::new())
+    }
+
     pub fn get_raw(&'a self) -> &'a [u8] {
         match self.raw.as_ref() {
             Some(v) => v.as_slice(),
@@ -116,6 +123,11 @@ impl<'a> Blob {
         self.zlib_data.as_mut().unwrap()
     }
 
+    // Take field
+    pub fn take_zlib_data(&mut self) -> ::std::vec::Vec<u8> {
+        self.zlib_data.take().unwrap_or_else(|| ::std::vec::Vec::new())
+    }
+
     pub fn get_zlib_data(&'a self) -> &'a [u8] {
         match self.zlib_data.as_ref() {
             Some(v) => v.as_slice(),
@@ -147,6 +159,11 @@ impl<'a> Blob {
         self.lzma_data.as_mut().unwrap()
     }
 
+    // Take field
+    pub fn take_lzma_data(&mut self) -> ::std::vec::Vec<u8> {
+        self.lzma_data.take().unwrap_or_else(|| ::std::vec::Vec::new())
+    }
+
     pub fn get_lzma_data(&'a self) -> &'a [u8] {
         match self.lzma_data.as_ref() {
             Some(v) => v.as_slice(),
@@ -176,6 +193,11 @@ impl<'a> Blob {
             self.OBSOLETE_bzip2_data.set_default();
         };
         self.OBSOLETE_bzip2_data.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_OBSOLETE_bzip2_data(&mut self) -> ::std::vec::Vec<u8> {
+        self.OBSOLETE_bzip2_data.take().unwrap_or_else(|| ::std::vec::Vec::new())
     }
 
     pub fn get_OBSOLETE_bzip2_data(&'a self) -> &'a [u8] {
@@ -245,7 +267,6 @@ impl ::protobuf::Message for Blob {
 
     // Compute sizes of nested messages
     fn compute_size(&self) -> u32 {
-        use protobuf::{Message};
         let mut my_size = 0;
         for value in self.raw.iter() {
             my_size += ::protobuf::rt::bytes_size(1, value.as_slice());
@@ -268,7 +289,6 @@ impl ::protobuf::Message for Blob {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        use protobuf::{Message};
         match self.raw.as_ref() {
             Some(v) => {
                 try!(os.write_bytes(1, v.as_slice()));
@@ -398,6 +418,11 @@ impl<'a> BlobHeader {
         self.field_type.as_mut().unwrap()
     }
 
+    // Take field
+    pub fn take_field_type(&mut self) -> ::std::string::String {
+        self.field_type.take().unwrap_or_else(|| ::std::string::String::new())
+    }
+
     pub fn get_field_type(&'a self) -> &'a str {
         match self.field_type.as_ref() {
             Some(v) => v.as_slice(),
@@ -427,6 +452,11 @@ impl<'a> BlobHeader {
             self.indexdata.set_default();
         };
         self.indexdata.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_indexdata(&mut self) -> ::std::vec::Vec<u8> {
+        self.indexdata.take().unwrap_or_else(|| ::std::vec::Vec::new())
     }
 
     pub fn get_indexdata(&'a self) -> &'a [u8] {
@@ -507,7 +537,6 @@ impl ::protobuf::Message for BlobHeader {
 
     // Compute sizes of nested messages
     fn compute_size(&self) -> u32 {
-        use protobuf::{Message};
         let mut my_size = 0;
         for value in self.field_type.iter() {
             my_size += ::protobuf::rt::string_size(1, value.as_slice());
@@ -524,7 +553,6 @@ impl ::protobuf::Message for BlobHeader {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        use protobuf::{Message};
         match self.field_type.as_ref() {
             Some(v) => {
                 try!(os.write_string(1, v.as_slice()));

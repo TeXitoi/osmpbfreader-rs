@@ -5,6 +5,8 @@
 #![allow(non_upper_case_globals)]
 #![allow(unused_imports)]
 
+use protobuf::Message as Message_imported_for_functions;
+use protobuf::ProtobufEnum as ProtobufEnum_imported_for_functions;
 
 #[deriving(Clone,Default,Show)]
 pub struct HeaderBlock {
@@ -72,6 +74,11 @@ impl<'a> HeaderBlock {
         self.bbox.as_mut().unwrap()
     }
 
+    // Take field
+    pub fn take_bbox(&mut self) -> HeaderBBox {
+        self.bbox.take().unwrap_or_else(|| HeaderBBox::new())
+    }
+
     pub fn get_bbox(&'a self) -> &'a HeaderBBox {
         self.bbox.as_ref().unwrap_or_else(|| HeaderBBox::default_instance())
     }
@@ -92,6 +99,11 @@ impl<'a> HeaderBlock {
         &mut self.required_features
     }
 
+    // Take field
+    pub fn take_required_features(&mut self) -> ::protobuf::RepeatedField<::std::string::String> {
+        ::std::mem::replace(&mut self.required_features, ::protobuf::RepeatedField::new())
+    }
+
     pub fn get_required_features(&'a self) -> &'a [::std::string::String] {
         self.required_features.as_slice()
     }
@@ -110,6 +122,11 @@ impl<'a> HeaderBlock {
     // Mutable pointer to the field.
     pub fn mut_optional_features(&'a mut self) -> &'a mut ::protobuf::RepeatedField<::std::string::String> {
         &mut self.optional_features
+    }
+
+    // Take field
+    pub fn take_optional_features(&mut self) -> ::protobuf::RepeatedField<::std::string::String> {
+        ::std::mem::replace(&mut self.optional_features, ::protobuf::RepeatedField::new())
     }
 
     pub fn get_optional_features(&'a self) -> &'a [::std::string::String] {
@@ -138,6 +155,11 @@ impl<'a> HeaderBlock {
             self.writingprogram.set_default();
         };
         self.writingprogram.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_writingprogram(&mut self) -> ::std::string::String {
+        self.writingprogram.take().unwrap_or_else(|| ::std::string::String::new())
     }
 
     pub fn get_writingprogram(&'a self) -> &'a str {
@@ -169,6 +191,11 @@ impl<'a> HeaderBlock {
             self.source.set_default();
         };
         self.source.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_source(&mut self) -> ::std::string::String {
+        self.source.take().unwrap_or_else(|| ::std::string::String::new())
     }
 
     pub fn get_source(&'a self) -> &'a str {
@@ -238,6 +265,11 @@ impl<'a> HeaderBlock {
             self.osmosis_replication_base_url.set_default();
         };
         self.osmosis_replication_base_url.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_osmosis_replication_base_url(&mut self) -> ::std::string::String {
+        self.osmosis_replication_base_url.take().unwrap_or_else(|| ::std::string::String::new())
     }
 
     pub fn get_osmosis_replication_base_url(&'a self) -> &'a str {
@@ -328,7 +360,6 @@ impl ::protobuf::Message for HeaderBlock {
 
     // Compute sizes of nested messages
     fn compute_size(&self) -> u32 {
-        use protobuf::{Message};
         let mut my_size = 0;
         for value in self.bbox.iter() {
             let len = value.compute_size();
@@ -361,7 +392,6 @@ impl ::protobuf::Message for HeaderBlock {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        use protobuf::{Message};
         match self.bbox.as_ref() {
             Some(v) => {
                 try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
@@ -630,7 +660,6 @@ impl ::protobuf::Message for HeaderBBox {
 
     // Compute sizes of nested messages
     fn compute_size(&self) -> u32 {
-        use protobuf::{Message};
         let mut my_size = 0;
         for value in self.left.iter() {
             my_size += ::protobuf::rt::value_size(1, *value, ::protobuf::wire_format::WireTypeVarint);
@@ -650,7 +679,6 @@ impl ::protobuf::Message for HeaderBBox {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        use protobuf::{Message};
         match self.left {
             Some(v) => {
                 try!(os.write_sint64(1, v));
@@ -778,6 +806,11 @@ impl<'a> PrimitiveBlock {
         self.stringtable.as_mut().unwrap()
     }
 
+    // Take field
+    pub fn take_stringtable(&mut self) -> StringTable {
+        self.stringtable.take().unwrap_or_else(|| StringTable::new())
+    }
+
     pub fn get_stringtable(&'a self) -> &'a StringTable {
         self.stringtable.as_ref().unwrap_or_else(|| StringTable::default_instance())
     }
@@ -796,6 +829,11 @@ impl<'a> PrimitiveBlock {
     // Mutable pointer to the field.
     pub fn mut_primitivegroup(&'a mut self) -> &'a mut ::protobuf::RepeatedField<PrimitiveGroup> {
         &mut self.primitivegroup
+    }
+
+    // Take field
+    pub fn take_primitivegroup(&mut self) -> ::protobuf::RepeatedField<PrimitiveGroup> {
+        ::std::mem::replace(&mut self.primitivegroup, ::protobuf::RepeatedField::new())
     }
 
     pub fn get_primitivegroup(&'a self) -> &'a [PrimitiveGroup] {
@@ -948,7 +986,6 @@ impl ::protobuf::Message for PrimitiveBlock {
 
     // Compute sizes of nested messages
     fn compute_size(&self) -> u32 {
-        use protobuf::{Message};
         let mut my_size = 0;
         for value in self.stringtable.iter() {
             let len = value.compute_size();
@@ -976,7 +1013,6 @@ impl ::protobuf::Message for PrimitiveBlock {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        use protobuf::{Message};
         match self.stringtable.as_ref() {
             Some(v) => {
                 try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
@@ -1111,6 +1147,11 @@ impl<'a> PrimitiveGroup {
         &mut self.nodes
     }
 
+    // Take field
+    pub fn take_nodes(&mut self) -> ::protobuf::RepeatedField<Node> {
+        ::std::mem::replace(&mut self.nodes, ::protobuf::RepeatedField::new())
+    }
+
     pub fn get_nodes(&'a self) -> &'a [Node] {
         self.nodes.as_slice()
     }
@@ -1139,6 +1180,11 @@ impl<'a> PrimitiveGroup {
         self.dense.as_mut().unwrap()
     }
 
+    // Take field
+    pub fn take_dense(&mut self) -> DenseNodes {
+        self.dense.take().unwrap_or_else(|| DenseNodes::new())
+    }
+
     pub fn get_dense(&'a self) -> &'a DenseNodes {
         self.dense.as_ref().unwrap_or_else(|| DenseNodes::default_instance())
     }
@@ -1157,6 +1203,11 @@ impl<'a> PrimitiveGroup {
     // Mutable pointer to the field.
     pub fn mut_ways(&'a mut self) -> &'a mut ::protobuf::RepeatedField<Way> {
         &mut self.ways
+    }
+
+    // Take field
+    pub fn take_ways(&mut self) -> ::protobuf::RepeatedField<Way> {
+        ::std::mem::replace(&mut self.ways, ::protobuf::RepeatedField::new())
     }
 
     pub fn get_ways(&'a self) -> &'a [Way] {
@@ -1179,6 +1230,11 @@ impl<'a> PrimitiveGroup {
         &mut self.relations
     }
 
+    // Take field
+    pub fn take_relations(&mut self) -> ::protobuf::RepeatedField<Relation> {
+        ::std::mem::replace(&mut self.relations, ::protobuf::RepeatedField::new())
+    }
+
     pub fn get_relations(&'a self) -> &'a [Relation] {
         self.relations.as_slice()
     }
@@ -1197,6 +1253,11 @@ impl<'a> PrimitiveGroup {
     // Mutable pointer to the field.
     pub fn mut_changesets(&'a mut self) -> &'a mut ::protobuf::RepeatedField<ChangeSet> {
         &mut self.changesets
+    }
+
+    // Take field
+    pub fn take_changesets(&mut self) -> ::protobuf::RepeatedField<ChangeSet> {
+        ::std::mem::replace(&mut self.changesets, ::protobuf::RepeatedField::new())
     }
 
     pub fn get_changesets(&'a self) -> &'a [ChangeSet] {
@@ -1263,7 +1324,6 @@ impl ::protobuf::Message for PrimitiveGroup {
 
     // Compute sizes of nested messages
     fn compute_size(&self) -> u32 {
-        use protobuf::{Message};
         let mut my_size = 0;
         for value in self.nodes.iter() {
             let len = value.compute_size();
@@ -1291,7 +1351,6 @@ impl ::protobuf::Message for PrimitiveGroup {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        use protobuf::{Message};
         for v in self.nodes.iter() {
             try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
             try!(os.write_raw_varint32(v.get_cached_size()));
@@ -1407,6 +1466,11 @@ impl<'a> StringTable {
         &mut self.s
     }
 
+    // Take field
+    pub fn take_s(&mut self) -> ::protobuf::RepeatedField<::std::vec::Vec<u8>> {
+        ::std::mem::replace(&mut self.s, ::protobuf::RepeatedField::new())
+    }
+
     pub fn get_s(&'a self) -> &'a [::std::vec::Vec<u8>] {
         self.s.as_slice()
     }
@@ -1443,7 +1507,6 @@ impl ::protobuf::Message for StringTable {
 
     // Compute sizes of nested messages
     fn compute_size(&self) -> u32 {
-        use protobuf::{Message};
         let mut my_size = 0;
         for value in self.s.iter() {
             my_size += ::protobuf::rt::bytes_size(1, value.as_slice());
@@ -1454,7 +1517,6 @@ impl ::protobuf::Message for StringTable {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        use protobuf::{Message};
         for v in self.s.iter() {
             try!(os.write_bytes(1, v.as_slice()));
         };
@@ -1712,7 +1774,6 @@ impl ::protobuf::Message for Info {
 
     // Compute sizes of nested messages
     fn compute_size(&self) -> u32 {
-        use protobuf::{Message};
         let mut my_size = 0;
         for value in self.version.iter() {
             my_size += ::protobuf::rt::value_size(1, *value, ::protobuf::wire_format::WireTypeVarint);
@@ -1738,7 +1799,6 @@ impl ::protobuf::Message for Info {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        use protobuf::{Message};
         match self.version {
             Some(v) => {
                 try!(os.write_int32(1, v));
@@ -1874,6 +1934,11 @@ impl<'a> DenseInfo {
         &mut self.version
     }
 
+    // Take field
+    pub fn take_version(&mut self) -> ::std::vec::Vec<i32> {
+        ::std::mem::replace(&mut self.version, ::std::vec::Vec::new())
+    }
+
     pub fn get_version(&'a self) -> &'a [i32] {
         self.version.as_slice()
     }
@@ -1892,6 +1957,11 @@ impl<'a> DenseInfo {
     // Mutable pointer to the field.
     pub fn mut_timestamp(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
         &mut self.timestamp
+    }
+
+    // Take field
+    pub fn take_timestamp(&mut self) -> ::std::vec::Vec<i64> {
+        ::std::mem::replace(&mut self.timestamp, ::std::vec::Vec::new())
     }
 
     pub fn get_timestamp(&'a self) -> &'a [i64] {
@@ -1914,6 +1984,11 @@ impl<'a> DenseInfo {
         &mut self.changeset
     }
 
+    // Take field
+    pub fn take_changeset(&mut self) -> ::std::vec::Vec<i64> {
+        ::std::mem::replace(&mut self.changeset, ::std::vec::Vec::new())
+    }
+
     pub fn get_changeset(&'a self) -> &'a [i64] {
         self.changeset.as_slice()
     }
@@ -1932,6 +2007,11 @@ impl<'a> DenseInfo {
     // Mutable pointer to the field.
     pub fn mut_uid(&'a mut self) -> &'a mut ::std::vec::Vec<i32> {
         &mut self.uid
+    }
+
+    // Take field
+    pub fn take_uid(&mut self) -> ::std::vec::Vec<i32> {
+        ::std::mem::replace(&mut self.uid, ::std::vec::Vec::new())
     }
 
     pub fn get_uid(&'a self) -> &'a [i32] {
@@ -1954,6 +2034,11 @@ impl<'a> DenseInfo {
         &mut self.user_sid
     }
 
+    // Take field
+    pub fn take_user_sid(&mut self) -> ::std::vec::Vec<i32> {
+        ::std::mem::replace(&mut self.user_sid, ::std::vec::Vec::new())
+    }
+
     pub fn get_user_sid(&'a self) -> &'a [i32] {
         self.user_sid.as_slice()
     }
@@ -1972,6 +2057,11 @@ impl<'a> DenseInfo {
     // Mutable pointer to the field.
     pub fn mut_visible(&'a mut self) -> &'a mut ::std::vec::Vec<bool> {
         &mut self.visible
+    }
+
+    // Take field
+    pub fn take_visible(&mut self) -> ::std::vec::Vec<bool> {
+        ::std::mem::replace(&mut self.visible, ::std::vec::Vec::new())
     }
 
     pub fn get_visible(&'a self) -> &'a [bool] {
@@ -1993,94 +2083,82 @@ impl ::protobuf::Message for DenseInfo {
             let (field_number, wire_type) = try!(is.read_tag_unpack());
             match field_number {
                 1 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_int32_into(&mut self.version));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.version.push(try!(is.read_int32()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.version.push(try!(is.read_int32()));
-                    }
+                        },
+                    };
                 },
                 2 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_sint64_into(&mut self.timestamp));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.timestamp.push(try!(is.read_sint64()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.timestamp.push(try!(is.read_sint64()));
-                    }
+                        },
+                    };
                 },
                 3 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_sint64_into(&mut self.changeset));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.changeset.push(try!(is.read_sint64()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.changeset.push(try!(is.read_sint64()));
-                    }
+                        },
+                    };
                 },
                 4 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_sint32_into(&mut self.uid));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.uid.push(try!(is.read_sint32()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.uid.push(try!(is.read_sint32()));
-                    }
+                        },
+                    };
                 },
                 5 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_sint32_into(&mut self.user_sid));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.user_sid.push(try!(is.read_sint32()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.user_sid.push(try!(is.read_sint32()));
-                    }
+                        },
+                    };
                 },
                 6 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_bool_into(&mut self.visible));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.visible.push(try!(is.read_bool()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.visible.push(try!(is.read_bool()));
-                    }
+                        },
+                    };
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -2093,7 +2171,6 @@ impl ::protobuf::Message for DenseInfo {
 
     // Compute sizes of nested messages
     fn compute_size(&self) -> u32 {
-        use protobuf::{Message};
         let mut my_size = 0;
         if !self.version.is_empty() {
             my_size += ::protobuf::rt::vec_packed_varint_size(1, self.version.as_slice());
@@ -2119,7 +2196,6 @@ impl ::protobuf::Message for DenseInfo {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        use protobuf::{Message};
         if !self.version.is_empty() {
             try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
@@ -2295,7 +2371,6 @@ impl ::protobuf::Message for ChangeSet {
 
     // Compute sizes of nested messages
     fn compute_size(&self) -> u32 {
-        use protobuf::{Message};
         let mut my_size = 0;
         for value in self.id.iter() {
             my_size += ::protobuf::rt::value_size(1, *value, ::protobuf::wire_format::WireTypeVarint);
@@ -2306,7 +2381,6 @@ impl ::protobuf::Message for ChangeSet {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        use protobuf::{Message};
         match self.id {
             Some(v) => {
                 try!(os.write_int64(1, v));
@@ -2421,6 +2495,11 @@ impl<'a> Node {
         &mut self.keys
     }
 
+    // Take field
+    pub fn take_keys(&mut self) -> ::std::vec::Vec<u32> {
+        ::std::mem::replace(&mut self.keys, ::std::vec::Vec::new())
+    }
+
     pub fn get_keys(&'a self) -> &'a [u32] {
         self.keys.as_slice()
     }
@@ -2439,6 +2518,11 @@ impl<'a> Node {
     // Mutable pointer to the field.
     pub fn mut_vals(&'a mut self) -> &'a mut ::std::vec::Vec<u32> {
         &mut self.vals
+    }
+
+    // Take field
+    pub fn take_vals(&mut self) -> ::std::vec::Vec<u32> {
+        ::std::mem::replace(&mut self.vals, ::std::vec::Vec::new())
     }
 
     pub fn get_vals(&'a self) -> &'a [u32] {
@@ -2467,6 +2551,11 @@ impl<'a> Node {
             self.info.set_default();
         };
         self.info.as_mut().unwrap()
+    }
+
+    // Take field
+    pub fn take_info(&mut self) -> Info {
+        self.info.take().unwrap_or_else(|| Info::new())
     }
 
     pub fn get_info(&'a self) -> &'a Info {
@@ -2542,34 +2631,30 @@ impl ::protobuf::Message for Node {
                     self.id = ::std::option::Some(tmp);
                 },
                 2 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_uint32_into(&mut self.keys));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.keys.push(try!(is.read_uint32()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.keys.push(try!(is.read_uint32()));
-                    }
+                        },
+                    };
                 },
                 3 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_uint32_into(&mut self.vals));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.vals.push(try!(is.read_uint32()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.vals.push(try!(is.read_uint32()));
-                    }
+                        },
+                    };
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -2603,7 +2688,6 @@ impl ::protobuf::Message for Node {
 
     // Compute sizes of nested messages
     fn compute_size(&self) -> u32 {
-        use protobuf::{Message};
         let mut my_size = 0;
         for value in self.id.iter() {
             my_size += ::protobuf::rt::value_size(1, *value, ::protobuf::wire_format::WireTypeVarint);
@@ -2630,7 +2714,6 @@ impl ::protobuf::Message for Node {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        use protobuf::{Message};
         match self.id {
             Some(v) => {
                 try!(os.write_sint64(1, v));
@@ -2770,6 +2853,11 @@ impl<'a> DenseNodes {
         &mut self.id
     }
 
+    // Take field
+    pub fn take_id(&mut self) -> ::std::vec::Vec<i64> {
+        ::std::mem::replace(&mut self.id, ::std::vec::Vec::new())
+    }
+
     pub fn get_id(&'a self) -> &'a [i64] {
         self.id.as_slice()
     }
@@ -2798,6 +2886,11 @@ impl<'a> DenseNodes {
         self.denseinfo.as_mut().unwrap()
     }
 
+    // Take field
+    pub fn take_denseinfo(&mut self) -> DenseInfo {
+        self.denseinfo.take().unwrap_or_else(|| DenseInfo::new())
+    }
+
     pub fn get_denseinfo(&'a self) -> &'a DenseInfo {
         self.denseinfo.as_ref().unwrap_or_else(|| DenseInfo::default_instance())
     }
@@ -2816,6 +2909,11 @@ impl<'a> DenseNodes {
     // Mutable pointer to the field.
     pub fn mut_lat(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
         &mut self.lat
+    }
+
+    // Take field
+    pub fn take_lat(&mut self) -> ::std::vec::Vec<i64> {
+        ::std::mem::replace(&mut self.lat, ::std::vec::Vec::new())
     }
 
     pub fn get_lat(&'a self) -> &'a [i64] {
@@ -2838,6 +2936,11 @@ impl<'a> DenseNodes {
         &mut self.lon
     }
 
+    // Take field
+    pub fn take_lon(&mut self) -> ::std::vec::Vec<i64> {
+        ::std::mem::replace(&mut self.lon, ::std::vec::Vec::new())
+    }
+
     pub fn get_lon(&'a self) -> &'a [i64] {
         self.lon.as_slice()
     }
@@ -2856,6 +2959,11 @@ impl<'a> DenseNodes {
     // Mutable pointer to the field.
     pub fn mut_keys_vals(&'a mut self) -> &'a mut ::std::vec::Vec<i32> {
         &mut self.keys_vals
+    }
+
+    // Take field
+    pub fn take_keys_vals(&mut self) -> ::std::vec::Vec<i32> {
+        ::std::mem::replace(&mut self.keys_vals, ::std::vec::Vec::new())
     }
 
     pub fn get_keys_vals(&'a self) -> &'a [i32] {
@@ -2877,19 +2985,17 @@ impl ::protobuf::Message for DenseNodes {
             let (field_number, wire_type) = try!(is.read_tag_unpack());
             match field_number {
                 1 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_sint64_into(&mut self.id));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.id.push(try!(is.read_sint64()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.id.push(try!(is.read_sint64()));
-                    }
+                        },
+                    };
                 },
                 5 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -2899,49 +3005,43 @@ impl ::protobuf::Message for DenseNodes {
                     try!(is.merge_message(tmp))
                 },
                 8 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_sint64_into(&mut self.lat));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.lat.push(try!(is.read_sint64()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.lat.push(try!(is.read_sint64()));
-                    }
+                        },
+                    };
                 },
                 9 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_sint64_into(&mut self.lon));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.lon.push(try!(is.read_sint64()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.lon.push(try!(is.read_sint64()));
-                    }
+                        },
+                    };
                 },
                 10 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_int32_into(&mut self.keys_vals));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.keys_vals.push(try!(is.read_int32()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.keys_vals.push(try!(is.read_int32()));
-                    }
+                        },
+                    };
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -2954,7 +3054,6 @@ impl ::protobuf::Message for DenseNodes {
 
     // Compute sizes of nested messages
     fn compute_size(&self) -> u32 {
-        use protobuf::{Message};
         let mut my_size = 0;
         if !self.id.is_empty() {
             my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(1, self.id.as_slice());
@@ -2978,7 +3077,6 @@ impl ::protobuf::Message for DenseNodes {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        use protobuf::{Message};
         if !self.id.is_empty() {
             try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
@@ -3133,6 +3231,11 @@ impl<'a> Way {
         &mut self.keys
     }
 
+    // Take field
+    pub fn take_keys(&mut self) -> ::std::vec::Vec<u32> {
+        ::std::mem::replace(&mut self.keys, ::std::vec::Vec::new())
+    }
+
     pub fn get_keys(&'a self) -> &'a [u32] {
         self.keys.as_slice()
     }
@@ -3151,6 +3254,11 @@ impl<'a> Way {
     // Mutable pointer to the field.
     pub fn mut_vals(&'a mut self) -> &'a mut ::std::vec::Vec<u32> {
         &mut self.vals
+    }
+
+    // Take field
+    pub fn take_vals(&mut self) -> ::std::vec::Vec<u32> {
+        ::std::mem::replace(&mut self.vals, ::std::vec::Vec::new())
     }
 
     pub fn get_vals(&'a self) -> &'a [u32] {
@@ -3181,6 +3289,11 @@ impl<'a> Way {
         self.info.as_mut().unwrap()
     }
 
+    // Take field
+    pub fn take_info(&mut self) -> Info {
+        self.info.take().unwrap_or_else(|| Info::new())
+    }
+
     pub fn get_info(&'a self) -> &'a Info {
         self.info.as_ref().unwrap_or_else(|| Info::default_instance())
     }
@@ -3199,6 +3312,11 @@ impl<'a> Way {
     // Mutable pointer to the field.
     pub fn mut_refs(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
         &mut self.refs
+    }
+
+    // Take field
+    pub fn take_refs(&mut self) -> ::std::vec::Vec<i64> {
+        ::std::mem::replace(&mut self.refs, ::std::vec::Vec::new())
     }
 
     pub fn get_refs(&'a self) -> &'a [i64] {
@@ -3230,34 +3348,30 @@ impl ::protobuf::Message for Way {
                     self.id = ::std::option::Some(tmp);
                 },
                 2 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_uint32_into(&mut self.keys));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.keys.push(try!(is.read_uint32()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.keys.push(try!(is.read_uint32()));
-                    }
+                        },
+                    };
                 },
                 3 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_uint32_into(&mut self.vals));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.vals.push(try!(is.read_uint32()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.vals.push(try!(is.read_uint32()));
-                    }
+                        },
+                    };
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -3267,19 +3381,17 @@ impl ::protobuf::Message for Way {
                     try!(is.merge_message(tmp))
                 },
                 8 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_sint64_into(&mut self.refs));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.refs.push(try!(is.read_sint64()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.refs.push(try!(is.read_sint64()));
-                    }
+                        },
+                    };
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -3292,7 +3404,6 @@ impl ::protobuf::Message for Way {
 
     // Compute sizes of nested messages
     fn compute_size(&self) -> u32 {
-        use protobuf::{Message};
         let mut my_size = 0;
         for value in self.id.iter() {
             my_size += ::protobuf::rt::value_size(1, *value, ::protobuf::wire_format::WireTypeVarint);
@@ -3316,7 +3427,6 @@ impl ::protobuf::Message for Way {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        use protobuf::{Message};
         match self.id {
             Some(v) => {
                 try!(os.write_int64(1, v));
@@ -3473,6 +3583,11 @@ impl<'a> Relation {
         &mut self.keys
     }
 
+    // Take field
+    pub fn take_keys(&mut self) -> ::std::vec::Vec<u32> {
+        ::std::mem::replace(&mut self.keys, ::std::vec::Vec::new())
+    }
+
     pub fn get_keys(&'a self) -> &'a [u32] {
         self.keys.as_slice()
     }
@@ -3491,6 +3606,11 @@ impl<'a> Relation {
     // Mutable pointer to the field.
     pub fn mut_vals(&'a mut self) -> &'a mut ::std::vec::Vec<u32> {
         &mut self.vals
+    }
+
+    // Take field
+    pub fn take_vals(&mut self) -> ::std::vec::Vec<u32> {
+        ::std::mem::replace(&mut self.vals, ::std::vec::Vec::new())
     }
 
     pub fn get_vals(&'a self) -> &'a [u32] {
@@ -3521,6 +3641,11 @@ impl<'a> Relation {
         self.info.as_mut().unwrap()
     }
 
+    // Take field
+    pub fn take_info(&mut self) -> Info {
+        self.info.take().unwrap_or_else(|| Info::new())
+    }
+
     pub fn get_info(&'a self) -> &'a Info {
         self.info.as_ref().unwrap_or_else(|| Info::default_instance())
     }
@@ -3539,6 +3664,11 @@ impl<'a> Relation {
     // Mutable pointer to the field.
     pub fn mut_roles_sid(&'a mut self) -> &'a mut ::std::vec::Vec<i32> {
         &mut self.roles_sid
+    }
+
+    // Take field
+    pub fn take_roles_sid(&mut self) -> ::std::vec::Vec<i32> {
+        ::std::mem::replace(&mut self.roles_sid, ::std::vec::Vec::new())
     }
 
     pub fn get_roles_sid(&'a self) -> &'a [i32] {
@@ -3561,6 +3691,11 @@ impl<'a> Relation {
         &mut self.memids
     }
 
+    // Take field
+    pub fn take_memids(&mut self) -> ::std::vec::Vec<i64> {
+        ::std::mem::replace(&mut self.memids, ::std::vec::Vec::new())
+    }
+
     pub fn get_memids(&'a self) -> &'a [i64] {
         self.memids.as_slice()
     }
@@ -3579,6 +3714,11 @@ impl<'a> Relation {
     // Mutable pointer to the field.
     pub fn mut_types(&'a mut self) -> &'a mut ::std::vec::Vec<Relation_MemberType> {
         &mut self.types
+    }
+
+    // Take field
+    pub fn take_types(&mut self) -> ::std::vec::Vec<Relation_MemberType> {
+        ::std::mem::replace(&mut self.types, ::std::vec::Vec::new())
     }
 
     pub fn get_types(&'a self) -> &'a [Relation_MemberType] {
@@ -3610,34 +3750,30 @@ impl ::protobuf::Message for Relation {
                     self.id = ::std::option::Some(tmp);
                 },
                 2 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_uint32_into(&mut self.keys));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.keys.push(try!(is.read_uint32()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.keys.push(try!(is.read_uint32()));
-                    }
+                        },
+                    };
                 },
                 3 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_uint32_into(&mut self.vals));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.vals.push(try!(is.read_uint32()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.vals.push(try!(is.read_uint32()));
-                    }
+                        },
+                    };
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -3647,49 +3783,43 @@ impl ::protobuf::Message for Relation {
                     try!(is.merge_message(tmp))
                 },
                 8 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_int32_into(&mut self.roles_sid));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.roles_sid.push(try!(is.read_int32()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.roles_sid.push(try!(is.read_int32()));
-                    }
+                        },
+                    };
                 },
                 9 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_sint64_into(&mut self.memids));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
                             self.memids.push(try!(is.read_sint64()));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.memids.push(try!(is.read_sint64()));
-                    }
+                        },
+                    };
                 },
                 10 => {
-                    if wire_type == ::protobuf::wire_format::WireTypeLengthDelimited {
-                        let len = try!(is.read_raw_varint32());
-                        let old_limit = is.push_limit(len);
-                        while !try!(is.eof()) {
-                            self.types.push(Relation_MemberType::new(try!(is.read_int32())));
-                        }
-                        is.pop_limit(old_limit);
-                    } else {
-                        if wire_type != ::protobuf::wire_format::WireTypeVarint {
+                    match wire_type {
+                        ::protobuf::wire_format::WireTypeLengthDelimited => {
+                            try!(is.read_repeated_packed_enum_into(&mut self.types));
+                        },
+                        ::protobuf::wire_format::WireTypeVarint => {
+                            self.types.push(try!(is.read_enum()));
+                        },
+                        _ => {
                             return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        };
-                        self.types.push(Relation_MemberType::new(try!(is.read_int32())));
-                    }
+                        },
+                    };
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -3702,7 +3832,6 @@ impl ::protobuf::Message for Relation {
 
     // Compute sizes of nested messages
     fn compute_size(&self) -> u32 {
-        use protobuf::{Message};
         let mut my_size = 0;
         for value in self.id.iter() {
             my_size += ::protobuf::rt::value_size(1, *value, ::protobuf::wire_format::WireTypeVarint);
@@ -3732,7 +3861,6 @@ impl ::protobuf::Message for Relation {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        use protobuf::{Message};
         match self.id {
             Some(v) => {
                 try!(os.write_int64(1, v));
@@ -3841,19 +3969,18 @@ pub enum Relation_MemberType {
     RELATION = 2,
 }
 
-impl Relation_MemberType {
-    pub fn new(value: i32) -> Relation_MemberType {
-        match value {
-            0 => Relation_MemberType::NODE,
-            1 => Relation_MemberType::WAY,
-            2 => Relation_MemberType::RELATION,
-            _ => panic!()
-        }
-    }
-}
 
 impl ::protobuf::ProtobufEnum for Relation_MemberType {
     fn value(&self) -> i32 {
         *self as i32
+    }
+
+    fn from_i32(value: i32) -> ::std::option::Option<Relation_MemberType> {
+        match value {
+            0 => ::std::option::Some(Relation_MemberType::NODE),
+            1 => ::std::option::Some(Relation_MemberType::WAY),
+            2 => ::std::option::Some(Relation_MemberType::RELATION),
+            _ => ::std::option::None
+        }
     }
 }
