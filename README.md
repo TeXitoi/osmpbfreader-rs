@@ -55,8 +55,8 @@ $ cargo build --release
    Compiling flate2 v0.1.0 (https://github.com/alexcrichton/flate2-rs#f9ab9da8)
    Compiling osmpbfreader v0.0.1 (https://github.com/TeXitoi/osmpbfreader-rs#57ba5182)
    Compiling test-osmpbfreader v0.0.1 (file:///home/gupinot/dev/test-osmpbfreader)
-$ ./target/test-osmpbfreader nord-pas-de-calais-latest.osm.pbf
-42 objects in nord-pas-de-calais-latest.osm.pbf
+$ ./target/test-osmpbfreader picardie-latest.osm.pbf
+9852873 objects in picardie-latest.osm.pbf
 ```
 
 You can find OSM PBF files at [Geofabrik's free download server](http://download.geofabrik.de/).
