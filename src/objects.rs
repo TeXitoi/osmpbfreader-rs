@@ -34,7 +34,7 @@ pub struct Way {
 }
 
 #[deriving(Show, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
-pub enum RelMem {
+pub enum OsmId {
     Node(i64),
     Way(i64),
     Relation(i64),
@@ -42,7 +42,7 @@ pub enum RelMem {
 
 #[deriving(Show, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
 pub struct Ref {
-    pub member: RelMem,
+    pub member: OsmId,
     pub role: String,
 }
 

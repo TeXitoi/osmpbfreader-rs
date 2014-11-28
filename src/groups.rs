@@ -5,7 +5,7 @@ use std::slice;
 use std::collections::BTreeMap;
 use std::iter::Chain;
 use std::iter::Map;
-use objects::{OsmObj, Node, Way, Relation, Ref, RelMem, Tags};
+use objects::{OsmObj, Node, Way, Relation, Ref, OsmId, Tags};
 
 pub type OsmObjs<'a> = Chain<Chain<Map<'a, Node, OsmObj, Nodes<'a>>, Map<'a, Way, OsmObj, Ways<'a>>>, Map<'a, Relation, OsmObj, Relations<'a>>>;
 
@@ -144,9 +144,9 @@ impl<'a> Iterator<Relation> for Relations<'a> {
                     m += dm;
                     Ref {
                         member: match t {
-                            NODE => RelMem::Node(m),
-                            WAY => RelMem::Way(m),
-                            RELATION => RelMem::Relation(m),
+                            NODE => OsmId::Node(m),
+                            WAY => OsmId::Way(m),
+                            RELATION => OsmId::Relation(m),
                         },
                         role: make_string(role as uint, self.block),
                     }
