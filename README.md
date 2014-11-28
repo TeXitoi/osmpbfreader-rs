@@ -5,6 +5,10 @@
 Read OpenStreetMap PBF files in rust. The goal is to propose something
 similar to https://github.com/CanalTP/libosmpbfreader for rust.
 
+## Example
+
+See [here](examples/count.rs) for an almost complete example.
+
 ## Perfs
 
 Using the `count` example compiled in release mode:
