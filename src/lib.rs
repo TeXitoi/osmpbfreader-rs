@@ -59,8 +59,7 @@ impl<R: Reader> OsmPbfReader<R> {
             use flate2::reader::ZlibDecoder;
             let r = std::io::BufReader::new(blob.get_zlib_data());
             let mut zr = ZlibDecoder::new(r);
-            let buf = try!(zr.read_to_end());// TODO use self.buf
-            Ok(try!(protobuf::parse_from_bytes(buf.as_slice())))
+            Ok(try!(protobuf::parse_from_reader(&mut zr as &mut Reader)))
         } else {
             Err(OsmPbfError::UnsupportedData)
         }
@@ -90,6 +89,7 @@ impl<R: Reader> OsmPbfReader<R> {
         use std::io::IoErrorKind;
         if self.finished { return None; }
         let sz = match self.r.read_be_u32() {
+            Ok(sz) if sz > 64 * 1024 => return Some(Err(OsmPbfError::InvalidData)),
             Ok(sz) => sz,
             Err(ref e) if e.kind == IoErrorKind::EndOfFile => {
                 self.finished = true;

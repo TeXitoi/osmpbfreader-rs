@@ -15,6 +15,7 @@ pub enum OsmPbfError {
     Io(IoError),
     Pbf(protobuf::ProtobufError),
     UnsupportedData,
+    InvalidData,
 }
 impl Error for OsmPbfError {
     fn description(&self) -> &str {
@@ -22,6 +23,7 @@ impl Error for OsmPbfError {
             OsmPbfError::Io(ref e) => e.description(),
             OsmPbfError::Pbf(ref e) => e.description(),
             OsmPbfError::UnsupportedData => "Unsupported data",
+            OsmPbfError::InvalidData => "Invalid data",
         }
     }
     fn detail(&self) -> Option<String> {
@@ -29,6 +31,7 @@ impl Error for OsmPbfError {
             OsmPbfError::Io(ref e) => e.detail(),
             OsmPbfError::Pbf(ref e) => e.detail(),
             OsmPbfError::UnsupportedData => None,
+            OsmPbfError::InvalidData => None,
         }
     }
     fn cause(&self) -> Option<&Error> {
@@ -36,6 +39,7 @@ impl Error for OsmPbfError {
             OsmPbfError::Io(ref e) => Some(e as &Error),
             OsmPbfError::Pbf(ref e) => Some(e as &Error),
             OsmPbfError::UnsupportedData => None,
+            OsmPbfError::InvalidData => None,
         }
     }
 }
