@@ -2,12 +2,16 @@
 
 ## Presentation
 
-osmpbfreadder-rs is a rust library to read OpenStreetMap PBF files. The goal is to propose something
-similar to https://github.com/CanalTP/libosmpbfreader.
+Read [OpenStreetMap PBF
+files](http://wiki.openstreetmap.org/wiki/PBF_Format) with
+[rust](http://www.rust-lang.org).  The main inspiration of this
+library is
+[libosmpbfreader](https://github.com/CanalTP/libosmpbfreader).
 
 ## Tutorial
 
-We'll see how to use this library to count the number of objects in an OSM PBF file.
+We'll see how to use this library to count the number of objects in an
+OSM PBF file.
 
 First, install rust:
 ```
@@ -44,7 +48,7 @@ fn main() {
     println!("{} objects in {}", nb, filename);
 }
 ```
-and build and run:
+build and run:
 ```
 $ cargo build --release
     Updating registry `https://github.com/rust-lang/crates.io-index`
@@ -61,7 +65,7 @@ $ ./target/test-osmpbfreader picardie-latest.osm.pbf
 
 You can find OSM PBF files at [Geofabrik's free download server](http://download.geofabrik.de/).
 
-## Perfs
+## Performances
 
 Using the [count](examples/count.rs) example compiled in release mode:
 ```
@@ -81,3 +85,22 @@ real	5m30.785s
 user	5m18.264s
 sys 	0m11.944s
 ```
+
+## License
+
+This work is free. You can redistribute it and/or modify it under the
+terms of the Do What The Fuck You Want To Public License, Version 2,
+as published by Sam Hocevar. See the COPYING file for more details.
+
+Note that `src/fileformat.proto` and `src/osmformat.proto` come from
+[OSM-binary](https://github.com/scrosby/OSM-binary) under the LGPLv3.
+
+## TODO
+
+TODO list:
+ - document until `#![deny(missing_docs)]` can be added;
+ - provide `OsmPbfReader::iter(&mut self) -> Iterator<OsmObject>`
+ - provide a high level function that, given a
+   `|&OsmObject| -> bool`, returns a structure with all the
+   filtered objects plus their dependencies;
+ - decompress the `osmformat::Block`s in parallel.
