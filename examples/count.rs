@@ -5,6 +5,9 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
+#![feature(phase)]
+
+#[phase(plugin, link)] extern crate log;
 extern crate osmpbfreader;
 
 fn count(filter: |&osmpbfreader::Tags| -> bool, filename: &str) {
@@ -20,6 +23,7 @@ fn count(filter: |&osmpbfreader::Tags| -> bool, filename: &str) {
     for block in pbf.primitive_blocks().map(|r| r.unwrap()) {
         for obj in osmpbfreader::blocks::iter(&block) {
             if !filter(obj.tags()) { continue; }
+            info!("{}", obj);
             match obj {
                 osmpbfreader::OsmObj::Node(node) => {
                     nb_nodes += 1;
