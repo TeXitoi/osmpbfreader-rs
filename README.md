@@ -103,4 +103,5 @@ TODO list:
  - provide a high level function that, given a
    `|&OsmObject| -> bool`, returns a structure with all the
    filtered objects plus their dependencies;
- - decompress the `osmformat::Block`s in parallel.
+ - decompress the `osmformat::Block`s in parallel;
+ - read header to check that we support all needed features.
