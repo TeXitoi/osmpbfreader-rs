@@ -19,7 +19,7 @@ pub struct Blob {
     cached_size: ::std::cell::Cell<u32>,
 }
 
-impl<'a> Blob {
+impl Blob {
     pub fn new() -> Blob {
         ::std::default::Default::default()
     }
@@ -33,7 +33,7 @@ impl<'a> Blob {
             instance.get(|| {
                 Blob {
                     raw: ::protobuf::SingularField::none(),
-                    raw_size: ::std::option::None,
+                    raw_size: ::std::option::Option::None,
                     zlib_data: ::protobuf::SingularField::none(),
                     lzma_data: ::protobuf::SingularField::none(),
                     OBSOLETE_bzip2_data: ::protobuf::SingularField::none(),
@@ -61,7 +61,7 @@ impl<'a> Blob {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_raw(&'a mut self) -> &'a mut ::std::vec::Vec<u8> {
+    pub fn mut_raw<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u8> {
         if self.raw.is_none() {
             self.raw.set_default();
         };
@@ -73,7 +73,7 @@ impl<'a> Blob {
         self.raw.take().unwrap_or_else(|| ::std::vec::Vec::new())
     }
 
-    pub fn get_raw(&'a self) -> &'a [u8] {
+    pub fn get_raw<'a>(&'a self) -> &'a [u8] {
         match self.raw.as_ref() {
             Some(v) => v.as_slice(),
             None => [].as_slice(),
@@ -83,7 +83,7 @@ impl<'a> Blob {
     // optional int32 raw_size = 2;
 
     pub fn clear_raw_size(&mut self) {
-        self.raw_size = ::std::option::None;
+        self.raw_size = ::std::option::Option::None;
     }
 
     pub fn has_raw_size(&self) -> bool {
@@ -92,10 +92,10 @@ impl<'a> Blob {
 
     // Param is passed by value, moved
     pub fn set_raw_size(&mut self, v: i32) {
-        self.raw_size = ::std::option::Some(v);
+        self.raw_size = ::std::option::Option::Some(v);
     }
 
-    pub fn get_raw_size(&self) -> i32 {
+    pub fn get_raw_size<'a>(&self) -> i32 {
         self.raw_size.unwrap_or(0)
     }
 
@@ -116,7 +116,7 @@ impl<'a> Blob {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_zlib_data(&'a mut self) -> &'a mut ::std::vec::Vec<u8> {
+    pub fn mut_zlib_data<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u8> {
         if self.zlib_data.is_none() {
             self.zlib_data.set_default();
         };
@@ -128,7 +128,7 @@ impl<'a> Blob {
         self.zlib_data.take().unwrap_or_else(|| ::std::vec::Vec::new())
     }
 
-    pub fn get_zlib_data(&'a self) -> &'a [u8] {
+    pub fn get_zlib_data<'a>(&'a self) -> &'a [u8] {
         match self.zlib_data.as_ref() {
             Some(v) => v.as_slice(),
             None => [].as_slice(),
@@ -152,7 +152,7 @@ impl<'a> Blob {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_lzma_data(&'a mut self) -> &'a mut ::std::vec::Vec<u8> {
+    pub fn mut_lzma_data<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u8> {
         if self.lzma_data.is_none() {
             self.lzma_data.set_default();
         };
@@ -164,7 +164,7 @@ impl<'a> Blob {
         self.lzma_data.take().unwrap_or_else(|| ::std::vec::Vec::new())
     }
 
-    pub fn get_lzma_data(&'a self) -> &'a [u8] {
+    pub fn get_lzma_data<'a>(&'a self) -> &'a [u8] {
         match self.lzma_data.as_ref() {
             Some(v) => v.as_slice(),
             None => [].as_slice(),
@@ -188,7 +188,7 @@ impl<'a> Blob {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_OBSOLETE_bzip2_data(&'a mut self) -> &'a mut ::std::vec::Vec<u8> {
+    pub fn mut_OBSOLETE_bzip2_data<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u8> {
         if self.OBSOLETE_bzip2_data.is_none() {
             self.OBSOLETE_bzip2_data.set_default();
         };
@@ -200,7 +200,7 @@ impl<'a> Blob {
         self.OBSOLETE_bzip2_data.take().unwrap_or_else(|| ::std::vec::Vec::new())
     }
 
-    pub fn get_OBSOLETE_bzip2_data(&'a self) -> &'a [u8] {
+    pub fn get_OBSOLETE_bzip2_data<'a>(&'a self) -> &'a [u8] {
         match self.OBSOLETE_bzip2_data.as_ref() {
             Some(v) => v.as_slice(),
             None => [].as_slice(),
@@ -223,35 +223,35 @@ impl ::protobuf::Message for Blob {
             match field_number {
                 1 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.raw.set_default();
                     try!(is.read_bytes_into(tmp))
                 },
                 2 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int32());
-                    self.raw_size = ::std::option::Some(tmp);
+                    self.raw_size = ::std::option::Option::Some(tmp);
                 },
                 3 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.zlib_data.set_default();
                     try!(is.read_bytes_into(tmp))
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.lzma_data.set_default();
                     try!(is.read_bytes_into(tmp))
                 },
                 5 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.OBSOLETE_bzip2_data.set_default();
                     try!(is.read_bytes_into(tmp))
@@ -262,7 +262,7 @@ impl ::protobuf::Message for Blob {
                 },
             };
         }
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     // Compute sizes of nested messages
@@ -289,38 +289,23 @@ impl ::protobuf::Message for Blob {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        match self.raw.as_ref() {
-            Some(v) => {
-                try!(os.write_bytes(1, v.as_slice()));
-            },
-            None => {},
+        if let Some(v) = self.raw.as_ref() {
+            try!(os.write_bytes(1, v.as_slice()));
         };
-        match self.raw_size {
-            Some(v) => {
-                try!(os.write_int32(2, v));
-            },
-            None => {},
+        if let Some(v) = self.raw_size {
+            try!(os.write_int32(2, v));
         };
-        match self.zlib_data.as_ref() {
-            Some(v) => {
-                try!(os.write_bytes(3, v.as_slice()));
-            },
-            None => {},
+        if let Some(v) = self.zlib_data.as_ref() {
+            try!(os.write_bytes(3, v.as_slice()));
         };
-        match self.lzma_data.as_ref() {
-            Some(v) => {
-                try!(os.write_bytes(4, v.as_slice()));
-            },
-            None => {},
+        if let Some(v) = self.lzma_data.as_ref() {
+            try!(os.write_bytes(4, v.as_slice()));
         };
-        match self.OBSOLETE_bzip2_data.as_ref() {
-            Some(v) => {
-                try!(os.write_bytes(5, v.as_slice()));
-            },
-            None => {},
+        if let Some(v) = self.OBSOLETE_bzip2_data.as_ref() {
+            try!(os.write_bytes(5, v.as_slice()));
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     fn get_cached_size(&self) -> u32 {
@@ -371,7 +356,7 @@ pub struct BlobHeader {
     cached_size: ::std::cell::Cell<u32>,
 }
 
-impl<'a> BlobHeader {
+impl BlobHeader {
     pub fn new() -> BlobHeader {
         ::std::default::Default::default()
     }
@@ -386,7 +371,7 @@ impl<'a> BlobHeader {
                 BlobHeader {
                     field_type: ::protobuf::SingularField::none(),
                     indexdata: ::protobuf::SingularField::none(),
-                    datasize: ::std::option::None,
+                    datasize: ::std::option::Option::None,
                     unknown_fields: ::protobuf::UnknownFields::new(),
                     cached_size: ::std::cell::Cell::new(0),
                 }
@@ -411,7 +396,7 @@ impl<'a> BlobHeader {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_field_type(&'a mut self) -> &'a mut ::std::string::String {
+    pub fn mut_field_type<'a>(&'a mut self) -> &'a mut ::std::string::String {
         if self.field_type.is_none() {
             self.field_type.set_default();
         };
@@ -423,7 +408,7 @@ impl<'a> BlobHeader {
         self.field_type.take().unwrap_or_else(|| ::std::string::String::new())
     }
 
-    pub fn get_field_type(&'a self) -> &'a str {
+    pub fn get_field_type<'a>(&'a self) -> &'a str {
         match self.field_type.as_ref() {
             Some(v) => v.as_slice(),
             None => "",
@@ -447,7 +432,7 @@ impl<'a> BlobHeader {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_indexdata(&'a mut self) -> &'a mut ::std::vec::Vec<u8> {
+    pub fn mut_indexdata<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u8> {
         if self.indexdata.is_none() {
             self.indexdata.set_default();
         };
@@ -459,7 +444,7 @@ impl<'a> BlobHeader {
         self.indexdata.take().unwrap_or_else(|| ::std::vec::Vec::new())
     }
 
-    pub fn get_indexdata(&'a self) -> &'a [u8] {
+    pub fn get_indexdata<'a>(&'a self) -> &'a [u8] {
         match self.indexdata.as_ref() {
             Some(v) => v.as_slice(),
             None => [].as_slice(),
@@ -469,7 +454,7 @@ impl<'a> BlobHeader {
     // required int32 datasize = 3;
 
     pub fn clear_datasize(&mut self) {
-        self.datasize = ::std::option::None;
+        self.datasize = ::std::option::Option::None;
     }
 
     pub fn has_datasize(&self) -> bool {
@@ -478,10 +463,10 @@ impl<'a> BlobHeader {
 
     // Param is passed by value, moved
     pub fn set_datasize(&mut self, v: i32) {
-        self.datasize = ::std::option::Some(v);
+        self.datasize = ::std::option::Option::Some(v);
     }
 
-    pub fn get_datasize(&self) -> i32 {
+    pub fn get_datasize<'a>(&self) -> i32 {
         self.datasize.unwrap_or(0)
     }
 }
@@ -507,24 +492,24 @@ impl ::protobuf::Message for BlobHeader {
             match field_number {
                 1 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.field_type.set_default();
                     try!(is.read_string_into(tmp))
                 },
                 2 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.indexdata.set_default();
                     try!(is.read_bytes_into(tmp))
                 },
                 3 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int32());
-                    self.datasize = ::std::option::Some(tmp);
+                    self.datasize = ::std::option::Option::Some(tmp);
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -532,7 +517,7 @@ impl ::protobuf::Message for BlobHeader {
                 },
             };
         }
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     // Compute sizes of nested messages
@@ -553,26 +538,17 @@ impl ::protobuf::Message for BlobHeader {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        match self.field_type.as_ref() {
-            Some(v) => {
-                try!(os.write_string(1, v.as_slice()));
-            },
-            None => {},
+        if let Some(v) = self.field_type.as_ref() {
+            try!(os.write_string(1, v.as_slice()));
         };
-        match self.indexdata.as_ref() {
-            Some(v) => {
-                try!(os.write_bytes(2, v.as_slice()));
-            },
-            None => {},
+        if let Some(v) = self.indexdata.as_ref() {
+            try!(os.write_bytes(2, v.as_slice()));
         };
-        match self.datasize {
-            Some(v) => {
-                try!(os.write_int32(3, v));
-            },
-            None => {},
+        if let Some(v) = self.datasize {
+            try!(os.write_int32(3, v));
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     fn get_cached_size(&self) -> u32 {

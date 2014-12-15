@@ -40,7 +40,7 @@ pub struct Way {
     pub tags: Tags,
 }
 
-#[deriving(Show, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+#[deriving(Show, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Copy)]
 pub enum OsmId {
     Node(i64),
     Way(i64),

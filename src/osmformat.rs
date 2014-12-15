@@ -22,7 +22,7 @@ pub struct HeaderBlock {
     cached_size: ::std::cell::Cell<u32>,
 }
 
-impl<'a> HeaderBlock {
+impl HeaderBlock {
     pub fn new() -> HeaderBlock {
         ::std::default::Default::default()
     }
@@ -40,8 +40,8 @@ impl<'a> HeaderBlock {
                     optional_features: ::protobuf::RepeatedField::new(),
                     writingprogram: ::protobuf::SingularField::none(),
                     source: ::protobuf::SingularField::none(),
-                    osmosis_replication_timestamp: ::std::option::None,
-                    osmosis_replication_sequence_number: ::std::option::None,
+                    osmosis_replication_timestamp: ::std::option::Option::None,
+                    osmosis_replication_sequence_number: ::std::option::Option::None,
                     osmosis_replication_base_url: ::protobuf::SingularField::none(),
                     unknown_fields: ::protobuf::UnknownFields::new(),
                     cached_size: ::std::cell::Cell::new(0),
@@ -67,7 +67,7 @@ impl<'a> HeaderBlock {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_bbox(&'a mut self) -> &'a mut HeaderBBox {
+    pub fn mut_bbox<'a>(&'a mut self) -> &'a mut HeaderBBox {
         if self.bbox.is_none() {
             self.bbox.set_default();
         };
@@ -79,7 +79,7 @@ impl<'a> HeaderBlock {
         self.bbox.take().unwrap_or_else(|| HeaderBBox::new())
     }
 
-    pub fn get_bbox(&'a self) -> &'a HeaderBBox {
+    pub fn get_bbox<'a>(&'a self) -> &'a HeaderBBox {
         self.bbox.as_ref().unwrap_or_else(|| HeaderBBox::default_instance())
     }
 
@@ -95,7 +95,7 @@ impl<'a> HeaderBlock {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_required_features(&'a mut self) -> &'a mut ::protobuf::RepeatedField<::std::string::String> {
+    pub fn mut_required_features<'a>(&'a mut self) -> &'a mut ::protobuf::RepeatedField<::std::string::String> {
         &mut self.required_features
     }
 
@@ -104,7 +104,7 @@ impl<'a> HeaderBlock {
         ::std::mem::replace(&mut self.required_features, ::protobuf::RepeatedField::new())
     }
 
-    pub fn get_required_features(&'a self) -> &'a [::std::string::String] {
+    pub fn get_required_features<'a>(&'a self) -> &'a [::std::string::String] {
         self.required_features.as_slice()
     }
 
@@ -120,7 +120,7 @@ impl<'a> HeaderBlock {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_optional_features(&'a mut self) -> &'a mut ::protobuf::RepeatedField<::std::string::String> {
+    pub fn mut_optional_features<'a>(&'a mut self) -> &'a mut ::protobuf::RepeatedField<::std::string::String> {
         &mut self.optional_features
     }
 
@@ -129,7 +129,7 @@ impl<'a> HeaderBlock {
         ::std::mem::replace(&mut self.optional_features, ::protobuf::RepeatedField::new())
     }
 
-    pub fn get_optional_features(&'a self) -> &'a [::std::string::String] {
+    pub fn get_optional_features<'a>(&'a self) -> &'a [::std::string::String] {
         self.optional_features.as_slice()
     }
 
@@ -150,7 +150,7 @@ impl<'a> HeaderBlock {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_writingprogram(&'a mut self) -> &'a mut ::std::string::String {
+    pub fn mut_writingprogram<'a>(&'a mut self) -> &'a mut ::std::string::String {
         if self.writingprogram.is_none() {
             self.writingprogram.set_default();
         };
@@ -162,7 +162,7 @@ impl<'a> HeaderBlock {
         self.writingprogram.take().unwrap_or_else(|| ::std::string::String::new())
     }
 
-    pub fn get_writingprogram(&'a self) -> &'a str {
+    pub fn get_writingprogram<'a>(&'a self) -> &'a str {
         match self.writingprogram.as_ref() {
             Some(v) => v.as_slice(),
             None => "",
@@ -186,7 +186,7 @@ impl<'a> HeaderBlock {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_source(&'a mut self) -> &'a mut ::std::string::String {
+    pub fn mut_source<'a>(&'a mut self) -> &'a mut ::std::string::String {
         if self.source.is_none() {
             self.source.set_default();
         };
@@ -198,7 +198,7 @@ impl<'a> HeaderBlock {
         self.source.take().unwrap_or_else(|| ::std::string::String::new())
     }
 
-    pub fn get_source(&'a self) -> &'a str {
+    pub fn get_source<'a>(&'a self) -> &'a str {
         match self.source.as_ref() {
             Some(v) => v.as_slice(),
             None => "",
@@ -208,7 +208,7 @@ impl<'a> HeaderBlock {
     // optional int64 osmosis_replication_timestamp = 32;
 
     pub fn clear_osmosis_replication_timestamp(&mut self) {
-        self.osmosis_replication_timestamp = ::std::option::None;
+        self.osmosis_replication_timestamp = ::std::option::Option::None;
     }
 
     pub fn has_osmosis_replication_timestamp(&self) -> bool {
@@ -217,17 +217,17 @@ impl<'a> HeaderBlock {
 
     // Param is passed by value, moved
     pub fn set_osmosis_replication_timestamp(&mut self, v: i64) {
-        self.osmosis_replication_timestamp = ::std::option::Some(v);
+        self.osmosis_replication_timestamp = ::std::option::Option::Some(v);
     }
 
-    pub fn get_osmosis_replication_timestamp(&self) -> i64 {
+    pub fn get_osmosis_replication_timestamp<'a>(&self) -> i64 {
         self.osmosis_replication_timestamp.unwrap_or(0)
     }
 
     // optional int64 osmosis_replication_sequence_number = 33;
 
     pub fn clear_osmosis_replication_sequence_number(&mut self) {
-        self.osmosis_replication_sequence_number = ::std::option::None;
+        self.osmosis_replication_sequence_number = ::std::option::Option::None;
     }
 
     pub fn has_osmosis_replication_sequence_number(&self) -> bool {
@@ -236,10 +236,10 @@ impl<'a> HeaderBlock {
 
     // Param is passed by value, moved
     pub fn set_osmosis_replication_sequence_number(&mut self, v: i64) {
-        self.osmosis_replication_sequence_number = ::std::option::Some(v);
+        self.osmosis_replication_sequence_number = ::std::option::Option::Some(v);
     }
 
-    pub fn get_osmosis_replication_sequence_number(&self) -> i64 {
+    pub fn get_osmosis_replication_sequence_number<'a>(&self) -> i64 {
         self.osmosis_replication_sequence_number.unwrap_or(0)
     }
 
@@ -260,7 +260,7 @@ impl<'a> HeaderBlock {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_osmosis_replication_base_url(&'a mut self) -> &'a mut ::std::string::String {
+    pub fn mut_osmosis_replication_base_url<'a>(&'a mut self) -> &'a mut ::std::string::String {
         if self.osmosis_replication_base_url.is_none() {
             self.osmosis_replication_base_url.set_default();
         };
@@ -272,7 +272,7 @@ impl<'a> HeaderBlock {
         self.osmosis_replication_base_url.take().unwrap_or_else(|| ::std::string::String::new())
     }
 
-    pub fn get_osmosis_replication_base_url(&'a self) -> &'a str {
+    pub fn get_osmosis_replication_base_url<'a>(&'a self) -> &'a str {
         match self.osmosis_replication_base_url.as_ref() {
             Some(v) => v.as_slice(),
             None => "",
@@ -295,56 +295,56 @@ impl ::protobuf::Message for HeaderBlock {
             match field_number {
                 1 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.bbox.set_default();
                     try!(is.merge_message(tmp))
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.required_features.push_default();
                     try!(is.read_string_into(tmp))
                 },
                 5 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.optional_features.push_default();
                     try!(is.read_string_into(tmp))
                 },
                 16 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.writingprogram.set_default();
                     try!(is.read_string_into(tmp))
                 },
                 17 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.source.set_default();
                     try!(is.read_string_into(tmp))
                 },
                 32 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.osmosis_replication_timestamp = ::std::option::Some(tmp);
+                    self.osmosis_replication_timestamp = ::std::option::Option::Some(tmp);
                 },
                 33 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.osmosis_replication_sequence_number = ::std::option::Some(tmp);
+                    self.osmosis_replication_sequence_number = ::std::option::Option::Some(tmp);
                 },
                 34 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.osmosis_replication_base_url.set_default();
                     try!(is.read_string_into(tmp))
@@ -355,7 +355,7 @@ impl ::protobuf::Message for HeaderBlock {
                 },
             };
         }
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     // Compute sizes of nested messages
@@ -392,13 +392,10 @@ impl ::protobuf::Message for HeaderBlock {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        match self.bbox.as_ref() {
-            Some(v) => {
-                try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
-                try!(os.write_raw_varint32(v.get_cached_size()));
-                try!(v.write_to_with_cached_sizes(os));
-            },
-            None => {},
+        if let Some(v) = self.bbox.as_ref() {
+            try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
+            try!(os.write_raw_varint32(v.get_cached_size()));
+            try!(v.write_to_with_cached_sizes(os));
         };
         for v in self.required_features.iter() {
             try!(os.write_string(4, v.as_slice()));
@@ -406,38 +403,23 @@ impl ::protobuf::Message for HeaderBlock {
         for v in self.optional_features.iter() {
             try!(os.write_string(5, v.as_slice()));
         };
-        match self.writingprogram.as_ref() {
-            Some(v) => {
-                try!(os.write_string(16, v.as_slice()));
-            },
-            None => {},
+        if let Some(v) = self.writingprogram.as_ref() {
+            try!(os.write_string(16, v.as_slice()));
         };
-        match self.source.as_ref() {
-            Some(v) => {
-                try!(os.write_string(17, v.as_slice()));
-            },
-            None => {},
+        if let Some(v) = self.source.as_ref() {
+            try!(os.write_string(17, v.as_slice()));
         };
-        match self.osmosis_replication_timestamp {
-            Some(v) => {
-                try!(os.write_int64(32, v));
-            },
-            None => {},
+        if let Some(v) = self.osmosis_replication_timestamp {
+            try!(os.write_int64(32, v));
         };
-        match self.osmosis_replication_sequence_number {
-            Some(v) => {
-                try!(os.write_int64(33, v));
-            },
-            None => {},
+        if let Some(v) = self.osmosis_replication_sequence_number {
+            try!(os.write_int64(33, v));
         };
-        match self.osmosis_replication_base_url.as_ref() {
-            Some(v) => {
-                try!(os.write_string(34, v.as_slice()));
-            },
-            None => {},
+        if let Some(v) = self.osmosis_replication_base_url.as_ref() {
+            try!(os.write_string(34, v.as_slice()));
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     fn get_cached_size(&self) -> u32 {
@@ -495,7 +477,7 @@ pub struct HeaderBBox {
     cached_size: ::std::cell::Cell<u32>,
 }
 
-impl<'a> HeaderBBox {
+impl HeaderBBox {
     pub fn new() -> HeaderBBox {
         ::std::default::Default::default()
     }
@@ -508,10 +490,10 @@ impl<'a> HeaderBBox {
         unsafe {
             instance.get(|| {
                 HeaderBBox {
-                    left: ::std::option::None,
-                    right: ::std::option::None,
-                    top: ::std::option::None,
-                    bottom: ::std::option::None,
+                    left: ::std::option::Option::None,
+                    right: ::std::option::Option::None,
+                    top: ::std::option::Option::None,
+                    bottom: ::std::option::Option::None,
                     unknown_fields: ::protobuf::UnknownFields::new(),
                     cached_size: ::std::cell::Cell::new(0),
                 }
@@ -522,7 +504,7 @@ impl<'a> HeaderBBox {
     // required sint64 left = 1;
 
     pub fn clear_left(&mut self) {
-        self.left = ::std::option::None;
+        self.left = ::std::option::Option::None;
     }
 
     pub fn has_left(&self) -> bool {
@@ -531,17 +513,17 @@ impl<'a> HeaderBBox {
 
     // Param is passed by value, moved
     pub fn set_left(&mut self, v: i64) {
-        self.left = ::std::option::Some(v);
+        self.left = ::std::option::Option::Some(v);
     }
 
-    pub fn get_left(&self) -> i64 {
+    pub fn get_left<'a>(&self) -> i64 {
         self.left.unwrap_or(0)
     }
 
     // required sint64 right = 2;
 
     pub fn clear_right(&mut self) {
-        self.right = ::std::option::None;
+        self.right = ::std::option::Option::None;
     }
 
     pub fn has_right(&self) -> bool {
@@ -550,17 +532,17 @@ impl<'a> HeaderBBox {
 
     // Param is passed by value, moved
     pub fn set_right(&mut self, v: i64) {
-        self.right = ::std::option::Some(v);
+        self.right = ::std::option::Option::Some(v);
     }
 
-    pub fn get_right(&self) -> i64 {
+    pub fn get_right<'a>(&self) -> i64 {
         self.right.unwrap_or(0)
     }
 
     // required sint64 top = 3;
 
     pub fn clear_top(&mut self) {
-        self.top = ::std::option::None;
+        self.top = ::std::option::Option::None;
     }
 
     pub fn has_top(&self) -> bool {
@@ -569,17 +551,17 @@ impl<'a> HeaderBBox {
 
     // Param is passed by value, moved
     pub fn set_top(&mut self, v: i64) {
-        self.top = ::std::option::Some(v);
+        self.top = ::std::option::Option::Some(v);
     }
 
-    pub fn get_top(&self) -> i64 {
+    pub fn get_top<'a>(&self) -> i64 {
         self.top.unwrap_or(0)
     }
 
     // required sint64 bottom = 4;
 
     pub fn clear_bottom(&mut self) {
-        self.bottom = ::std::option::None;
+        self.bottom = ::std::option::Option::None;
     }
 
     pub fn has_bottom(&self) -> bool {
@@ -588,10 +570,10 @@ impl<'a> HeaderBBox {
 
     // Param is passed by value, moved
     pub fn set_bottom(&mut self, v: i64) {
-        self.bottom = ::std::option::Some(v);
+        self.bottom = ::std::option::Option::Some(v);
     }
 
-    pub fn get_bottom(&self) -> i64 {
+    pub fn get_bottom<'a>(&self) -> i64 {
         self.bottom.unwrap_or(0)
     }
 }
@@ -623,31 +605,31 @@ impl ::protobuf::Message for HeaderBBox {
             match field_number {
                 1 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_sint64());
-                    self.left = ::std::option::Some(tmp);
+                    self.left = ::std::option::Option::Some(tmp);
                 },
                 2 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_sint64());
-                    self.right = ::std::option::Some(tmp);
+                    self.right = ::std::option::Option::Some(tmp);
                 },
                 3 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_sint64());
-                    self.top = ::std::option::Some(tmp);
+                    self.top = ::std::option::Option::Some(tmp);
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_sint64());
-                    self.bottom = ::std::option::Some(tmp);
+                    self.bottom = ::std::option::Option::Some(tmp);
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -655,7 +637,7 @@ impl ::protobuf::Message for HeaderBBox {
                 },
             };
         }
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     // Compute sizes of nested messages
@@ -679,32 +661,20 @@ impl ::protobuf::Message for HeaderBBox {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        match self.left {
-            Some(v) => {
-                try!(os.write_sint64(1, v));
-            },
-            None => {},
+        if let Some(v) = self.left {
+            try!(os.write_sint64(1, v));
         };
-        match self.right {
-            Some(v) => {
-                try!(os.write_sint64(2, v));
-            },
-            None => {},
+        if let Some(v) = self.right {
+            try!(os.write_sint64(2, v));
         };
-        match self.top {
-            Some(v) => {
-                try!(os.write_sint64(3, v));
-            },
-            None => {},
+        if let Some(v) = self.top {
+            try!(os.write_sint64(3, v));
         };
-        match self.bottom {
-            Some(v) => {
-                try!(os.write_sint64(4, v));
-            },
-            None => {},
+        if let Some(v) = self.bottom {
+            try!(os.write_sint64(4, v));
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     fn get_cached_size(&self) -> u32 {
@@ -756,7 +726,7 @@ pub struct PrimitiveBlock {
     cached_size: ::std::cell::Cell<u32>,
 }
 
-impl<'a> PrimitiveBlock {
+impl PrimitiveBlock {
     pub fn new() -> PrimitiveBlock {
         ::std::default::Default::default()
     }
@@ -771,10 +741,10 @@ impl<'a> PrimitiveBlock {
                 PrimitiveBlock {
                     stringtable: ::protobuf::SingularPtrField::none(),
                     primitivegroup: ::protobuf::RepeatedField::new(),
-                    granularity: ::std::option::None,
-                    lat_offset: ::std::option::None,
-                    lon_offset: ::std::option::None,
-                    date_granularity: ::std::option::None,
+                    granularity: ::std::option::Option::None,
+                    lat_offset: ::std::option::Option::None,
+                    lon_offset: ::std::option::Option::None,
+                    date_granularity: ::std::option::Option::None,
                     unknown_fields: ::protobuf::UnknownFields::new(),
                     cached_size: ::std::cell::Cell::new(0),
                 }
@@ -799,7 +769,7 @@ impl<'a> PrimitiveBlock {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_stringtable(&'a mut self) -> &'a mut StringTable {
+    pub fn mut_stringtable<'a>(&'a mut self) -> &'a mut StringTable {
         if self.stringtable.is_none() {
             self.stringtable.set_default();
         };
@@ -811,7 +781,7 @@ impl<'a> PrimitiveBlock {
         self.stringtable.take().unwrap_or_else(|| StringTable::new())
     }
 
-    pub fn get_stringtable(&'a self) -> &'a StringTable {
+    pub fn get_stringtable<'a>(&'a self) -> &'a StringTable {
         self.stringtable.as_ref().unwrap_or_else(|| StringTable::default_instance())
     }
 
@@ -827,7 +797,7 @@ impl<'a> PrimitiveBlock {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_primitivegroup(&'a mut self) -> &'a mut ::protobuf::RepeatedField<PrimitiveGroup> {
+    pub fn mut_primitivegroup<'a>(&'a mut self) -> &'a mut ::protobuf::RepeatedField<PrimitiveGroup> {
         &mut self.primitivegroup
     }
 
@@ -836,14 +806,14 @@ impl<'a> PrimitiveBlock {
         ::std::mem::replace(&mut self.primitivegroup, ::protobuf::RepeatedField::new())
     }
 
-    pub fn get_primitivegroup(&'a self) -> &'a [PrimitiveGroup] {
+    pub fn get_primitivegroup<'a>(&'a self) -> &'a [PrimitiveGroup] {
         self.primitivegroup.as_slice()
     }
 
     // optional int32 granularity = 17;
 
     pub fn clear_granularity(&mut self) {
-        self.granularity = ::std::option::None;
+        self.granularity = ::std::option::Option::None;
     }
 
     pub fn has_granularity(&self) -> bool {
@@ -852,17 +822,17 @@ impl<'a> PrimitiveBlock {
 
     // Param is passed by value, moved
     pub fn set_granularity(&mut self, v: i32) {
-        self.granularity = ::std::option::Some(v);
+        self.granularity = ::std::option::Option::Some(v);
     }
 
-    pub fn get_granularity(&self) -> i32 {
+    pub fn get_granularity<'a>(&self) -> i32 {
         self.granularity.unwrap_or(100i32)
     }
 
     // optional int64 lat_offset = 19;
 
     pub fn clear_lat_offset(&mut self) {
-        self.lat_offset = ::std::option::None;
+        self.lat_offset = ::std::option::Option::None;
     }
 
     pub fn has_lat_offset(&self) -> bool {
@@ -871,17 +841,17 @@ impl<'a> PrimitiveBlock {
 
     // Param is passed by value, moved
     pub fn set_lat_offset(&mut self, v: i64) {
-        self.lat_offset = ::std::option::Some(v);
+        self.lat_offset = ::std::option::Option::Some(v);
     }
 
-    pub fn get_lat_offset(&self) -> i64 {
+    pub fn get_lat_offset<'a>(&self) -> i64 {
         self.lat_offset.unwrap_or(0i64)
     }
 
     // optional int64 lon_offset = 20;
 
     pub fn clear_lon_offset(&mut self) {
-        self.lon_offset = ::std::option::None;
+        self.lon_offset = ::std::option::Option::None;
     }
 
     pub fn has_lon_offset(&self) -> bool {
@@ -890,17 +860,17 @@ impl<'a> PrimitiveBlock {
 
     // Param is passed by value, moved
     pub fn set_lon_offset(&mut self, v: i64) {
-        self.lon_offset = ::std::option::Some(v);
+        self.lon_offset = ::std::option::Option::Some(v);
     }
 
-    pub fn get_lon_offset(&self) -> i64 {
+    pub fn get_lon_offset<'a>(&self) -> i64 {
         self.lon_offset.unwrap_or(0i64)
     }
 
     // optional int32 date_granularity = 18;
 
     pub fn clear_date_granularity(&mut self) {
-        self.date_granularity = ::std::option::None;
+        self.date_granularity = ::std::option::Option::None;
     }
 
     pub fn has_date_granularity(&self) -> bool {
@@ -909,10 +879,10 @@ impl<'a> PrimitiveBlock {
 
     // Param is passed by value, moved
     pub fn set_date_granularity(&mut self, v: i32) {
-        self.date_granularity = ::std::option::Some(v);
+        self.date_granularity = ::std::option::Option::Some(v);
     }
 
-    pub fn get_date_granularity(&self) -> i32 {
+    pub fn get_date_granularity<'a>(&self) -> i32 {
         self.date_granularity.unwrap_or(1000i32)
     }
 }
@@ -935,45 +905,45 @@ impl ::protobuf::Message for PrimitiveBlock {
             match field_number {
                 1 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.stringtable.set_default();
                     try!(is.merge_message(tmp))
                 },
                 2 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.primitivegroup.push_default();
                     try!(is.merge_message(tmp))
                 },
                 17 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int32());
-                    self.granularity = ::std::option::Some(tmp);
+                    self.granularity = ::std::option::Option::Some(tmp);
                 },
                 19 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.lat_offset = ::std::option::Some(tmp);
+                    self.lat_offset = ::std::option::Option::Some(tmp);
                 },
                 20 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.lon_offset = ::std::option::Some(tmp);
+                    self.lon_offset = ::std::option::Option::Some(tmp);
                 },
                 18 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int32());
-                    self.date_granularity = ::std::option::Some(tmp);
+                    self.date_granularity = ::std::option::Option::Some(tmp);
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -981,7 +951,7 @@ impl ::protobuf::Message for PrimitiveBlock {
                 },
             };
         }
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     // Compute sizes of nested messages
@@ -1013,45 +983,30 @@ impl ::protobuf::Message for PrimitiveBlock {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        match self.stringtable.as_ref() {
-            Some(v) => {
-                try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
-                try!(os.write_raw_varint32(v.get_cached_size()));
-                try!(v.write_to_with_cached_sizes(os));
-            },
-            None => {},
+        if let Some(v) = self.stringtable.as_ref() {
+            try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
+            try!(os.write_raw_varint32(v.get_cached_size()));
+            try!(v.write_to_with_cached_sizes(os));
         };
         for v in self.primitivegroup.iter() {
             try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
             try!(os.write_raw_varint32(v.get_cached_size()));
             try!(v.write_to_with_cached_sizes(os));
         };
-        match self.granularity {
-            Some(v) => {
-                try!(os.write_int32(17, v));
-            },
-            None => {},
+        if let Some(v) = self.granularity {
+            try!(os.write_int32(17, v));
         };
-        match self.lat_offset {
-            Some(v) => {
-                try!(os.write_int64(19, v));
-            },
-            None => {},
+        if let Some(v) = self.lat_offset {
+            try!(os.write_int64(19, v));
         };
-        match self.lon_offset {
-            Some(v) => {
-                try!(os.write_int64(20, v));
-            },
-            None => {},
+        if let Some(v) = self.lon_offset {
+            try!(os.write_int64(20, v));
         };
-        match self.date_granularity {
-            Some(v) => {
-                try!(os.write_int32(18, v));
-            },
-            None => {},
+        if let Some(v) = self.date_granularity {
+            try!(os.write_int32(18, v));
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     fn get_cached_size(&self) -> u32 {
@@ -1106,7 +1061,7 @@ pub struct PrimitiveGroup {
     cached_size: ::std::cell::Cell<u32>,
 }
 
-impl<'a> PrimitiveGroup {
+impl PrimitiveGroup {
     pub fn new() -> PrimitiveGroup {
         ::std::default::Default::default()
     }
@@ -1143,7 +1098,7 @@ impl<'a> PrimitiveGroup {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_nodes(&'a mut self) -> &'a mut ::protobuf::RepeatedField<Node> {
+    pub fn mut_nodes<'a>(&'a mut self) -> &'a mut ::protobuf::RepeatedField<Node> {
         &mut self.nodes
     }
 
@@ -1152,7 +1107,7 @@ impl<'a> PrimitiveGroup {
         ::std::mem::replace(&mut self.nodes, ::protobuf::RepeatedField::new())
     }
 
-    pub fn get_nodes(&'a self) -> &'a [Node] {
+    pub fn get_nodes<'a>(&'a self) -> &'a [Node] {
         self.nodes.as_slice()
     }
 
@@ -1173,7 +1128,7 @@ impl<'a> PrimitiveGroup {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_dense(&'a mut self) -> &'a mut DenseNodes {
+    pub fn mut_dense<'a>(&'a mut self) -> &'a mut DenseNodes {
         if self.dense.is_none() {
             self.dense.set_default();
         };
@@ -1185,7 +1140,7 @@ impl<'a> PrimitiveGroup {
         self.dense.take().unwrap_or_else(|| DenseNodes::new())
     }
 
-    pub fn get_dense(&'a self) -> &'a DenseNodes {
+    pub fn get_dense<'a>(&'a self) -> &'a DenseNodes {
         self.dense.as_ref().unwrap_or_else(|| DenseNodes::default_instance())
     }
 
@@ -1201,7 +1156,7 @@ impl<'a> PrimitiveGroup {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_ways(&'a mut self) -> &'a mut ::protobuf::RepeatedField<Way> {
+    pub fn mut_ways<'a>(&'a mut self) -> &'a mut ::protobuf::RepeatedField<Way> {
         &mut self.ways
     }
 
@@ -1210,7 +1165,7 @@ impl<'a> PrimitiveGroup {
         ::std::mem::replace(&mut self.ways, ::protobuf::RepeatedField::new())
     }
 
-    pub fn get_ways(&'a self) -> &'a [Way] {
+    pub fn get_ways<'a>(&'a self) -> &'a [Way] {
         self.ways.as_slice()
     }
 
@@ -1226,7 +1181,7 @@ impl<'a> PrimitiveGroup {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_relations(&'a mut self) -> &'a mut ::protobuf::RepeatedField<Relation> {
+    pub fn mut_relations<'a>(&'a mut self) -> &'a mut ::protobuf::RepeatedField<Relation> {
         &mut self.relations
     }
 
@@ -1235,7 +1190,7 @@ impl<'a> PrimitiveGroup {
         ::std::mem::replace(&mut self.relations, ::protobuf::RepeatedField::new())
     }
 
-    pub fn get_relations(&'a self) -> &'a [Relation] {
+    pub fn get_relations<'a>(&'a self) -> &'a [Relation] {
         self.relations.as_slice()
     }
 
@@ -1251,7 +1206,7 @@ impl<'a> PrimitiveGroup {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_changesets(&'a mut self) -> &'a mut ::protobuf::RepeatedField<ChangeSet> {
+    pub fn mut_changesets<'a>(&'a mut self) -> &'a mut ::protobuf::RepeatedField<ChangeSet> {
         &mut self.changesets
     }
 
@@ -1260,7 +1215,7 @@ impl<'a> PrimitiveGroup {
         ::std::mem::replace(&mut self.changesets, ::protobuf::RepeatedField::new())
     }
 
-    pub fn get_changesets(&'a self) -> &'a [ChangeSet] {
+    pub fn get_changesets<'a>(&'a self) -> &'a [ChangeSet] {
         self.changesets.as_slice()
     }
 }
@@ -1280,35 +1235,35 @@ impl ::protobuf::Message for PrimitiveGroup {
             match field_number {
                 1 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.nodes.push_default();
                     try!(is.merge_message(tmp))
                 },
                 2 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.dense.set_default();
                     try!(is.merge_message(tmp))
                 },
                 3 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.ways.push_default();
                     try!(is.merge_message(tmp))
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.relations.push_default();
                     try!(is.merge_message(tmp))
                 },
                 5 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.changesets.push_default();
                     try!(is.merge_message(tmp))
@@ -1319,7 +1274,7 @@ impl ::protobuf::Message for PrimitiveGroup {
                 },
             };
         }
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     // Compute sizes of nested messages
@@ -1356,13 +1311,10 @@ impl ::protobuf::Message for PrimitiveGroup {
             try!(os.write_raw_varint32(v.get_cached_size()));
             try!(v.write_to_with_cached_sizes(os));
         };
-        match self.dense.as_ref() {
-            Some(v) => {
-                try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
-                try!(os.write_raw_varint32(v.get_cached_size()));
-                try!(v.write_to_with_cached_sizes(os));
-            },
-            None => {},
+        if let Some(v) = self.dense.as_ref() {
+            try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
+            try!(os.write_raw_varint32(v.get_cached_size()));
+            try!(v.write_to_with_cached_sizes(os));
         };
         for v in self.ways.iter() {
             try!(os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited));
@@ -1380,7 +1332,7 @@ impl ::protobuf::Message for PrimitiveGroup {
             try!(v.write_to_with_cached_sizes(os));
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     fn get_cached_size(&self) -> u32 {
@@ -1429,7 +1381,7 @@ pub struct StringTable {
     cached_size: ::std::cell::Cell<u32>,
 }
 
-impl<'a> StringTable {
+impl StringTable {
     pub fn new() -> StringTable {
         ::std::default::Default::default()
     }
@@ -1462,7 +1414,7 @@ impl<'a> StringTable {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_s(&'a mut self) -> &'a mut ::protobuf::RepeatedField<::std::vec::Vec<u8>> {
+    pub fn mut_s<'a>(&'a mut self) -> &'a mut ::protobuf::RepeatedField<::std::vec::Vec<u8>> {
         &mut self.s
     }
 
@@ -1471,7 +1423,7 @@ impl<'a> StringTable {
         ::std::mem::replace(&mut self.s, ::protobuf::RepeatedField::new())
     }
 
-    pub fn get_s(&'a self) -> &'a [::std::vec::Vec<u8>] {
+    pub fn get_s<'a>(&'a self) -> &'a [::std::vec::Vec<u8>] {
         self.s.as_slice()
     }
 }
@@ -1491,7 +1443,7 @@ impl ::protobuf::Message for StringTable {
             match field_number {
                 1 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.s.push_default();
                     try!(is.read_bytes_into(tmp))
@@ -1502,7 +1454,7 @@ impl ::protobuf::Message for StringTable {
                 },
             };
         }
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     // Compute sizes of nested messages
@@ -1521,7 +1473,7 @@ impl ::protobuf::Message for StringTable {
             try!(os.write_bytes(1, v.as_slice()));
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     fn get_cached_size(&self) -> u32 {
@@ -1567,7 +1519,7 @@ pub struct Info {
     cached_size: ::std::cell::Cell<u32>,
 }
 
-impl<'a> Info {
+impl Info {
     pub fn new() -> Info {
         ::std::default::Default::default()
     }
@@ -1580,12 +1532,12 @@ impl<'a> Info {
         unsafe {
             instance.get(|| {
                 Info {
-                    version: ::std::option::None,
-                    timestamp: ::std::option::None,
-                    changeset: ::std::option::None,
-                    uid: ::std::option::None,
-                    user_sid: ::std::option::None,
-                    visible: ::std::option::None,
+                    version: ::std::option::Option::None,
+                    timestamp: ::std::option::Option::None,
+                    changeset: ::std::option::Option::None,
+                    uid: ::std::option::Option::None,
+                    user_sid: ::std::option::Option::None,
+                    visible: ::std::option::Option::None,
                     unknown_fields: ::protobuf::UnknownFields::new(),
                     cached_size: ::std::cell::Cell::new(0),
                 }
@@ -1596,7 +1548,7 @@ impl<'a> Info {
     // optional int32 version = 1;
 
     pub fn clear_version(&mut self) {
-        self.version = ::std::option::None;
+        self.version = ::std::option::Option::None;
     }
 
     pub fn has_version(&self) -> bool {
@@ -1605,17 +1557,17 @@ impl<'a> Info {
 
     // Param is passed by value, moved
     pub fn set_version(&mut self, v: i32) {
-        self.version = ::std::option::Some(v);
+        self.version = ::std::option::Option::Some(v);
     }
 
-    pub fn get_version(&self) -> i32 {
+    pub fn get_version<'a>(&self) -> i32 {
         self.version.unwrap_or(-1i32)
     }
 
     // optional int64 timestamp = 2;
 
     pub fn clear_timestamp(&mut self) {
-        self.timestamp = ::std::option::None;
+        self.timestamp = ::std::option::Option::None;
     }
 
     pub fn has_timestamp(&self) -> bool {
@@ -1624,17 +1576,17 @@ impl<'a> Info {
 
     // Param is passed by value, moved
     pub fn set_timestamp(&mut self, v: i64) {
-        self.timestamp = ::std::option::Some(v);
+        self.timestamp = ::std::option::Option::Some(v);
     }
 
-    pub fn get_timestamp(&self) -> i64 {
+    pub fn get_timestamp<'a>(&self) -> i64 {
         self.timestamp.unwrap_or(0)
     }
 
     // optional int64 changeset = 3;
 
     pub fn clear_changeset(&mut self) {
-        self.changeset = ::std::option::None;
+        self.changeset = ::std::option::Option::None;
     }
 
     pub fn has_changeset(&self) -> bool {
@@ -1643,17 +1595,17 @@ impl<'a> Info {
 
     // Param is passed by value, moved
     pub fn set_changeset(&mut self, v: i64) {
-        self.changeset = ::std::option::Some(v);
+        self.changeset = ::std::option::Option::Some(v);
     }
 
-    pub fn get_changeset(&self) -> i64 {
+    pub fn get_changeset<'a>(&self) -> i64 {
         self.changeset.unwrap_or(0)
     }
 
     // optional int32 uid = 4;
 
     pub fn clear_uid(&mut self) {
-        self.uid = ::std::option::None;
+        self.uid = ::std::option::Option::None;
     }
 
     pub fn has_uid(&self) -> bool {
@@ -1662,17 +1614,17 @@ impl<'a> Info {
 
     // Param is passed by value, moved
     pub fn set_uid(&mut self, v: i32) {
-        self.uid = ::std::option::Some(v);
+        self.uid = ::std::option::Option::Some(v);
     }
 
-    pub fn get_uid(&self) -> i32 {
+    pub fn get_uid<'a>(&self) -> i32 {
         self.uid.unwrap_or(0)
     }
 
     // optional uint32 user_sid = 5;
 
     pub fn clear_user_sid(&mut self) {
-        self.user_sid = ::std::option::None;
+        self.user_sid = ::std::option::Option::None;
     }
 
     pub fn has_user_sid(&self) -> bool {
@@ -1681,17 +1633,17 @@ impl<'a> Info {
 
     // Param is passed by value, moved
     pub fn set_user_sid(&mut self, v: u32) {
-        self.user_sid = ::std::option::Some(v);
+        self.user_sid = ::std::option::Option::Some(v);
     }
 
-    pub fn get_user_sid(&self) -> u32 {
+    pub fn get_user_sid<'a>(&self) -> u32 {
         self.user_sid.unwrap_or(0)
     }
 
     // optional bool visible = 6;
 
     pub fn clear_visible(&mut self) {
-        self.visible = ::std::option::None;
+        self.visible = ::std::option::Option::None;
     }
 
     pub fn has_visible(&self) -> bool {
@@ -1700,10 +1652,10 @@ impl<'a> Info {
 
     // Param is passed by value, moved
     pub fn set_visible(&mut self, v: bool) {
-        self.visible = ::std::option::Some(v);
+        self.visible = ::std::option::Option::Some(v);
     }
 
-    pub fn get_visible(&self) -> bool {
+    pub fn get_visible<'a>(&self) -> bool {
         self.visible.unwrap_or(false)
     }
 }
@@ -1723,45 +1675,45 @@ impl ::protobuf::Message for Info {
             match field_number {
                 1 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int32());
-                    self.version = ::std::option::Some(tmp);
+                    self.version = ::std::option::Option::Some(tmp);
                 },
                 2 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.timestamp = ::std::option::Some(tmp);
+                    self.timestamp = ::std::option::Option::Some(tmp);
                 },
                 3 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.changeset = ::std::option::Some(tmp);
+                    self.changeset = ::std::option::Option::Some(tmp);
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int32());
-                    self.uid = ::std::option::Some(tmp);
+                    self.uid = ::std::option::Option::Some(tmp);
                 },
                 5 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_uint32());
-                    self.user_sid = ::std::option::Some(tmp);
+                    self.user_sid = ::std::option::Option::Some(tmp);
                 },
                 6 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_bool());
-                    self.visible = ::std::option::Some(tmp);
+                    self.visible = ::std::option::Option::Some(tmp);
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -1769,7 +1721,7 @@ impl ::protobuf::Message for Info {
                 },
             };
         }
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     // Compute sizes of nested messages
@@ -1799,44 +1751,26 @@ impl ::protobuf::Message for Info {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        match self.version {
-            Some(v) => {
-                try!(os.write_int32(1, v));
-            },
-            None => {},
+        if let Some(v) = self.version {
+            try!(os.write_int32(1, v));
         };
-        match self.timestamp {
-            Some(v) => {
-                try!(os.write_int64(2, v));
-            },
-            None => {},
+        if let Some(v) = self.timestamp {
+            try!(os.write_int64(2, v));
         };
-        match self.changeset {
-            Some(v) => {
-                try!(os.write_int64(3, v));
-            },
-            None => {},
+        if let Some(v) = self.changeset {
+            try!(os.write_int64(3, v));
         };
-        match self.uid {
-            Some(v) => {
-                try!(os.write_int32(4, v));
-            },
-            None => {},
+        if let Some(v) = self.uid {
+            try!(os.write_int32(4, v));
         };
-        match self.user_sid {
-            Some(v) => {
-                try!(os.write_uint32(5, v));
-            },
-            None => {},
+        if let Some(v) = self.user_sid {
+            try!(os.write_uint32(5, v));
         };
-        match self.visible {
-            Some(v) => {
-                try!(os.write_bool(6, v));
-            },
-            None => {},
+        if let Some(v) = self.visible {
+            try!(os.write_bool(6, v));
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     fn get_cached_size(&self) -> u32 {
@@ -1892,7 +1826,7 @@ pub struct DenseInfo {
     cached_size: ::std::cell::Cell<u32>,
 }
 
-impl<'a> DenseInfo {
+impl DenseInfo {
     pub fn new() -> DenseInfo {
         ::std::default::Default::default()
     }
@@ -1930,7 +1864,7 @@ impl<'a> DenseInfo {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_version(&'a mut self) -> &'a mut ::std::vec::Vec<i32> {
+    pub fn mut_version<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<i32> {
         &mut self.version
     }
 
@@ -1939,7 +1873,7 @@ impl<'a> DenseInfo {
         ::std::mem::replace(&mut self.version, ::std::vec::Vec::new())
     }
 
-    pub fn get_version(&'a self) -> &'a [i32] {
+    pub fn get_version<'a>(&'a self) -> &'a [i32] {
         self.version.as_slice()
     }
 
@@ -1955,7 +1889,7 @@ impl<'a> DenseInfo {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_timestamp(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
+    pub fn mut_timestamp<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
         &mut self.timestamp
     }
 
@@ -1964,7 +1898,7 @@ impl<'a> DenseInfo {
         ::std::mem::replace(&mut self.timestamp, ::std::vec::Vec::new())
     }
 
-    pub fn get_timestamp(&'a self) -> &'a [i64] {
+    pub fn get_timestamp<'a>(&'a self) -> &'a [i64] {
         self.timestamp.as_slice()
     }
 
@@ -1980,7 +1914,7 @@ impl<'a> DenseInfo {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_changeset(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
+    pub fn mut_changeset<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
         &mut self.changeset
     }
 
@@ -1989,7 +1923,7 @@ impl<'a> DenseInfo {
         ::std::mem::replace(&mut self.changeset, ::std::vec::Vec::new())
     }
 
-    pub fn get_changeset(&'a self) -> &'a [i64] {
+    pub fn get_changeset<'a>(&'a self) -> &'a [i64] {
         self.changeset.as_slice()
     }
 
@@ -2005,7 +1939,7 @@ impl<'a> DenseInfo {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_uid(&'a mut self) -> &'a mut ::std::vec::Vec<i32> {
+    pub fn mut_uid<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<i32> {
         &mut self.uid
     }
 
@@ -2014,7 +1948,7 @@ impl<'a> DenseInfo {
         ::std::mem::replace(&mut self.uid, ::std::vec::Vec::new())
     }
 
-    pub fn get_uid(&'a self) -> &'a [i32] {
+    pub fn get_uid<'a>(&'a self) -> &'a [i32] {
         self.uid.as_slice()
     }
 
@@ -2030,7 +1964,7 @@ impl<'a> DenseInfo {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_user_sid(&'a mut self) -> &'a mut ::std::vec::Vec<i32> {
+    pub fn mut_user_sid<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<i32> {
         &mut self.user_sid
     }
 
@@ -2039,7 +1973,7 @@ impl<'a> DenseInfo {
         ::std::mem::replace(&mut self.user_sid, ::std::vec::Vec::new())
     }
 
-    pub fn get_user_sid(&'a self) -> &'a [i32] {
+    pub fn get_user_sid<'a>(&'a self) -> &'a [i32] {
         self.user_sid.as_slice()
     }
 
@@ -2055,7 +1989,7 @@ impl<'a> DenseInfo {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_visible(&'a mut self) -> &'a mut ::std::vec::Vec<bool> {
+    pub fn mut_visible<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<bool> {
         &mut self.visible
     }
 
@@ -2064,7 +1998,7 @@ impl<'a> DenseInfo {
         ::std::mem::replace(&mut self.visible, ::std::vec::Vec::new())
     }
 
-    pub fn get_visible(&'a self) -> &'a [bool] {
+    pub fn get_visible<'a>(&'a self) -> &'a [bool] {
         self.visible.as_slice()
     }
 }
@@ -2091,7 +2025,7 @@ impl ::protobuf::Message for DenseInfo {
                             self.version.push(try!(is.read_int32()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -2104,7 +2038,7 @@ impl ::protobuf::Message for DenseInfo {
                             self.timestamp.push(try!(is.read_sint64()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -2117,7 +2051,7 @@ impl ::protobuf::Message for DenseInfo {
                             self.changeset.push(try!(is.read_sint64()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -2130,7 +2064,7 @@ impl ::protobuf::Message for DenseInfo {
                             self.uid.push(try!(is.read_sint32()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -2143,7 +2077,7 @@ impl ::protobuf::Message for DenseInfo {
                             self.user_sid.push(try!(is.read_sint32()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -2156,7 +2090,7 @@ impl ::protobuf::Message for DenseInfo {
                             self.visible.push(try!(is.read_bool()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -2166,7 +2100,7 @@ impl ::protobuf::Message for DenseInfo {
                 },
             };
         }
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     // Compute sizes of nested messages
@@ -2245,7 +2179,7 @@ impl ::protobuf::Message for DenseInfo {
             };
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     fn get_cached_size(&self) -> u32 {
@@ -2296,7 +2230,7 @@ pub struct ChangeSet {
     cached_size: ::std::cell::Cell<u32>,
 }
 
-impl<'a> ChangeSet {
+impl ChangeSet {
     pub fn new() -> ChangeSet {
         ::std::default::Default::default()
     }
@@ -2309,7 +2243,7 @@ impl<'a> ChangeSet {
         unsafe {
             instance.get(|| {
                 ChangeSet {
-                    id: ::std::option::None,
+                    id: ::std::option::Option::None,
                     unknown_fields: ::protobuf::UnknownFields::new(),
                     cached_size: ::std::cell::Cell::new(0),
                 }
@@ -2320,7 +2254,7 @@ impl<'a> ChangeSet {
     // required int64 id = 1;
 
     pub fn clear_id(&mut self) {
-        self.id = ::std::option::None;
+        self.id = ::std::option::Option::None;
     }
 
     pub fn has_id(&self) -> bool {
@@ -2329,10 +2263,10 @@ impl<'a> ChangeSet {
 
     // Param is passed by value, moved
     pub fn set_id(&mut self, v: i64) {
-        self.id = ::std::option::Some(v);
+        self.id = ::std::option::Option::Some(v);
     }
 
-    pub fn get_id(&self) -> i64 {
+    pub fn get_id<'a>(&self) -> i64 {
         self.id.unwrap_or(0)
     }
 }
@@ -2355,10 +2289,10 @@ impl ::protobuf::Message for ChangeSet {
             match field_number {
                 1 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.id = ::std::option::Some(tmp);
+                    self.id = ::std::option::Option::Some(tmp);
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -2366,7 +2300,7 @@ impl ::protobuf::Message for ChangeSet {
                 },
             };
         }
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     // Compute sizes of nested messages
@@ -2381,14 +2315,11 @@ impl ::protobuf::Message for ChangeSet {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        match self.id {
-            Some(v) => {
-                try!(os.write_int64(1, v));
-            },
-            None => {},
+        if let Some(v) = self.id {
+            try!(os.write_int64(1, v));
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     fn get_cached_size(&self) -> u32 {
@@ -2434,7 +2365,7 @@ pub struct Node {
     cached_size: ::std::cell::Cell<u32>,
 }
 
-impl<'a> Node {
+impl Node {
     pub fn new() -> Node {
         ::std::default::Default::default()
     }
@@ -2447,12 +2378,12 @@ impl<'a> Node {
         unsafe {
             instance.get(|| {
                 Node {
-                    id: ::std::option::None,
+                    id: ::std::option::Option::None,
                     keys: ::std::vec::Vec::new(),
                     vals: ::std::vec::Vec::new(),
                     info: ::protobuf::SingularPtrField::none(),
-                    lat: ::std::option::None,
-                    lon: ::std::option::None,
+                    lat: ::std::option::Option::None,
+                    lon: ::std::option::Option::None,
                     unknown_fields: ::protobuf::UnknownFields::new(),
                     cached_size: ::std::cell::Cell::new(0),
                 }
@@ -2463,7 +2394,7 @@ impl<'a> Node {
     // required sint64 id = 1;
 
     pub fn clear_id(&mut self) {
-        self.id = ::std::option::None;
+        self.id = ::std::option::Option::None;
     }
 
     pub fn has_id(&self) -> bool {
@@ -2472,10 +2403,10 @@ impl<'a> Node {
 
     // Param is passed by value, moved
     pub fn set_id(&mut self, v: i64) {
-        self.id = ::std::option::Some(v);
+        self.id = ::std::option::Option::Some(v);
     }
 
-    pub fn get_id(&self) -> i64 {
+    pub fn get_id<'a>(&self) -> i64 {
         self.id.unwrap_or(0)
     }
 
@@ -2491,7 +2422,7 @@ impl<'a> Node {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_keys(&'a mut self) -> &'a mut ::std::vec::Vec<u32> {
+    pub fn mut_keys<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u32> {
         &mut self.keys
     }
 
@@ -2500,7 +2431,7 @@ impl<'a> Node {
         ::std::mem::replace(&mut self.keys, ::std::vec::Vec::new())
     }
 
-    pub fn get_keys(&'a self) -> &'a [u32] {
+    pub fn get_keys<'a>(&'a self) -> &'a [u32] {
         self.keys.as_slice()
     }
 
@@ -2516,7 +2447,7 @@ impl<'a> Node {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_vals(&'a mut self) -> &'a mut ::std::vec::Vec<u32> {
+    pub fn mut_vals<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u32> {
         &mut self.vals
     }
 
@@ -2525,7 +2456,7 @@ impl<'a> Node {
         ::std::mem::replace(&mut self.vals, ::std::vec::Vec::new())
     }
 
-    pub fn get_vals(&'a self) -> &'a [u32] {
+    pub fn get_vals<'a>(&'a self) -> &'a [u32] {
         self.vals.as_slice()
     }
 
@@ -2546,7 +2477,7 @@ impl<'a> Node {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_info(&'a mut self) -> &'a mut Info {
+    pub fn mut_info<'a>(&'a mut self) -> &'a mut Info {
         if self.info.is_none() {
             self.info.set_default();
         };
@@ -2558,14 +2489,14 @@ impl<'a> Node {
         self.info.take().unwrap_or_else(|| Info::new())
     }
 
-    pub fn get_info(&'a self) -> &'a Info {
+    pub fn get_info<'a>(&'a self) -> &'a Info {
         self.info.as_ref().unwrap_or_else(|| Info::default_instance())
     }
 
     // required sint64 lat = 8;
 
     pub fn clear_lat(&mut self) {
-        self.lat = ::std::option::None;
+        self.lat = ::std::option::Option::None;
     }
 
     pub fn has_lat(&self) -> bool {
@@ -2574,17 +2505,17 @@ impl<'a> Node {
 
     // Param is passed by value, moved
     pub fn set_lat(&mut self, v: i64) {
-        self.lat = ::std::option::Some(v);
+        self.lat = ::std::option::Option::Some(v);
     }
 
-    pub fn get_lat(&self) -> i64 {
+    pub fn get_lat<'a>(&self) -> i64 {
         self.lat.unwrap_or(0)
     }
 
     // required sint64 lon = 9;
 
     pub fn clear_lon(&mut self) {
-        self.lon = ::std::option::None;
+        self.lon = ::std::option::Option::None;
     }
 
     pub fn has_lon(&self) -> bool {
@@ -2593,10 +2524,10 @@ impl<'a> Node {
 
     // Param is passed by value, moved
     pub fn set_lon(&mut self, v: i64) {
-        self.lon = ::std::option::Some(v);
+        self.lon = ::std::option::Option::Some(v);
     }
 
-    pub fn get_lon(&self) -> i64 {
+    pub fn get_lon<'a>(&self) -> i64 {
         self.lon.unwrap_or(0)
     }
 }
@@ -2625,10 +2556,10 @@ impl ::protobuf::Message for Node {
             match field_number {
                 1 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_sint64());
-                    self.id = ::std::option::Some(tmp);
+                    self.id = ::std::option::Option::Some(tmp);
                 },
                 2 => {
                     match wire_type {
@@ -2639,7 +2570,7 @@ impl ::protobuf::Message for Node {
                             self.keys.push(try!(is.read_uint32()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -2652,30 +2583,30 @@ impl ::protobuf::Message for Node {
                             self.vals.push(try!(is.read_uint32()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.info.set_default();
                     try!(is.merge_message(tmp))
                 },
                 8 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_sint64());
-                    self.lat = ::std::option::Some(tmp);
+                    self.lat = ::std::option::Option::Some(tmp);
                 },
                 9 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_sint64());
-                    self.lon = ::std::option::Some(tmp);
+                    self.lon = ::std::option::Option::Some(tmp);
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -2683,7 +2614,7 @@ impl ::protobuf::Message for Node {
                 },
             };
         }
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     // Compute sizes of nested messages
@@ -2714,11 +2645,8 @@ impl ::protobuf::Message for Node {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        match self.id {
-            Some(v) => {
-                try!(os.write_sint64(1, v));
-            },
-            None => {},
+        if let Some(v) = self.id {
+            try!(os.write_sint64(1, v));
         };
         if !self.keys.is_empty() {
             try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
@@ -2736,28 +2664,19 @@ impl ::protobuf::Message for Node {
                 try!(os.write_uint32_no_tag(*v));
             };
         };
-        match self.info.as_ref() {
-            Some(v) => {
-                try!(os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited));
-                try!(os.write_raw_varint32(v.get_cached_size()));
-                try!(v.write_to_with_cached_sizes(os));
-            },
-            None => {},
+        if let Some(v) = self.info.as_ref() {
+            try!(os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited));
+            try!(os.write_raw_varint32(v.get_cached_size()));
+            try!(v.write_to_with_cached_sizes(os));
         };
-        match self.lat {
-            Some(v) => {
-                try!(os.write_sint64(8, v));
-            },
-            None => {},
+        if let Some(v) = self.lat {
+            try!(os.write_sint64(8, v));
         };
-        match self.lon {
-            Some(v) => {
-                try!(os.write_sint64(9, v));
-            },
-            None => {},
+        if let Some(v) = self.lon {
+            try!(os.write_sint64(9, v));
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     fn get_cached_size(&self) -> u32 {
@@ -2812,7 +2731,7 @@ pub struct DenseNodes {
     cached_size: ::std::cell::Cell<u32>,
 }
 
-impl<'a> DenseNodes {
+impl DenseNodes {
     pub fn new() -> DenseNodes {
         ::std::default::Default::default()
     }
@@ -2849,7 +2768,7 @@ impl<'a> DenseNodes {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_id(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
+    pub fn mut_id<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
         &mut self.id
     }
 
@@ -2858,7 +2777,7 @@ impl<'a> DenseNodes {
         ::std::mem::replace(&mut self.id, ::std::vec::Vec::new())
     }
 
-    pub fn get_id(&'a self) -> &'a [i64] {
+    pub fn get_id<'a>(&'a self) -> &'a [i64] {
         self.id.as_slice()
     }
 
@@ -2879,7 +2798,7 @@ impl<'a> DenseNodes {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_denseinfo(&'a mut self) -> &'a mut DenseInfo {
+    pub fn mut_denseinfo<'a>(&'a mut self) -> &'a mut DenseInfo {
         if self.denseinfo.is_none() {
             self.denseinfo.set_default();
         };
@@ -2891,7 +2810,7 @@ impl<'a> DenseNodes {
         self.denseinfo.take().unwrap_or_else(|| DenseInfo::new())
     }
 
-    pub fn get_denseinfo(&'a self) -> &'a DenseInfo {
+    pub fn get_denseinfo<'a>(&'a self) -> &'a DenseInfo {
         self.denseinfo.as_ref().unwrap_or_else(|| DenseInfo::default_instance())
     }
 
@@ -2907,7 +2826,7 @@ impl<'a> DenseNodes {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_lat(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
+    pub fn mut_lat<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
         &mut self.lat
     }
 
@@ -2916,7 +2835,7 @@ impl<'a> DenseNodes {
         ::std::mem::replace(&mut self.lat, ::std::vec::Vec::new())
     }
 
-    pub fn get_lat(&'a self) -> &'a [i64] {
+    pub fn get_lat<'a>(&'a self) -> &'a [i64] {
         self.lat.as_slice()
     }
 
@@ -2932,7 +2851,7 @@ impl<'a> DenseNodes {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_lon(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
+    pub fn mut_lon<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
         &mut self.lon
     }
 
@@ -2941,7 +2860,7 @@ impl<'a> DenseNodes {
         ::std::mem::replace(&mut self.lon, ::std::vec::Vec::new())
     }
 
-    pub fn get_lon(&'a self) -> &'a [i64] {
+    pub fn get_lon<'a>(&'a self) -> &'a [i64] {
         self.lon.as_slice()
     }
 
@@ -2957,7 +2876,7 @@ impl<'a> DenseNodes {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_keys_vals(&'a mut self) -> &'a mut ::std::vec::Vec<i32> {
+    pub fn mut_keys_vals<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<i32> {
         &mut self.keys_vals
     }
 
@@ -2966,7 +2885,7 @@ impl<'a> DenseNodes {
         ::std::mem::replace(&mut self.keys_vals, ::std::vec::Vec::new())
     }
 
-    pub fn get_keys_vals(&'a self) -> &'a [i32] {
+    pub fn get_keys_vals<'a>(&'a self) -> &'a [i32] {
         self.keys_vals.as_slice()
     }
 }
@@ -2993,13 +2912,13 @@ impl ::protobuf::Message for DenseNodes {
                             self.id.push(try!(is.read_sint64()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
                 5 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.denseinfo.set_default();
                     try!(is.merge_message(tmp))
@@ -3013,7 +2932,7 @@ impl ::protobuf::Message for DenseNodes {
                             self.lat.push(try!(is.read_sint64()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -3026,7 +2945,7 @@ impl ::protobuf::Message for DenseNodes {
                             self.lon.push(try!(is.read_sint64()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -3039,7 +2958,7 @@ impl ::protobuf::Message for DenseNodes {
                             self.keys_vals.push(try!(is.read_int32()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -3049,7 +2968,7 @@ impl ::protobuf::Message for DenseNodes {
                 },
             };
         }
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     // Compute sizes of nested messages
@@ -3085,13 +3004,10 @@ impl ::protobuf::Message for DenseNodes {
                 try!(os.write_sint64_no_tag(*v));
             };
         };
-        match self.denseinfo.as_ref() {
-            Some(v) => {
-                try!(os.write_tag(5, ::protobuf::wire_format::WireTypeLengthDelimited));
-                try!(os.write_raw_varint32(v.get_cached_size()));
-                try!(v.write_to_with_cached_sizes(os));
-            },
-            None => {},
+        if let Some(v) = self.denseinfo.as_ref() {
+            try!(os.write_tag(5, ::protobuf::wire_format::WireTypeLengthDelimited));
+            try!(os.write_raw_varint32(v.get_cached_size()));
+            try!(v.write_to_with_cached_sizes(os));
         };
         if !self.lat.is_empty() {
             try!(os.write_tag(8, ::protobuf::wire_format::WireTypeLengthDelimited));
@@ -3118,7 +3034,7 @@ impl ::protobuf::Message for DenseNodes {
             };
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     fn get_cached_size(&self) -> u32 {
@@ -3171,7 +3087,7 @@ pub struct Way {
     cached_size: ::std::cell::Cell<u32>,
 }
 
-impl<'a> Way {
+impl Way {
     pub fn new() -> Way {
         ::std::default::Default::default()
     }
@@ -3184,7 +3100,7 @@ impl<'a> Way {
         unsafe {
             instance.get(|| {
                 Way {
-                    id: ::std::option::None,
+                    id: ::std::option::Option::None,
                     keys: ::std::vec::Vec::new(),
                     vals: ::std::vec::Vec::new(),
                     info: ::protobuf::SingularPtrField::none(),
@@ -3199,7 +3115,7 @@ impl<'a> Way {
     // required int64 id = 1;
 
     pub fn clear_id(&mut self) {
-        self.id = ::std::option::None;
+        self.id = ::std::option::Option::None;
     }
 
     pub fn has_id(&self) -> bool {
@@ -3208,10 +3124,10 @@ impl<'a> Way {
 
     // Param is passed by value, moved
     pub fn set_id(&mut self, v: i64) {
-        self.id = ::std::option::Some(v);
+        self.id = ::std::option::Option::Some(v);
     }
 
-    pub fn get_id(&self) -> i64 {
+    pub fn get_id<'a>(&self) -> i64 {
         self.id.unwrap_or(0)
     }
 
@@ -3227,7 +3143,7 @@ impl<'a> Way {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_keys(&'a mut self) -> &'a mut ::std::vec::Vec<u32> {
+    pub fn mut_keys<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u32> {
         &mut self.keys
     }
 
@@ -3236,7 +3152,7 @@ impl<'a> Way {
         ::std::mem::replace(&mut self.keys, ::std::vec::Vec::new())
     }
 
-    pub fn get_keys(&'a self) -> &'a [u32] {
+    pub fn get_keys<'a>(&'a self) -> &'a [u32] {
         self.keys.as_slice()
     }
 
@@ -3252,7 +3168,7 @@ impl<'a> Way {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_vals(&'a mut self) -> &'a mut ::std::vec::Vec<u32> {
+    pub fn mut_vals<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u32> {
         &mut self.vals
     }
 
@@ -3261,7 +3177,7 @@ impl<'a> Way {
         ::std::mem::replace(&mut self.vals, ::std::vec::Vec::new())
     }
 
-    pub fn get_vals(&'a self) -> &'a [u32] {
+    pub fn get_vals<'a>(&'a self) -> &'a [u32] {
         self.vals.as_slice()
     }
 
@@ -3282,7 +3198,7 @@ impl<'a> Way {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_info(&'a mut self) -> &'a mut Info {
+    pub fn mut_info<'a>(&'a mut self) -> &'a mut Info {
         if self.info.is_none() {
             self.info.set_default();
         };
@@ -3294,7 +3210,7 @@ impl<'a> Way {
         self.info.take().unwrap_or_else(|| Info::new())
     }
 
-    pub fn get_info(&'a self) -> &'a Info {
+    pub fn get_info<'a>(&'a self) -> &'a Info {
         self.info.as_ref().unwrap_or_else(|| Info::default_instance())
     }
 
@@ -3310,7 +3226,7 @@ impl<'a> Way {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_refs(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
+    pub fn mut_refs<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
         &mut self.refs
     }
 
@@ -3319,7 +3235,7 @@ impl<'a> Way {
         ::std::mem::replace(&mut self.refs, ::std::vec::Vec::new())
     }
 
-    pub fn get_refs(&'a self) -> &'a [i64] {
+    pub fn get_refs<'a>(&'a self) -> &'a [i64] {
         self.refs.as_slice()
     }
 }
@@ -3342,10 +3258,10 @@ impl ::protobuf::Message for Way {
             match field_number {
                 1 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.id = ::std::option::Some(tmp);
+                    self.id = ::std::option::Option::Some(tmp);
                 },
                 2 => {
                     match wire_type {
@@ -3356,7 +3272,7 @@ impl ::protobuf::Message for Way {
                             self.keys.push(try!(is.read_uint32()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -3369,13 +3285,13 @@ impl ::protobuf::Message for Way {
                             self.vals.push(try!(is.read_uint32()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.info.set_default();
                     try!(is.merge_message(tmp))
@@ -3389,7 +3305,7 @@ impl ::protobuf::Message for Way {
                             self.refs.push(try!(is.read_sint64()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -3399,7 +3315,7 @@ impl ::protobuf::Message for Way {
                 },
             };
         }
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     // Compute sizes of nested messages
@@ -3427,11 +3343,8 @@ impl ::protobuf::Message for Way {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        match self.id {
-            Some(v) => {
-                try!(os.write_int64(1, v));
-            },
-            None => {},
+        if let Some(v) = self.id {
+            try!(os.write_int64(1, v));
         };
         if !self.keys.is_empty() {
             try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
@@ -3449,13 +3362,10 @@ impl ::protobuf::Message for Way {
                 try!(os.write_uint32_no_tag(*v));
             };
         };
-        match self.info.as_ref() {
-            Some(v) => {
-                try!(os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited));
-                try!(os.write_raw_varint32(v.get_cached_size()));
-                try!(v.write_to_with_cached_sizes(os));
-            },
-            None => {},
+        if let Some(v) = self.info.as_ref() {
+            try!(os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited));
+            try!(os.write_raw_varint32(v.get_cached_size()));
+            try!(v.write_to_with_cached_sizes(os));
         };
         if !self.refs.is_empty() {
             try!(os.write_tag(8, ::protobuf::wire_format::WireTypeLengthDelimited));
@@ -3466,7 +3376,7 @@ impl ::protobuf::Message for Way {
             };
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     fn get_cached_size(&self) -> u32 {
@@ -3521,7 +3431,7 @@ pub struct Relation {
     cached_size: ::std::cell::Cell<u32>,
 }
 
-impl<'a> Relation {
+impl Relation {
     pub fn new() -> Relation {
         ::std::default::Default::default()
     }
@@ -3534,7 +3444,7 @@ impl<'a> Relation {
         unsafe {
             instance.get(|| {
                 Relation {
-                    id: ::std::option::None,
+                    id: ::std::option::Option::None,
                     keys: ::std::vec::Vec::new(),
                     vals: ::std::vec::Vec::new(),
                     info: ::protobuf::SingularPtrField::none(),
@@ -3551,7 +3461,7 @@ impl<'a> Relation {
     // required int64 id = 1;
 
     pub fn clear_id(&mut self) {
-        self.id = ::std::option::None;
+        self.id = ::std::option::Option::None;
     }
 
     pub fn has_id(&self) -> bool {
@@ -3560,10 +3470,10 @@ impl<'a> Relation {
 
     // Param is passed by value, moved
     pub fn set_id(&mut self, v: i64) {
-        self.id = ::std::option::Some(v);
+        self.id = ::std::option::Option::Some(v);
     }
 
-    pub fn get_id(&self) -> i64 {
+    pub fn get_id<'a>(&self) -> i64 {
         self.id.unwrap_or(0)
     }
 
@@ -3579,7 +3489,7 @@ impl<'a> Relation {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_keys(&'a mut self) -> &'a mut ::std::vec::Vec<u32> {
+    pub fn mut_keys<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u32> {
         &mut self.keys
     }
 
@@ -3588,7 +3498,7 @@ impl<'a> Relation {
         ::std::mem::replace(&mut self.keys, ::std::vec::Vec::new())
     }
 
-    pub fn get_keys(&'a self) -> &'a [u32] {
+    pub fn get_keys<'a>(&'a self) -> &'a [u32] {
         self.keys.as_slice()
     }
 
@@ -3604,7 +3514,7 @@ impl<'a> Relation {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_vals(&'a mut self) -> &'a mut ::std::vec::Vec<u32> {
+    pub fn mut_vals<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u32> {
         &mut self.vals
     }
 
@@ -3613,7 +3523,7 @@ impl<'a> Relation {
         ::std::mem::replace(&mut self.vals, ::std::vec::Vec::new())
     }
 
-    pub fn get_vals(&'a self) -> &'a [u32] {
+    pub fn get_vals<'a>(&'a self) -> &'a [u32] {
         self.vals.as_slice()
     }
 
@@ -3634,7 +3544,7 @@ impl<'a> Relation {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_info(&'a mut self) -> &'a mut Info {
+    pub fn mut_info<'a>(&'a mut self) -> &'a mut Info {
         if self.info.is_none() {
             self.info.set_default();
         };
@@ -3646,7 +3556,7 @@ impl<'a> Relation {
         self.info.take().unwrap_or_else(|| Info::new())
     }
 
-    pub fn get_info(&'a self) -> &'a Info {
+    pub fn get_info<'a>(&'a self) -> &'a Info {
         self.info.as_ref().unwrap_or_else(|| Info::default_instance())
     }
 
@@ -3662,7 +3572,7 @@ impl<'a> Relation {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_roles_sid(&'a mut self) -> &'a mut ::std::vec::Vec<i32> {
+    pub fn mut_roles_sid<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<i32> {
         &mut self.roles_sid
     }
 
@@ -3671,7 +3581,7 @@ impl<'a> Relation {
         ::std::mem::replace(&mut self.roles_sid, ::std::vec::Vec::new())
     }
 
-    pub fn get_roles_sid(&'a self) -> &'a [i32] {
+    pub fn get_roles_sid<'a>(&'a self) -> &'a [i32] {
         self.roles_sid.as_slice()
     }
 
@@ -3687,7 +3597,7 @@ impl<'a> Relation {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_memids(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
+    pub fn mut_memids<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<i64> {
         &mut self.memids
     }
 
@@ -3696,7 +3606,7 @@ impl<'a> Relation {
         ::std::mem::replace(&mut self.memids, ::std::vec::Vec::new())
     }
 
-    pub fn get_memids(&'a self) -> &'a [i64] {
+    pub fn get_memids<'a>(&'a self) -> &'a [i64] {
         self.memids.as_slice()
     }
 
@@ -3712,7 +3622,7 @@ impl<'a> Relation {
     }
 
     // Mutable pointer to the field.
-    pub fn mut_types(&'a mut self) -> &'a mut ::std::vec::Vec<Relation_MemberType> {
+    pub fn mut_types<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<Relation_MemberType> {
         &mut self.types
     }
 
@@ -3721,7 +3631,7 @@ impl<'a> Relation {
         ::std::mem::replace(&mut self.types, ::std::vec::Vec::new())
     }
 
-    pub fn get_types(&'a self) -> &'a [Relation_MemberType] {
+    pub fn get_types<'a>(&'a self) -> &'a [Relation_MemberType] {
         self.types.as_slice()
     }
 }
@@ -3744,10 +3654,10 @@ impl ::protobuf::Message for Relation {
             match field_number {
                 1 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = try!(is.read_int64());
-                    self.id = ::std::option::Some(tmp);
+                    self.id = ::std::option::Option::Some(tmp);
                 },
                 2 => {
                     match wire_type {
@@ -3758,7 +3668,7 @@ impl ::protobuf::Message for Relation {
                             self.keys.push(try!(is.read_uint32()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -3771,13 +3681,13 @@ impl ::protobuf::Message for Relation {
                             self.vals.push(try!(is.read_uint32()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                     };
                     let tmp = self.info.set_default();
                     try!(is.merge_message(tmp))
@@ -3791,7 +3701,7 @@ impl ::protobuf::Message for Relation {
                             self.roles_sid.push(try!(is.read_int32()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -3804,7 +3714,7 @@ impl ::protobuf::Message for Relation {
                             self.memids.push(try!(is.read_sint64()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -3817,7 +3727,7 @@ impl ::protobuf::Message for Relation {
                             self.types.push(try!(is.read_enum()));
                         },
                         _ => {
-                            return ::std::result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
                         },
                     };
                 },
@@ -3827,7 +3737,7 @@ impl ::protobuf::Message for Relation {
                 },
             };
         }
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     // Compute sizes of nested messages
@@ -3861,11 +3771,8 @@ impl ::protobuf::Message for Relation {
     }
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
-        match self.id {
-            Some(v) => {
-                try!(os.write_int64(1, v));
-            },
-            None => {},
+        if let Some(v) = self.id {
+            try!(os.write_int64(1, v));
         };
         if !self.keys.is_empty() {
             try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
@@ -3883,13 +3790,10 @@ impl ::protobuf::Message for Relation {
                 try!(os.write_uint32_no_tag(*v));
             };
         };
-        match self.info.as_ref() {
-            Some(v) => {
-                try!(os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited));
-                try!(os.write_raw_varint32(v.get_cached_size()));
-                try!(v.write_to_with_cached_sizes(os));
-            },
-            None => {},
+        if let Some(v) = self.info.as_ref() {
+            try!(os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited));
+            try!(os.write_raw_varint32(v.get_cached_size()));
+            try!(v.write_to_with_cached_sizes(os));
         };
         if !self.roles_sid.is_empty() {
             try!(os.write_tag(8, ::protobuf::wire_format::WireTypeLengthDelimited));
@@ -3916,7 +3820,7 @@ impl ::protobuf::Message for Relation {
             };
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
-        ::std::result::Ok(())
+        ::std::result::Result::Ok(())
     }
 
     fn get_cached_size(&self) -> u32 {
@@ -3969,7 +3873,6 @@ pub enum Relation_MemberType {
     RELATION = 2,
 }
 
-
 impl ::protobuf::ProtobufEnum for Relation_MemberType {
     fn value(&self) -> i32 {
         *self as i32
@@ -3977,10 +3880,13 @@ impl ::protobuf::ProtobufEnum for Relation_MemberType {
 
     fn from_i32(value: i32) -> ::std::option::Option<Relation_MemberType> {
         match value {
-            0 => ::std::option::Some(Relation_MemberType::NODE),
-            1 => ::std::option::Some(Relation_MemberType::WAY),
-            2 => ::std::option::Some(Relation_MemberType::RELATION),
-            _ => ::std::option::None
+            0 => ::std::option::Option::Some(Relation_MemberType::NODE),
+            1 => ::std::option::Option::Some(Relation_MemberType::WAY),
+            2 => ::std::option::Option::Some(Relation_MemberType::RELATION),
+            _ => ::std::option::Option::None
         }
     }
+}
+
+impl ::std::kinds::Copy for Relation_MemberType {
 }
