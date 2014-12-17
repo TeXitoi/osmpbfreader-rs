@@ -52,7 +52,6 @@ build and run:
 ```
 $ cargo build --release
     Updating registry `https://github.com/rust-lang/crates.io-index`
-   Compiling mdo v0.1.0 (https://github.com/TeXitoi/rust-mdo?ref=unboxed-closure#ccf4a31e)
    Compiling protobuf v0.0.5 (https://github.com/stepancheg/rust-protobuf.git#0bc890cd)
    Compiling gcc v0.1.0
    Compiling miniz-sys v0.1.0 (https://github.com/alexcrichton/flate2-rs#f9ab9da8)

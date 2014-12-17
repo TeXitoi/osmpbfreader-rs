@@ -8,11 +8,11 @@
 use osmformat::PrimitiveBlock;
 use osmformat::PrimitiveGroup;
 use groups;
-use mdo;
-use mdo::iter::bind;
+use std::iter::FlatMap;
 use std::slice;
+use objects::{OsmObj, Node, Way, Relation};
 
-pub type OsmObjs<'a> = mdo::iter::UnboxedFlatMap<&'a PrimitiveGroup, slice::Items<'a, PrimitiveGroup>, groups::OsmObjs<'a>, FnOsmObjs<'a>>;
+pub type OsmObjs<'a> = FlatMap<&'a PrimitiveGroup, OsmObj, slice::Items<'a, PrimitiveGroup>, groups::OsmObjs<'a>, FnOsmObjs<'a>>;
 
 struct FnOsmObjs<'a> { block: &'a PrimitiveBlock }
 impl<'a> Fn(&'a PrimitiveGroup) -> groups::OsmObjs<'a> for FnOsmObjs<'a> {
@@ -24,10 +24,10 @@ impl<'a> Fn(&'a PrimitiveGroup) -> groups::OsmObjs<'a> for FnOsmObjs<'a> {
 }
 
 pub fn iter<'a>(block: &'a PrimitiveBlock) -> OsmObjs<'a> {
-    bind(block.get_primitivegroup().iter(), FnOsmObjs { block: block })
+    block.get_primitivegroup().iter().flat_map(FnOsmObjs { block: block })
 }
 
-pub type Nodes<'a> = mdo::iter::UnboxedFlatMap<&'a PrimitiveGroup, slice::Items<'a, PrimitiveGroup>, groups::Nodes<'a>, FnNodes<'a>>;
+pub type Nodes<'a> = FlatMap<&'a PrimitiveGroup, Node, slice::Items<'a, PrimitiveGroup>, groups::Nodes<'a>, FnNodes<'a>>;
 
 struct FnNodes<'a> { block: &'a PrimitiveBlock }
 impl<'a> Fn(&'a PrimitiveGroup) -> groups::Nodes<'a> for FnNodes<'a> {
@@ -39,10 +39,10 @@ impl<'a> Fn(&'a PrimitiveGroup) -> groups::Nodes<'a> for FnNodes<'a> {
 }
 
 pub fn nodes<'a>(block: &'a PrimitiveBlock) -> Nodes<'a> {
-    bind(block.get_primitivegroup().iter(), FnNodes { block: block })
+    block.get_primitivegroup().iter().flat_map(FnNodes { block: block })
 }
 
-pub type Ways<'a> = mdo::iter::UnboxedFlatMap<&'a PrimitiveGroup, slice::Items<'a, PrimitiveGroup>, groups::Ways<'a>, FnWays<'a>>;
+pub type Ways<'a> = FlatMap<&'a PrimitiveGroup, Way, slice::Items<'a, PrimitiveGroup>, groups::Ways<'a>, FnWays<'a>>;
 
 struct FnWays<'a> { block: &'a PrimitiveBlock }
 impl<'a> Fn(&'a PrimitiveGroup) -> groups::Ways<'a> for FnWays<'a> {
@@ -54,10 +54,10 @@ impl<'a> Fn(&'a PrimitiveGroup) -> groups::Ways<'a> for FnWays<'a> {
 }
 
 pub fn ways<'a>(block: &'a PrimitiveBlock) -> Ways<'a> {
-    bind(block.get_primitivegroup().iter(), FnWays { block: block })
+    block.get_primitivegroup().iter().flat_map(FnWays { block: block })
 }
 
-pub type Relations<'a> = mdo::iter::UnboxedFlatMap<&'a PrimitiveGroup, slice::Items<'a, PrimitiveGroup>, groups::Relations<'a>, FnRelations<'a>>;
+pub type Relations<'a> = FlatMap<&'a PrimitiveGroup, Relation, slice::Items<'a, PrimitiveGroup>, groups::Relations<'a>, FnRelations<'a>>;
 
 struct FnRelations<'a> { block: &'a PrimitiveBlock }
 impl<'a> Fn(&'a PrimitiveGroup) -> groups::Relations<'a> for FnRelations<'a> {
@@ -69,5 +69,5 @@ impl<'a> Fn(&'a PrimitiveGroup) -> groups::Relations<'a> for FnRelations<'a> {
 }
 
 pub fn relations<'a>(block: &'a PrimitiveBlock) -> Relations<'a> {
-    bind(block.get_primitivegroup().iter(), FnRelations { block: block })
+    block.get_primitivegroup().iter().flat_map(FnRelations { block: block })
 }

@@ -10,7 +10,6 @@
 
 extern crate protobuf;
 extern crate flate2;
-#[phase(plugin, link)] extern crate mdo;
 
 pub use objects::{OsmObj, Node, Way, Relation, Ref, OsmId, Tags};
 pub use error::OsmPbfError;
