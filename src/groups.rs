@@ -38,7 +38,7 @@ pub fn simple_nodes<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock)
 }
 
 pub struct SimpleNodes<'a> {
-    iter: slice::Items<'a, osmformat::Node>,
+    iter: slice::Iter<'a, osmformat::Node>,
     block: &'a PrimitiveBlock,
 }
 impl<'a> Iterator<Node> for SimpleNodes<'a> {
@@ -72,10 +72,10 @@ pub fn dense_nodes<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock)
 }
 pub struct DenseNodes<'a> {
     block: &'a PrimitiveBlock,
-    dids: slice::Items<'a, i64>,
-    dlats: slice::Items<'a, i64>,
-    dlons: slice::Items<'a, i64>,
-    keys_vals: slice::Items<'a, i32>,
+    dids: slice::Iter<'a, i64>,
+    dlats: slice::Iter<'a, i64>,
+    dlons: slice::Iter<'a, i64>,
+    keys_vals: slice::Iter<'a, i32>,
     cur_id: i64,
     cur_lat: i64,
     cur_lon: i64,
@@ -115,7 +115,7 @@ pub fn ways<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock) -> Ways<'a
     Ways { iter: group.get_ways().iter(), block: block }
 }
 pub struct Ways<'a> {
-    iter: slice::Items<'a, osmformat::Way>,
+    iter: slice::Iter<'a, osmformat::Way>,
     block: &'a PrimitiveBlock,
 }
 impl<'a> Iterator<Way> for Ways<'a> {
@@ -139,7 +139,7 @@ pub fn relations<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock) -> Re
     Relations { iter: group.get_relations().iter(), block: block }
 }
 pub struct Relations<'a> {
-    iter: slice::Items<'a, osmformat::Relation>,
+    iter: slice::Iter<'a, osmformat::Relation>,
     block: &'a PrimitiveBlock,
 }
 impl<'a> Iterator<Relation> for Relations<'a> {
