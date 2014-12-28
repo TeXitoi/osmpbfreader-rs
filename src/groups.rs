@@ -17,9 +17,9 @@ use objects::{OsmObj, Node, Way, Relation, Ref, OsmId, Tags};
 pub type OsmObjs<'a> = Chain<Chain<Map<Node, OsmObj, Nodes<'a>, fn(Node) -> OsmObj>, Map<Way, OsmObj, Ways<'a>, fn(Way) -> OsmObj>>, Map<Relation, OsmObj, Relations<'a>, fn(Relation) -> OsmObj>>;
 
 pub fn iter<'a>(g: &'a PrimitiveGroup, b: &'a PrimitiveBlock) -> OsmObjs<'a> {
-    nodes(g, b).map(node_into_obj)
-        .chain(ways(g, b).map(way_into_obj))
-        .chain(relations(g, b).map(rel_into_obj))
+    nodes(g, b).map(node_into_obj as fn(Node) -> OsmObj)
+        .chain(ways(g, b).map(way_into_obj as fn(Way) -> OsmObj))
+        .chain(relations(g, b).map(rel_into_obj as fn(Relation) -> OsmObj))
 }
 fn node_into_obj(n: Node) -> OsmObj { OsmObj::Node(n) }
 fn way_into_obj(w: Way) -> OsmObj { OsmObj::Way(w) }
@@ -175,7 +175,7 @@ impl<'a> Iterator<Relation> for Relations<'a> {
 
 fn make_string(k: uint, block: &osmformat::PrimitiveBlock) -> String {
     String::from_utf8_lossy(block.get_stringtable().get_s()[k].as_slice())
-        .into_string()
+        .into_owned()
 }
 fn make_lat(c: i64, b: &osmformat::PrimitiveBlock) -> f64 {
     let granularity = b.get_granularity() as i64;
