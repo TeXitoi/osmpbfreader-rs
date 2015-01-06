@@ -10,7 +10,7 @@
 #[phase(plugin, link)] extern crate log;
 extern crate osmpbfreader;
 
-fn count(filter: |&osmpbfreader::Tags| -> bool, filename: &str) {
+fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &str) {
     let r = std::io::fs::File::open(&std::path::Path::new(filename)).unwrap();
     let mut pbf = osmpbfreader::OsmPbfReader::with_reader(r);
     let mut nb_nodes = 0u;
