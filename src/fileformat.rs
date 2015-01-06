@@ -8,7 +8,7 @@
 use protobuf::Message as Message_imported_for_functions;
 use protobuf::ProtobufEnum as ProtobufEnum_imported_for_functions;
 
-#[deriving(Clone,Default,Show)]
+#[derive(Clone,Default,Show)]
 pub struct Blob {
     raw: ::protobuf::SingularField<::std::vec::Vec<u8>>,
     raw_size: ::std::option::Option<i32>,
@@ -209,10 +209,6 @@ impl Blob {
 }
 
 impl ::protobuf::Message for Blob {
-    fn new() -> Blob {
-        Blob::new()
-    }
-
     fn is_initialized(&self) -> bool {
         true
     }
@@ -323,6 +319,16 @@ impl ::protobuf::Message for Blob {
     fn type_id(&self) -> ::std::intrinsics::TypeId {
         ::std::intrinsics::TypeId::of::<Blob>()
     }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        ::protobuf::MessageStatic::descriptor_static(None::<Self>)
+    }
+}
+
+impl ::protobuf::MessageStatic for Blob {
+    fn new() -> Blob {
+        Blob::new()
+    }
 }
 
 impl ::protobuf::Clear for Blob {
@@ -347,7 +353,7 @@ impl ::std::cmp::PartialEq for Blob {
     }
 }
 
-#[deriving(Clone,Default,Show)]
+#[derive(Clone,Default,Show)]
 pub struct BlobHeader {
     field_type: ::protobuf::SingularField<::std::string::String>,
     indexdata: ::protobuf::SingularField<::std::vec::Vec<u8>>,
@@ -472,10 +478,6 @@ impl BlobHeader {
 }
 
 impl ::protobuf::Message for BlobHeader {
-    fn new() -> BlobHeader {
-        BlobHeader::new()
-    }
-
     fn is_initialized(&self) -> bool {
         if self.field_type.is_none() {
             return false;
@@ -565,6 +567,16 @@ impl ::protobuf::Message for BlobHeader {
 
     fn type_id(&self) -> ::std::intrinsics::TypeId {
         ::std::intrinsics::TypeId::of::<BlobHeader>()
+    }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        ::protobuf::MessageStatic::descriptor_static(None::<Self>)
+    }
+}
+
+impl ::protobuf::MessageStatic for BlobHeader {
+    fn new() -> BlobHeader {
+        BlobHeader::new()
     }
 }
 

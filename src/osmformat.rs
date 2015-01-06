@@ -8,7 +8,7 @@
 use protobuf::Message as Message_imported_for_functions;
 use protobuf::ProtobufEnum as ProtobufEnum_imported_for_functions;
 
-#[deriving(Clone,Default,Show)]
+#[derive(Clone,Default,Show)]
 pub struct HeaderBlock {
     bbox: ::protobuf::SingularPtrField<HeaderBBox>,
     required_features: ::protobuf::RepeatedField<::std::string::String>,
@@ -281,10 +281,6 @@ impl HeaderBlock {
 }
 
 impl ::protobuf::Message for HeaderBlock {
-    fn new() -> HeaderBlock {
-        HeaderBlock::new()
-    }
-
     fn is_initialized(&self) -> bool {
         true
     }
@@ -301,18 +297,10 @@ impl ::protobuf::Message for HeaderBlock {
                     try!(is.merge_message(tmp))
                 },
                 4 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                    };
-                    let tmp = self.required_features.push_default();
-                    try!(is.read_string_into(tmp))
+                    try!(::protobuf::rt::read_repeated_string_into(wire_type, is, &mut self.required_features));
                 },
                 5 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                    };
-                    let tmp = self.optional_features.push_default();
-                    try!(is.read_string_into(tmp))
+                    try!(::protobuf::rt::read_repeated_string_into(wire_type, is, &mut self.optional_features));
                 },
                 16 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -437,6 +425,16 @@ impl ::protobuf::Message for HeaderBlock {
     fn type_id(&self) -> ::std::intrinsics::TypeId {
         ::std::intrinsics::TypeId::of::<HeaderBlock>()
     }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        ::protobuf::MessageStatic::descriptor_static(None::<Self>)
+    }
+}
+
+impl ::protobuf::MessageStatic for HeaderBlock {
+    fn new() -> HeaderBlock {
+        HeaderBlock::new()
+    }
 }
 
 impl ::protobuf::Clear for HeaderBlock {
@@ -467,7 +465,7 @@ impl ::std::cmp::PartialEq for HeaderBlock {
     }
 }
 
-#[deriving(Clone,Default,Show)]
+#[derive(Clone,Default,Show)]
 pub struct HeaderBBox {
     left: ::std::option::Option<i64>,
     right: ::std::option::Option<i64>,
@@ -579,10 +577,6 @@ impl HeaderBBox {
 }
 
 impl ::protobuf::Message for HeaderBBox {
-    fn new() -> HeaderBBox {
-        HeaderBBox::new()
-    }
-
     fn is_initialized(&self) -> bool {
         if self.left.is_none() {
             return false;
@@ -692,6 +686,16 @@ impl ::protobuf::Message for HeaderBBox {
     fn type_id(&self) -> ::std::intrinsics::TypeId {
         ::std::intrinsics::TypeId::of::<HeaderBBox>()
     }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        ::protobuf::MessageStatic::descriptor_static(None::<Self>)
+    }
+}
+
+impl ::protobuf::MessageStatic for HeaderBBox {
+    fn new() -> HeaderBBox {
+        HeaderBBox::new()
+    }
 }
 
 impl ::protobuf::Clear for HeaderBBox {
@@ -714,7 +718,7 @@ impl ::std::cmp::PartialEq for HeaderBBox {
     }
 }
 
-#[deriving(Clone,Default,Show)]
+#[derive(Clone,Default,Show)]
 pub struct PrimitiveBlock {
     stringtable: ::protobuf::SingularPtrField<StringTable>,
     primitivegroup: ::protobuf::RepeatedField<PrimitiveGroup>,
@@ -888,10 +892,6 @@ impl PrimitiveBlock {
 }
 
 impl ::protobuf::Message for PrimitiveBlock {
-    fn new() -> PrimitiveBlock {
-        PrimitiveBlock::new()
-    }
-
     fn is_initialized(&self) -> bool {
         if self.stringtable.is_none() {
             return false;
@@ -911,11 +911,7 @@ impl ::protobuf::Message for PrimitiveBlock {
                     try!(is.merge_message(tmp))
                 },
                 2 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                    };
-                    let tmp = self.primitivegroup.push_default();
-                    try!(is.merge_message(tmp))
+                    try!(::protobuf::rt::read_repeated_message_into(wire_type, is, &mut self.primitivegroup));
                 },
                 17 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
@@ -1024,6 +1020,16 @@ impl ::protobuf::Message for PrimitiveBlock {
     fn type_id(&self) -> ::std::intrinsics::TypeId {
         ::std::intrinsics::TypeId::of::<PrimitiveBlock>()
     }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        ::protobuf::MessageStatic::descriptor_static(None::<Self>)
+    }
+}
+
+impl ::protobuf::MessageStatic for PrimitiveBlock {
+    fn new() -> PrimitiveBlock {
+        PrimitiveBlock::new()
+    }
 }
 
 impl ::protobuf::Clear for PrimitiveBlock {
@@ -1050,7 +1056,7 @@ impl ::std::cmp::PartialEq for PrimitiveBlock {
     }
 }
 
-#[deriving(Clone,Default,Show)]
+#[derive(Clone,Default,Show)]
 pub struct PrimitiveGroup {
     nodes: ::protobuf::RepeatedField<Node>,
     dense: ::protobuf::SingularPtrField<DenseNodes>,
@@ -1221,10 +1227,6 @@ impl PrimitiveGroup {
 }
 
 impl ::protobuf::Message for PrimitiveGroup {
-    fn new() -> PrimitiveGroup {
-        PrimitiveGroup::new()
-    }
-
     fn is_initialized(&self) -> bool {
         true
     }
@@ -1234,11 +1236,7 @@ impl ::protobuf::Message for PrimitiveGroup {
             let (field_number, wire_type) = try!(is.read_tag_unpack());
             match field_number {
                 1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                    };
-                    let tmp = self.nodes.push_default();
-                    try!(is.merge_message(tmp))
+                    try!(::protobuf::rt::read_repeated_message_into(wire_type, is, &mut self.nodes));
                 },
                 2 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -1248,25 +1246,13 @@ impl ::protobuf::Message for PrimitiveGroup {
                     try!(is.merge_message(tmp))
                 },
                 3 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                    };
-                    let tmp = self.ways.push_default();
-                    try!(is.merge_message(tmp))
+                    try!(::protobuf::rt::read_repeated_message_into(wire_type, is, &mut self.ways));
                 },
                 4 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                    };
-                    let tmp = self.relations.push_default();
-                    try!(is.merge_message(tmp))
+                    try!(::protobuf::rt::read_repeated_message_into(wire_type, is, &mut self.relations));
                 },
                 5 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                    };
-                    let tmp = self.changesets.push_default();
-                    try!(is.merge_message(tmp))
+                    try!(::protobuf::rt::read_repeated_message_into(wire_type, is, &mut self.changesets));
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -1350,6 +1336,16 @@ impl ::protobuf::Message for PrimitiveGroup {
     fn type_id(&self) -> ::std::intrinsics::TypeId {
         ::std::intrinsics::TypeId::of::<PrimitiveGroup>()
     }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        ::protobuf::MessageStatic::descriptor_static(None::<Self>)
+    }
+}
+
+impl ::protobuf::MessageStatic for PrimitiveGroup {
+    fn new() -> PrimitiveGroup {
+        PrimitiveGroup::new()
+    }
 }
 
 impl ::protobuf::Clear for PrimitiveGroup {
@@ -1374,7 +1370,7 @@ impl ::std::cmp::PartialEq for PrimitiveGroup {
     }
 }
 
-#[deriving(Clone,Default,Show)]
+#[derive(Clone,Default,Show)]
 pub struct StringTable {
     s: ::protobuf::RepeatedField<::std::vec::Vec<u8>>,
     unknown_fields: ::protobuf::UnknownFields,
@@ -1429,10 +1425,6 @@ impl StringTable {
 }
 
 impl ::protobuf::Message for StringTable {
-    fn new() -> StringTable {
-        StringTable::new()
-    }
-
     fn is_initialized(&self) -> bool {
         true
     }
@@ -1442,11 +1434,7 @@ impl ::protobuf::Message for StringTable {
             let (field_number, wire_type) = try!(is.read_tag_unpack());
             match field_number {
                 1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                    };
-                    let tmp = self.s.push_default();
-                    try!(is.read_bytes_into(tmp))
+                    try!(::protobuf::rt::read_repeated_bytes_into(wire_type, is, &mut self.s));
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -1491,6 +1479,16 @@ impl ::protobuf::Message for StringTable {
     fn type_id(&self) -> ::std::intrinsics::TypeId {
         ::std::intrinsics::TypeId::of::<StringTable>()
     }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        ::protobuf::MessageStatic::descriptor_static(None::<Self>)
+    }
+}
+
+impl ::protobuf::MessageStatic for StringTable {
+    fn new() -> StringTable {
+        StringTable::new()
+    }
 }
 
 impl ::protobuf::Clear for StringTable {
@@ -1507,7 +1505,7 @@ impl ::std::cmp::PartialEq for StringTable {
     }
 }
 
-#[deriving(Clone,Default,Show)]
+#[derive(Clone,Default,Show)]
 pub struct Info {
     version: ::std::option::Option<i32>,
     timestamp: ::std::option::Option<i64>,
@@ -1661,10 +1659,6 @@ impl Info {
 }
 
 impl ::protobuf::Message for Info {
-    fn new() -> Info {
-        Info::new()
-    }
-
     fn is_initialized(&self) -> bool {
         true
     }
@@ -1788,6 +1782,16 @@ impl ::protobuf::Message for Info {
     fn type_id(&self) -> ::std::intrinsics::TypeId {
         ::std::intrinsics::TypeId::of::<Info>()
     }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        ::protobuf::MessageStatic::descriptor_static(None::<Self>)
+    }
+}
+
+impl ::protobuf::MessageStatic for Info {
+    fn new() -> Info {
+        Info::new()
+    }
 }
 
 impl ::protobuf::Clear for Info {
@@ -1814,7 +1818,7 @@ impl ::std::cmp::PartialEq for Info {
     }
 }
 
-#[deriving(Clone,Default,Show)]
+#[derive(Clone,Default,Show)]
 pub struct DenseInfo {
     version: ::std::vec::Vec<i32>,
     timestamp: ::std::vec::Vec<i64>,
@@ -2004,10 +2008,6 @@ impl DenseInfo {
 }
 
 impl ::protobuf::Message for DenseInfo {
-    fn new() -> DenseInfo {
-        DenseInfo::new()
-    }
-
     fn is_initialized(&self) -> bool {
         true
     }
@@ -2017,82 +2017,22 @@ impl ::protobuf::Message for DenseInfo {
             let (field_number, wire_type) = try!(is.read_tag_unpack());
             match field_number {
                 1 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_int32_into(&mut self.version));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.version.push(try!(is.read_int32()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_int32_into(wire_type, is, &mut self.version));
                 },
                 2 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_sint64_into(&mut self.timestamp));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.timestamp.push(try!(is.read_sint64()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_sint64_into(wire_type, is, &mut self.timestamp));
                 },
                 3 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_sint64_into(&mut self.changeset));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.changeset.push(try!(is.read_sint64()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_sint64_into(wire_type, is, &mut self.changeset));
                 },
                 4 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_sint32_into(&mut self.uid));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.uid.push(try!(is.read_sint32()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_sint32_into(wire_type, is, &mut self.uid));
                 },
                 5 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_sint32_into(&mut self.user_sid));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.user_sid.push(try!(is.read_sint32()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_sint32_into(wire_type, is, &mut self.user_sid));
                 },
                 6 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_bool_into(&mut self.visible));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.visible.push(try!(is.read_bool()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_bool_into(wire_type, is, &mut self.visible));
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -2197,6 +2137,16 @@ impl ::protobuf::Message for DenseInfo {
     fn type_id(&self) -> ::std::intrinsics::TypeId {
         ::std::intrinsics::TypeId::of::<DenseInfo>()
     }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        ::protobuf::MessageStatic::descriptor_static(None::<Self>)
+    }
+}
+
+impl ::protobuf::MessageStatic for DenseInfo {
+    fn new() -> DenseInfo {
+        DenseInfo::new()
+    }
 }
 
 impl ::protobuf::Clear for DenseInfo {
@@ -2223,7 +2173,7 @@ impl ::std::cmp::PartialEq for DenseInfo {
     }
 }
 
-#[deriving(Clone,Default,Show)]
+#[derive(Clone,Default,Show)]
 pub struct ChangeSet {
     id: ::std::option::Option<i64>,
     unknown_fields: ::protobuf::UnknownFields,
@@ -2272,10 +2222,6 @@ impl ChangeSet {
 }
 
 impl ::protobuf::Message for ChangeSet {
-    fn new() -> ChangeSet {
-        ChangeSet::new()
-    }
-
     fn is_initialized(&self) -> bool {
         if self.id.is_none() {
             return false;
@@ -2337,6 +2283,16 @@ impl ::protobuf::Message for ChangeSet {
     fn type_id(&self) -> ::std::intrinsics::TypeId {
         ::std::intrinsics::TypeId::of::<ChangeSet>()
     }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        ::protobuf::MessageStatic::descriptor_static(None::<Self>)
+    }
+}
+
+impl ::protobuf::MessageStatic for ChangeSet {
+    fn new() -> ChangeSet {
+        ChangeSet::new()
+    }
 }
 
 impl ::protobuf::Clear for ChangeSet {
@@ -2353,7 +2309,7 @@ impl ::std::cmp::PartialEq for ChangeSet {
     }
 }
 
-#[deriving(Clone,Default,Show)]
+#[derive(Clone,Default,Show)]
 pub struct Node {
     id: ::std::option::Option<i64>,
     keys: ::std::vec::Vec<u32>,
@@ -2533,10 +2489,6 @@ impl Node {
 }
 
 impl ::protobuf::Message for Node {
-    fn new() -> Node {
-        Node::new()
-    }
-
     fn is_initialized(&self) -> bool {
         if self.id.is_none() {
             return false;
@@ -2562,30 +2514,10 @@ impl ::protobuf::Message for Node {
                     self.id = ::std::option::Option::Some(tmp);
                 },
                 2 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_uint32_into(&mut self.keys));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.keys.push(try!(is.read_uint32()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_uint32_into(wire_type, is, &mut self.keys));
                 },
                 3 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_uint32_into(&mut self.vals));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.vals.push(try!(is.read_uint32()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_uint32_into(wire_type, is, &mut self.vals));
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -2694,6 +2626,16 @@ impl ::protobuf::Message for Node {
     fn type_id(&self) -> ::std::intrinsics::TypeId {
         ::std::intrinsics::TypeId::of::<Node>()
     }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        ::protobuf::MessageStatic::descriptor_static(None::<Self>)
+    }
+}
+
+impl ::protobuf::MessageStatic for Node {
+    fn new() -> Node {
+        Node::new()
+    }
 }
 
 impl ::protobuf::Clear for Node {
@@ -2720,7 +2662,7 @@ impl ::std::cmp::PartialEq for Node {
     }
 }
 
-#[deriving(Clone,Default,Show)]
+#[derive(Clone,Default,Show)]
 pub struct DenseNodes {
     id: ::std::vec::Vec<i64>,
     denseinfo: ::protobuf::SingularPtrField<DenseInfo>,
@@ -2891,10 +2833,6 @@ impl DenseNodes {
 }
 
 impl ::protobuf::Message for DenseNodes {
-    fn new() -> DenseNodes {
-        DenseNodes::new()
-    }
-
     fn is_initialized(&self) -> bool {
         true
     }
@@ -2904,17 +2842,7 @@ impl ::protobuf::Message for DenseNodes {
             let (field_number, wire_type) = try!(is.read_tag_unpack());
             match field_number {
                 1 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_sint64_into(&mut self.id));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.id.push(try!(is.read_sint64()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_sint64_into(wire_type, is, &mut self.id));
                 },
                 5 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -2924,43 +2852,13 @@ impl ::protobuf::Message for DenseNodes {
                     try!(is.merge_message(tmp))
                 },
                 8 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_sint64_into(&mut self.lat));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.lat.push(try!(is.read_sint64()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_sint64_into(wire_type, is, &mut self.lat));
                 },
                 9 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_sint64_into(&mut self.lon));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.lon.push(try!(is.read_sint64()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_sint64_into(wire_type, is, &mut self.lon));
                 },
                 10 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_int32_into(&mut self.keys_vals));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.keys_vals.push(try!(is.read_int32()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_int32_into(wire_type, is, &mut self.keys_vals));
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -3052,6 +2950,16 @@ impl ::protobuf::Message for DenseNodes {
     fn type_id(&self) -> ::std::intrinsics::TypeId {
         ::std::intrinsics::TypeId::of::<DenseNodes>()
     }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        ::protobuf::MessageStatic::descriptor_static(None::<Self>)
+    }
+}
+
+impl ::protobuf::MessageStatic for DenseNodes {
+    fn new() -> DenseNodes {
+        DenseNodes::new()
+    }
 }
 
 impl ::protobuf::Clear for DenseNodes {
@@ -3076,7 +2984,7 @@ impl ::std::cmp::PartialEq for DenseNodes {
     }
 }
 
-#[deriving(Clone,Default,Show)]
+#[derive(Clone,Default,Show)]
 pub struct Way {
     id: ::std::option::Option<i64>,
     keys: ::std::vec::Vec<u32>,
@@ -3241,10 +3149,6 @@ impl Way {
 }
 
 impl ::protobuf::Message for Way {
-    fn new() -> Way {
-        Way::new()
-    }
-
     fn is_initialized(&self) -> bool {
         if self.id.is_none() {
             return false;
@@ -3264,30 +3168,10 @@ impl ::protobuf::Message for Way {
                     self.id = ::std::option::Option::Some(tmp);
                 },
                 2 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_uint32_into(&mut self.keys));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.keys.push(try!(is.read_uint32()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_uint32_into(wire_type, is, &mut self.keys));
                 },
                 3 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_uint32_into(&mut self.vals));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.vals.push(try!(is.read_uint32()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_uint32_into(wire_type, is, &mut self.vals));
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -3297,17 +3181,7 @@ impl ::protobuf::Message for Way {
                     try!(is.merge_message(tmp))
                 },
                 8 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_sint64_into(&mut self.refs));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.refs.push(try!(is.read_sint64()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_sint64_into(wire_type, is, &mut self.refs));
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -3394,6 +3268,16 @@ impl ::protobuf::Message for Way {
     fn type_id(&self) -> ::std::intrinsics::TypeId {
         ::std::intrinsics::TypeId::of::<Way>()
     }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        ::protobuf::MessageStatic::descriptor_static(None::<Self>)
+    }
+}
+
+impl ::protobuf::MessageStatic for Way {
+    fn new() -> Way {
+        Way::new()
+    }
 }
 
 impl ::protobuf::Clear for Way {
@@ -3418,7 +3302,7 @@ impl ::std::cmp::PartialEq for Way {
     }
 }
 
-#[deriving(Clone,Default,Show)]
+#[derive(Clone,Default,Show)]
 pub struct Relation {
     id: ::std::option::Option<i64>,
     keys: ::std::vec::Vec<u32>,
@@ -3637,10 +3521,6 @@ impl Relation {
 }
 
 impl ::protobuf::Message for Relation {
-    fn new() -> Relation {
-        Relation::new()
-    }
-
     fn is_initialized(&self) -> bool {
         if self.id.is_none() {
             return false;
@@ -3660,30 +3540,10 @@ impl ::protobuf::Message for Relation {
                     self.id = ::std::option::Option::Some(tmp);
                 },
                 2 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_uint32_into(&mut self.keys));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.keys.push(try!(is.read_uint32()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_uint32_into(wire_type, is, &mut self.keys));
                 },
                 3 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_uint32_into(&mut self.vals));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.vals.push(try!(is.read_uint32()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_uint32_into(wire_type, is, &mut self.vals));
                 },
                 4 => {
                     if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
@@ -3693,43 +3553,13 @@ impl ::protobuf::Message for Relation {
                     try!(is.merge_message(tmp))
                 },
                 8 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_int32_into(&mut self.roles_sid));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.roles_sid.push(try!(is.read_int32()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_int32_into(wire_type, is, &mut self.roles_sid));
                 },
                 9 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_sint64_into(&mut self.memids));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.memids.push(try!(is.read_sint64()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_sint64_into(wire_type, is, &mut self.memids));
                 },
                 10 => {
-                    match wire_type {
-                        ::protobuf::wire_format::WireTypeLengthDelimited => {
-                            try!(is.read_repeated_packed_enum_into(&mut self.types));
-                        },
-                        ::protobuf::wire_format::WireTypeVarint => {
-                            self.types.push(try!(is.read_enum()));
-                        },
-                        _ => {
-                            return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                        },
-                    };
+                    try!(::protobuf::rt::read_repeated_enum_into(wire_type, is, &mut self.types));
                 },
                 _ => {
                     let unknown = try!(is.read_unknown(wire_type));
@@ -3838,6 +3668,16 @@ impl ::protobuf::Message for Relation {
     fn type_id(&self) -> ::std::intrinsics::TypeId {
         ::std::intrinsics::TypeId::of::<Relation>()
     }
+
+    fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
+        ::protobuf::MessageStatic::descriptor_static(None::<Self>)
+    }
+}
+
+impl ::protobuf::MessageStatic for Relation {
+    fn new() -> Relation {
+        Relation::new()
+    }
 }
 
 impl ::protobuf::Clear for Relation {
@@ -3866,7 +3706,7 @@ impl ::std::cmp::PartialEq for Relation {
     }
 }
 
-#[deriving(Clone,PartialEq,Eq,Show)]
+#[derive(Clone,PartialEq,Eq,Show)]
 pub enum Relation_MemberType {
     NODE = 0,
     WAY = 1,

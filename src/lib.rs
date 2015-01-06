@@ -6,7 +6,7 @@
 // more details.
 
 #![deny(warnings)]
-#![feature(phase, unboxed_closures, globs)]
+#![feature(unboxed_closures, associated_types)]
 
 extern crate protobuf;
 extern crate flate2;
@@ -113,9 +113,8 @@ impl<R: Reader> OsmPbfReader<R> {
 pub struct PrimitiveBlocks<'a, R: 'a> {
     opr: &'a mut OsmPbfReader<R>
 }
-impl<'a, R: Reader> Iterator<Result<osmformat::PrimitiveBlock, OsmPbfError>>
-    for PrimitiveBlocks<'a, R>
-{
+impl<'a, R: Reader> Iterator for PrimitiveBlocks<'a, R> {
+    type Item = Result<osmformat::PrimitiveBlock, OsmPbfError>;
     fn next(&mut self) -> Option<Result<osmformat::PrimitiveBlock, OsmPbfError>> {
         self.opr.next_primitive_block()
     }

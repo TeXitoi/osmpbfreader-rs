@@ -41,7 +41,8 @@ pub struct SimpleNodes<'a> {
     iter: slice::Iter<'a, osmformat::Node>,
     block: &'a PrimitiveBlock,
 }
-impl<'a> Iterator<Node> for SimpleNodes<'a> {
+impl<'a> Iterator for SimpleNodes<'a> {
+    type Item = Node;
     fn next(&mut self) -> Option<Node> {
         self.iter.next().map(|n| Node {
             id: n.get_id(),
@@ -80,7 +81,8 @@ pub struct DenseNodes<'a> {
     cur_lat: i64,
     cur_lon: i64,
 }
-impl<'a> Iterator<Node> for DenseNodes<'a> {
+impl<'a> Iterator for DenseNodes<'a> {
+    type Item = Node;
     fn next(&mut self) -> Option<Node> {
         match (self.dids.next(), self.dlats.next(), self.dlons.next()) {
             (Some(&did), Some(&dlat), Some(&dlon)) => {
@@ -118,7 +120,8 @@ pub struct Ways<'a> {
     iter: slice::Iter<'a, osmformat::Way>,
     block: &'a PrimitiveBlock,
 }
-impl<'a> Iterator<Way> for Ways<'a> {
+impl<'a> Iterator for Ways<'a> {
+    type Item = Way;
     fn next(&mut self) -> Option<Way> {
         self.iter.next().map(|w| {
             let mut n = 0;
@@ -142,9 +145,10 @@ pub struct Relations<'a> {
     iter: slice::Iter<'a, osmformat::Relation>,
     block: &'a PrimitiveBlock,
 }
-impl<'a> Iterator<Relation> for Relations<'a> {
+impl<'a> Iterator for Relations<'a> {
+    type Item = Relation;
     fn next(&mut self) -> Option<Relation> {
-        use osmformat::Relation_MemberType::*;
+        use osmformat::Relation_MemberType::{NODE, WAY, RELATION};
         self.iter.next().map(|rel| {
             let mut m = 0;
             let refs = rel.get_memids().iter()

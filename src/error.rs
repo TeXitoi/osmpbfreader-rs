@@ -10,7 +10,7 @@ use std::error::FromError;
 use std::io::IoError;
 use protobuf;
 
-#[deriving(Show)]
+#[derive(Show)]
 pub enum OsmPbfError {
     Io(IoError),
     Pbf(protobuf::ProtobufError),
