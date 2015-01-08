@@ -5,9 +5,7 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-#![feature(phase)]
-
-#[phase(plugin, link)] extern crate log;
+#[macro_use] extern crate log;
 extern crate osmpbfreader;
 
 fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &str) {
