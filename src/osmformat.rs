@@ -3728,5 +3728,5 @@ impl ::protobuf::ProtobufEnum for Relation_MemberType {
     }
 }
 
-impl ::std::kinds::Copy for Relation_MemberType {
+impl ::std::marker::Copy for Relation_MemberType {
 }

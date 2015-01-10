@@ -11,17 +11,17 @@ extern crate osmpbfreader;
 fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &str) {
     let r = std::io::fs::File::open(&std::path::Path::new(filename)).unwrap();
     let mut pbf = osmpbfreader::OsmPbfReader::with_reader(r);
-    let mut nb_nodes = 0u;
+    let mut nb_nodes = 0;
     let mut sum_lon = 0.;
     let mut sum_lat = 0.;
-    let mut nb_ways = 0u;
+    let mut nb_ways = 0;
     let mut nb_way_nodes = 0;
-    let mut nb_rels = 0u;
+    let mut nb_rels = 0;
     let mut nb_rel_refs = 0;
     for block in pbf.primitive_blocks().map(|r| r.unwrap()) {
         for obj in osmpbfreader::blocks::iter(&block) {
             if !filter(obj.tags()) { continue; }
-            info!("{}", obj);
+            info!("{:?}", obj);
             match obj {
                 osmpbfreader::OsmObj::Node(node) => {
                     nb_nodes += 1;
@@ -49,18 +49,18 @@ fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &str) {
 
 fn main() {
     let args = std::os::args();
-    match args.as_slice() {
+    match &*args {
         [_, ref f] => {
             println!("counting objects...");
-            count(|_| true, f.as_slice());
+            count(|_| true, &**f);
         }
         [_, ref f, ref key] => {
             println!("counting objects with \"{}\" in tags...", key);
-            count(|tags| tags.contains_key(key), f.as_slice());
+            count(|tags| tags.contains_key(key), &**f);
         }
         [_, ref f, ref key, ref val] => {
             println!("counting objects with tags[\"{}\"] = \"{}\"...", key, val);
-            count(|tags| tags.get(key).map(|v| v == val).unwrap_or(false), f.as_slice());
+            count(|tags| tags.get(key).map(|v| v == val).unwrap_or(false), &**f);
         }
         _ => println!("usage: count filename [key [value]]", ),
     };

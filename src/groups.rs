@@ -51,7 +51,7 @@ impl<'a> Iterator for SimpleNodes<'a> {
             tags: make_tags(n.get_keys(), n.get_vals(), self.block),
         })
     }
-    fn size_hint(&self) -> (uint, Option<uint>) {
+    fn size_hint(&self) -> (usize, Option<usize>) {
         self.iter.size_hint()
     }
 }
@@ -96,11 +96,11 @@ impl<'a> Iterator for DenseNodes<'a> {
         loop {
             let k = match self.keys_vals.next() {
                 None | Some(&0) => break,
-                Some(k) => make_string(*k as uint, self.block),
+                Some(k) => make_string(*k as usize, self.block),
             };
             let v = match self.keys_vals.next() {
                 None => break,
-                Some(v) => make_string(*v as uint, self.block),
+                Some(v) => make_string(*v as usize, self.block),
             };
             tags.insert(k, v);
         }
@@ -133,7 +133,7 @@ impl<'a> Iterator for Ways<'a> {
             }
         })
     }
-    fn size_hint(&self) -> (uint, Option<uint>) {
+    fn size_hint(&self) -> (usize, Option<usize>) {
         self.iter.size_hint()
     }
 }
@@ -162,7 +162,7 @@ impl<'a> Iterator for Relations<'a> {
                             WAY => OsmId::Way(m),
                             RELATION => OsmId::Relation(m),
                         },
-                        role: make_string(role as uint, self.block),
+                        role: make_string(role as usize, self.block),
                     }
                 }).collect();
             Relation {
@@ -172,13 +172,13 @@ impl<'a> Iterator for Relations<'a> {
             }
         })
     }
-    fn size_hint(&self) -> (uint, Option<uint>) {
+    fn size_hint(&self) -> (usize, Option<usize>) {
         self.iter.size_hint()
     }
 }
 
-fn make_string(k: uint, block: &osmformat::PrimitiveBlock) -> String {
-    String::from_utf8_lossy(block.get_stringtable().get_s()[k].as_slice())
+fn make_string(k: usize, block: &osmformat::PrimitiveBlock) -> String {
+    String::from_utf8_lossy(&*block.get_stringtable().get_s()[k])
         .into_owned()
 }
 fn make_lat(c: i64, b: &osmformat::PrimitiveBlock) -> f64 {
@@ -192,8 +192,8 @@ fn make_lon(c: i64, b: &osmformat::PrimitiveBlock) -> f64 {
 fn make_tags(keys: &[u32], vals: &[u32], b: &PrimitiveBlock) -> Tags {
     let mut tags = BTreeMap::new();
     for (&k, &v) in keys.iter().zip(vals.iter()) {
-        let k = make_string(k as uint, b);
-        let v = make_string(v as uint, b);
+        let k = make_string(k as usize, b);
+        let v = make_string(v as usize, b);
         tags.insert(k, v);
     }
     tags

@@ -5,7 +5,7 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-#![deny(warnings)]
+//#![deny(warnings)]
 #![feature(unboxed_closures)]
 
 extern crate protobuf;
@@ -16,9 +16,8 @@ pub use error::OsmPbfError;
 
 use std::error::FromError;
 
-#[allow(non_snake_case)]
-pub mod fileformat;
-pub mod osmformat;
+#[allow(non_snake_case, unstable)] pub mod fileformat;
+#[allow(unstable)] pub mod osmformat;
 
 pub mod error;
 pub mod objects;
@@ -43,7 +42,7 @@ impl<R: Reader> OsmPbfReader<R> {
         PrimitiveBlocks { opr: self }
     }
 
-    fn push(&mut self, sz: uint) -> Result<(), OsmPbfError> {
+    fn push(&mut self, sz: usize) -> Result<(), OsmPbfError> {
         self.buf.clear();
         let readed = try!(self.r.push_at_least(sz, sz, &mut self.buf));
         assert_eq!(sz, readed);
@@ -63,15 +62,15 @@ impl<R: Reader> OsmPbfReader<R> {
             Err(OsmPbfError::UnsupportedData)
         }
     }
-    fn try_primitive_block(&mut self, sz: uint)
+    fn try_primitive_block(&mut self, sz: usize)
                            -> Result<Option<osmformat::PrimitiveBlock>, OsmPbfError>
     {
         try!(self.push(sz));
         let header: fileformat::BlobHeader =
-            try!(protobuf::parse_from_bytes(self.buf.as_slice()));
-        let sz = header.get_datasize() as uint;
+            try!(protobuf::parse_from_bytes(&*self.buf));
+        let sz = header.get_datasize() as usize;
         try!(self.push(sz));
-        let blob: fileformat::Blob = try!(protobuf::parse_from_bytes(self.buf.as_slice()));
+        let blob: fileformat::Blob = try!(protobuf::parse_from_bytes(&*self.buf));
         let primitive_opt = if header.get_field_type() == "OSMData" {
             Some(try!(self.read_primitive_block(blob)))
         } else if header.get_field_type() == "OSMHeader" {
@@ -98,7 +97,7 @@ impl<R: Reader> OsmPbfReader<R> {
                 self.finished = true;
                 return Some(Err(FromError::from_error(e)));
             }
-        } as uint;
+        } as usize;
         match self.try_primitive_block(sz) {
             Ok(Some(p)) => Some(Ok(p)),
             Ok(None) => self.next_primitive_block(),
