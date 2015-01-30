@@ -5,11 +5,13 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
+#![feature(os, path, io)]
+
 #[macro_use] extern crate log;
 extern crate osmpbfreader;
 
 fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &str) {
-    let r = std::io::fs::File::open(&std::path::Path::new(filename)).unwrap();
+    let r = std::old_io::fs::File::open(&std::path::Path::new(filename)).unwrap();
     let mut pbf = osmpbfreader::OsmPbfReader::with_reader(r);
     let mut nb_nodes = 0;
     let mut sum_lon = 0.;

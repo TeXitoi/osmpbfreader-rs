@@ -11,6 +11,7 @@ use std::old_io::IoError;
 use std::fmt;
 use protobuf;
 
+#[derive(Debug)]
 pub enum OsmPbfError {
     Io(IoError),
     Pbf(protobuf::ProtobufError),
