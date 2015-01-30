@@ -7,7 +7,7 @@
 
 use std::error::Error;
 use std::error::FromError;
-use std::io::IoError;
+use std::old_io::IoError;
 use protobuf;
 
 #[derive(Show)]
@@ -24,14 +24,6 @@ impl Error for OsmPbfError {
             OsmPbfError::Pbf(ref e) => e.description(),
             OsmPbfError::UnsupportedData => "Unsupported data",
             OsmPbfError::InvalidData => "Invalid data",
-        }
-    }
-    fn detail(&self) -> Option<String> {
-        match *self {
-            OsmPbfError::Io(ref e) => e.detail(),
-            OsmPbfError::Pbf(ref e) => e.detail(),
-            OsmPbfError::UnsupportedData => None,
-            OsmPbfError::InvalidData => None,
         }
     }
     fn cause(&self) -> Option<&Error> {

@@ -8,7 +8,7 @@
 use protobuf::Message as Message_imported_for_functions;
 use protobuf::ProtobufEnum as ProtobufEnum_imported_for_functions;
 
-#[derive(Clone,Default,Show)]
+#[derive(Clone,Default,Debug)]
 pub struct HeaderBlock {
     bbox: ::protobuf::SingularPtrField<HeaderBBox>,
     required_features: ::protobuf::RepeatedField<::std::string::String>,
@@ -422,8 +422,8 @@ impl ::protobuf::Message for HeaderBlock {
         &mut self.unknown_fields
     }
 
-    fn type_id(&self) -> ::std::intrinsics::TypeId {
-        ::std::intrinsics::TypeId::of::<HeaderBlock>()
+    fn type_id(&self) -> ::std::any::TypeId {
+        ::std::any::TypeId::of::<HeaderBlock>()
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -465,7 +465,7 @@ impl ::std::cmp::PartialEq for HeaderBlock {
     }
 }
 
-#[derive(Clone,Default,Show)]
+#[derive(Clone,Default,Debug)]
 pub struct HeaderBBox {
     left: ::std::option::Option<i64>,
     right: ::std::option::Option<i64>,
@@ -683,8 +683,8 @@ impl ::protobuf::Message for HeaderBBox {
         &mut self.unknown_fields
     }
 
-    fn type_id(&self) -> ::std::intrinsics::TypeId {
-        ::std::intrinsics::TypeId::of::<HeaderBBox>()
+    fn type_id(&self) -> ::std::any::TypeId {
+        ::std::any::TypeId::of::<HeaderBBox>()
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -718,7 +718,7 @@ impl ::std::cmp::PartialEq for HeaderBBox {
     }
 }
 
-#[derive(Clone,Default,Show)]
+#[derive(Clone,Default,Debug)]
 pub struct PrimitiveBlock {
     stringtable: ::protobuf::SingularPtrField<StringTable>,
     primitivegroup: ::protobuf::RepeatedField<PrimitiveGroup>,
@@ -1017,8 +1017,8 @@ impl ::protobuf::Message for PrimitiveBlock {
         &mut self.unknown_fields
     }
 
-    fn type_id(&self) -> ::std::intrinsics::TypeId {
-        ::std::intrinsics::TypeId::of::<PrimitiveBlock>()
+    fn type_id(&self) -> ::std::any::TypeId {
+        ::std::any::TypeId::of::<PrimitiveBlock>()
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -1056,7 +1056,7 @@ impl ::std::cmp::PartialEq for PrimitiveBlock {
     }
 }
 
-#[derive(Clone,Default,Show)]
+#[derive(Clone,Default,Debug)]
 pub struct PrimitiveGroup {
     nodes: ::protobuf::RepeatedField<Node>,
     dense: ::protobuf::SingularPtrField<DenseNodes>,
@@ -1333,8 +1333,8 @@ impl ::protobuf::Message for PrimitiveGroup {
         &mut self.unknown_fields
     }
 
-    fn type_id(&self) -> ::std::intrinsics::TypeId {
-        ::std::intrinsics::TypeId::of::<PrimitiveGroup>()
+    fn type_id(&self) -> ::std::any::TypeId {
+        ::std::any::TypeId::of::<PrimitiveGroup>()
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -1370,7 +1370,7 @@ impl ::std::cmp::PartialEq for PrimitiveGroup {
     }
 }
 
-#[derive(Clone,Default,Show)]
+#[derive(Clone,Default,Debug)]
 pub struct StringTable {
     s: ::protobuf::RepeatedField<::std::vec::Vec<u8>>,
     unknown_fields: ::protobuf::UnknownFields,
@@ -1476,8 +1476,8 @@ impl ::protobuf::Message for StringTable {
         &mut self.unknown_fields
     }
 
-    fn type_id(&self) -> ::std::intrinsics::TypeId {
-        ::std::intrinsics::TypeId::of::<StringTable>()
+    fn type_id(&self) -> ::std::any::TypeId {
+        ::std::any::TypeId::of::<StringTable>()
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -1505,7 +1505,7 @@ impl ::std::cmp::PartialEq for StringTable {
     }
 }
 
-#[derive(Clone,Default,Show)]
+#[derive(Clone,Default,Debug)]
 pub struct Info {
     version: ::std::option::Option<i32>,
     timestamp: ::std::option::Option<i64>,
@@ -1779,8 +1779,8 @@ impl ::protobuf::Message for Info {
         &mut self.unknown_fields
     }
 
-    fn type_id(&self) -> ::std::intrinsics::TypeId {
-        ::std::intrinsics::TypeId::of::<Info>()
+    fn type_id(&self) -> ::std::any::TypeId {
+        ::std::any::TypeId::of::<Info>()
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -1818,7 +1818,7 @@ impl ::std::cmp::PartialEq for Info {
     }
 }
 
-#[derive(Clone,Default,Show)]
+#[derive(Clone,Default,Debug)]
 pub struct DenseInfo {
     version: ::std::vec::Vec<i32>,
     timestamp: ::std::vec::Vec<i64>,
@@ -2134,8 +2134,8 @@ impl ::protobuf::Message for DenseInfo {
         &mut self.unknown_fields
     }
 
-    fn type_id(&self) -> ::std::intrinsics::TypeId {
-        ::std::intrinsics::TypeId::of::<DenseInfo>()
+    fn type_id(&self) -> ::std::any::TypeId {
+        ::std::any::TypeId::of::<DenseInfo>()
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -2173,7 +2173,7 @@ impl ::std::cmp::PartialEq for DenseInfo {
     }
 }
 
-#[derive(Clone,Default,Show)]
+#[derive(Clone,Default,Debug)]
 pub struct ChangeSet {
     id: ::std::option::Option<i64>,
     unknown_fields: ::protobuf::UnknownFields,
@@ -2280,8 +2280,8 @@ impl ::protobuf::Message for ChangeSet {
         &mut self.unknown_fields
     }
 
-    fn type_id(&self) -> ::std::intrinsics::TypeId {
-        ::std::intrinsics::TypeId::of::<ChangeSet>()
+    fn type_id(&self) -> ::std::any::TypeId {
+        ::std::any::TypeId::of::<ChangeSet>()
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -2309,7 +2309,7 @@ impl ::std::cmp::PartialEq for ChangeSet {
     }
 }
 
-#[derive(Clone,Default,Show)]
+#[derive(Clone,Default,Debug)]
 pub struct Node {
     id: ::std::option::Option<i64>,
     keys: ::std::vec::Vec<u32>,
@@ -2623,8 +2623,8 @@ impl ::protobuf::Message for Node {
         &mut self.unknown_fields
     }
 
-    fn type_id(&self) -> ::std::intrinsics::TypeId {
-        ::std::intrinsics::TypeId::of::<Node>()
+    fn type_id(&self) -> ::std::any::TypeId {
+        ::std::any::TypeId::of::<Node>()
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -2662,7 +2662,7 @@ impl ::std::cmp::PartialEq for Node {
     }
 }
 
-#[derive(Clone,Default,Show)]
+#[derive(Clone,Default,Debug)]
 pub struct DenseNodes {
     id: ::std::vec::Vec<i64>,
     denseinfo: ::protobuf::SingularPtrField<DenseInfo>,
@@ -2947,8 +2947,8 @@ impl ::protobuf::Message for DenseNodes {
         &mut self.unknown_fields
     }
 
-    fn type_id(&self) -> ::std::intrinsics::TypeId {
-        ::std::intrinsics::TypeId::of::<DenseNodes>()
+    fn type_id(&self) -> ::std::any::TypeId {
+        ::std::any::TypeId::of::<DenseNodes>()
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -2984,7 +2984,7 @@ impl ::std::cmp::PartialEq for DenseNodes {
     }
 }
 
-#[derive(Clone,Default,Show)]
+#[derive(Clone,Default,Debug)]
 pub struct Way {
     id: ::std::option::Option<i64>,
     keys: ::std::vec::Vec<u32>,
@@ -3265,8 +3265,8 @@ impl ::protobuf::Message for Way {
         &mut self.unknown_fields
     }
 
-    fn type_id(&self) -> ::std::intrinsics::TypeId {
-        ::std::intrinsics::TypeId::of::<Way>()
+    fn type_id(&self) -> ::std::any::TypeId {
+        ::std::any::TypeId::of::<Way>()
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -3302,7 +3302,7 @@ impl ::std::cmp::PartialEq for Way {
     }
 }
 
-#[derive(Clone,Default,Show)]
+#[derive(Clone,Default,Debug)]
 pub struct Relation {
     id: ::std::option::Option<i64>,
     keys: ::std::vec::Vec<u32>,
@@ -3665,8 +3665,8 @@ impl ::protobuf::Message for Relation {
         &mut self.unknown_fields
     }
 
-    fn type_id(&self) -> ::std::intrinsics::TypeId {
-        ::std::intrinsics::TypeId::of::<Relation>()
+    fn type_id(&self) -> ::std::any::TypeId {
+        ::std::any::TypeId::of::<Relation>()
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -3706,7 +3706,7 @@ impl ::std::cmp::PartialEq for Relation {
     }
 }
 
-#[derive(Clone,PartialEq,Eq,Show)]
+#[derive(Clone,PartialEq,Eq,Debug)]
 pub enum Relation_MemberType {
     NODE = 0,
     WAY = 1,
@@ -3728,5 +3728,5 @@ impl ::protobuf::ProtobufEnum for Relation_MemberType {
     }
 }
 
-impl ::std::kinds::Copy for Relation_MemberType {
+impl ::std::marker::Copy for Relation_MemberType {
 }

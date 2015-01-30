@@ -5,6 +5,7 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
+
 use osmformat::PrimitiveBlock;
 use osmformat::PrimitiveGroup;
 use groups;
