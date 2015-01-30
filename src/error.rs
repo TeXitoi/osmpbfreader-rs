@@ -8,14 +8,24 @@
 use std::error::Error;
 use std::error::FromError;
 use std::old_io::IoError;
+use std::fmt;
 use protobuf;
 
-#[derive(Show)]
 pub enum OsmPbfError {
     Io(IoError),
     Pbf(protobuf::ProtobufError),
     UnsupportedData,
     InvalidData,
+}
+impl fmt::Display for OsmPbfError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            OsmPbfError::Io(ref e) => write!(f, "Io({})", e),
+            OsmPbfError::Pbf(ref e) => write!(f, "Pbf({})", e),
+            OsmPbfError::UnsupportedData => write!(f, "UnsupportedData"),
+            OsmPbfError::InvalidData => write!(f, "InvalidData"),
+        }
+    }
 }
 impl Error for OsmPbfError {
     fn description(&self) -> &str {

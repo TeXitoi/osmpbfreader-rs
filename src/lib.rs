@@ -6,7 +6,7 @@
 // more details.
 
 //#![deny(warnings)]
-#![feature(unboxed_closures)]
+#![feature(unboxed_closures, io, core, collections, hash)]
 
 extern crate protobuf;
 extern crate flate2;
@@ -16,8 +16,8 @@ pub use error::OsmPbfError;
 
 use std::error::FromError;
 
-#[allow(non_snake_case, unstable)] pub mod fileformat;
-#[allow(unstable)] pub mod osmformat;
+#[allow(non_snake_case)] pub mod fileformat;
+pub mod osmformat;
 
 pub mod error;
 pub mod objects;

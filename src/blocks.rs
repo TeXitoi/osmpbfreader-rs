@@ -16,7 +16,8 @@ use objects::{OsmObj, Node, Way, Relation};
 pub type OsmObjs<'a> = FlatMap<&'a PrimitiveGroup, OsmObj, slice::Iter<'a, PrimitiveGroup>, groups::OsmObjs<'a>, FnOsmObjs<'a>>;
 
 struct FnOsmObjs<'a> { block: &'a PrimitiveBlock }
-impl<'a> Fn(&'a PrimitiveGroup) -> groups::OsmObjs<'a> for FnOsmObjs<'a> {
+impl<'a> Fn<(&'a PrimitiveGroup,)>  for FnOsmObjs<'a> {
+    type Output = groups::OsmObjs<'a>;
     extern "rust-call" fn call(&self, (group,): (&'a PrimitiveGroup,))
                                -> groups::OsmObjs<'a>
     {
@@ -31,7 +32,8 @@ pub fn iter<'a>(block: &'a PrimitiveBlock) -> OsmObjs<'a> {
 pub type Nodes<'a> = FlatMap<&'a PrimitiveGroup, Node, slice::Iter<'a, PrimitiveGroup>, groups::Nodes<'a>, FnNodes<'a>>;
 
 struct FnNodes<'a> { block: &'a PrimitiveBlock }
-impl<'a> Fn(&'a PrimitiveGroup) -> groups::Nodes<'a> for FnNodes<'a> {
+impl<'a> Fn<(&'a PrimitiveGroup,)> for FnNodes<'a> {
+    type Output = groups::Nodes<'a>;
     extern "rust-call" fn call(&self, (group,): (&'a PrimitiveGroup,))
                                -> groups::Nodes<'a>
     {
@@ -46,7 +48,8 @@ pub fn nodes<'a>(block: &'a PrimitiveBlock) -> Nodes<'a> {
 pub type Ways<'a> = FlatMap<&'a PrimitiveGroup, Way, slice::Iter<'a, PrimitiveGroup>, groups::Ways<'a>, FnWays<'a>>;
 
 struct FnWays<'a> { block: &'a PrimitiveBlock }
-impl<'a> Fn(&'a PrimitiveGroup) -> groups::Ways<'a> for FnWays<'a> {
+impl<'a> Fn<(&'a PrimitiveGroup,)> for FnWays<'a> {
+    type Output = groups::Ways<'a>;
     extern "rust-call" fn call(&self, (group,): (&'a PrimitiveGroup,))
                                -> groups::Ways<'a>
     {
@@ -61,7 +64,8 @@ pub fn ways<'a>(block: &'a PrimitiveBlock) -> Ways<'a> {
 pub type Relations<'a> = FlatMap<&'a PrimitiveGroup, Relation, slice::Iter<'a, PrimitiveGroup>, groups::Relations<'a>, FnRelations<'a>>;
 
 struct FnRelations<'a> { block: &'a PrimitiveBlock }
-impl<'a> Fn(&'a PrimitiveGroup) -> groups::Relations<'a> for FnRelations<'a> {
+impl<'a> Fn<(&'a PrimitiveGroup,)> for FnRelations<'a> {
+    type Output = groups::Relations<'a>;
     extern "rust-call" fn call(&self, (group,): (&'a PrimitiveGroup,))
                                -> groups::Relations<'a>
     {
