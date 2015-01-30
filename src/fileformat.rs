@@ -8,7 +8,7 @@
 use protobuf::Message as Message_imported_for_functions;
 use protobuf::ProtobufEnum as ProtobufEnum_imported_for_functions;
 
-#[derive(Clone,Default,Show)]
+#[derive(Clone,Default,Debug)]
 pub struct Blob {
     raw: ::protobuf::SingularField<::std::vec::Vec<u8>>,
     raw_size: ::std::option::Option<i32>,
@@ -316,8 +316,8 @@ impl ::protobuf::Message for Blob {
         &mut self.unknown_fields
     }
 
-    fn type_id(&self) -> ::std::intrinsics::TypeId {
-        ::std::intrinsics::TypeId::of::<Blob>()
+    fn type_id(&self) -> ::std::any::TypeId {
+        ::std::any::TypeId::of::<Blob>()
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -353,7 +353,7 @@ impl ::std::cmp::PartialEq for Blob {
     }
 }
 
-#[derive(Clone,Default,Show)]
+#[derive(Clone,Default,Debug)]
 pub struct BlobHeader {
     field_type: ::protobuf::SingularField<::std::string::String>,
     indexdata: ::protobuf::SingularField<::std::vec::Vec<u8>>,
@@ -565,8 +565,8 @@ impl ::protobuf::Message for BlobHeader {
         &mut self.unknown_fields
     }
 
-    fn type_id(&self) -> ::std::intrinsics::TypeId {
-        ::std::intrinsics::TypeId::of::<BlobHeader>()
+    fn type_id(&self) -> ::std::any::TypeId {
+        ::std::any::TypeId::of::<BlobHeader>()
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
