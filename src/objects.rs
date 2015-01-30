@@ -9,7 +9,7 @@ use std::collections::BTreeMap;
 
 pub type Tags = BTreeMap<String, String>;
 
-#[derive(Show, PartialEq, PartialOrd, Clone)]
+#[derive(Debug, PartialEq, PartialOrd, Clone)]
 pub enum OsmObj {
     Node(Node),
     Way(Way),
@@ -25,7 +25,7 @@ impl OsmObj {
     }
 }
 
-#[derive(Show, PartialEq, PartialOrd, Clone)]
+#[derive(Debug, PartialEq, PartialOrd, Clone)]
 pub struct Node {
     pub id: i64,
     pub lat: f64,
@@ -33,27 +33,27 @@ pub struct Node {
     pub tags: Tags,
 }
 
-#[derive(Show, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
 pub struct Way {
     pub id: i64,
     pub nodes: Vec<i64>,
     pub tags: Tags,
 }
 
-#[derive(Show, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Copy)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Copy)]
 pub enum OsmId {
     Node(i64),
     Way(i64),
     Relation(i64),
 }
 
-#[derive(Show, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
 pub struct Ref {
     pub member: OsmId,
     pub role: String,
 }
 
-#[derive(Show, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
 pub struct Relation {
     pub id: i64,
     pub refs: Vec<Ref>,
