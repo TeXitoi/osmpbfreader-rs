@@ -7,15 +7,25 @@
 
 use std::error::Error;
 use std::error::FromError;
-use std::io::IoError;
+use std::old_io::IoError;
+use std::fmt;
 use protobuf;
 
-#[derive(Show)]
 pub enum OsmPbfError {
     Io(IoError),
     Pbf(protobuf::ProtobufError),
     UnsupportedData,
     InvalidData,
+}
+impl fmt::Display for OsmPbfError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            OsmPbfError::Io(ref e) => write!(f, "Io({})", e),
+            OsmPbfError::Pbf(ref e) => write!(f, "Pbf({})", e),
+            OsmPbfError::UnsupportedData => write!(f, "UnsupportedData"),
+            OsmPbfError::InvalidData => write!(f, "InvalidData"),
+        }
+    }
 }
 impl Error for OsmPbfError {
     fn description(&self) -> &str {
@@ -24,14 +34,6 @@ impl Error for OsmPbfError {
             OsmPbfError::Pbf(ref e) => e.description(),
             OsmPbfError::UnsupportedData => "Unsupported data",
             OsmPbfError::InvalidData => "Invalid data",
-        }
-    }
-    fn detail(&self) -> Option<String> {
-        match *self {
-            OsmPbfError::Io(ref e) => e.detail(),
-            OsmPbfError::Pbf(ref e) => e.detail(),
-            OsmPbfError::UnsupportedData => None,
-            OsmPbfError::InvalidData => None,
         }
     }
     fn cause(&self) -> Option<&Error> {

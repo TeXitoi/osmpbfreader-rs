@@ -6,7 +6,7 @@
 // more details.
 
 //#![deny(warnings)]
-#![feature(unboxed_closures)]
+#![feature(unboxed_closures, io, core, collections, hash)]
 
 extern crate protobuf;
 extern crate flate2;
@@ -16,8 +16,8 @@ pub use error::OsmPbfError;
 
 use std::error::FromError;
 
-#[allow(non_snake_case, unstable)] pub mod fileformat;
-#[allow(unstable)] pub mod osmformat;
+#[allow(non_snake_case)] pub mod fileformat;
+pub mod osmformat;
 
 pub mod error;
 pub mod objects;
@@ -55,7 +55,7 @@ impl<R: Reader> OsmPbfReader<R> {
             Ok(try!(protobuf::parse_from_bytes(blob.get_raw())))
         } else if blob.has_zlib_data() {
             use flate2::reader::ZlibDecoder;
-            let r = std::io::BufReader::new(blob.get_zlib_data());
+            let r = std::old_io::BufReader::new(blob.get_zlib_data());
             let mut zr = ZlibDecoder::new(r);
             Ok(try!(protobuf::parse_from_reader(&mut zr as &mut Reader)))
         } else {
@@ -84,7 +84,7 @@ impl<R: Reader> OsmPbfReader<R> {
     fn next_primitive_block(&mut self)
                             -> Option<Result<osmformat::PrimitiveBlock, OsmPbfError>>
     {
-        use std::io::IoErrorKind;
+        use std::old_io::IoErrorKind;
         if self.finished { return None; }
         let sz = match self.r.read_be_u32() {
             Ok(sz) if sz > 64 * 1024 => return Some(Err(OsmPbfError::InvalidData)),
