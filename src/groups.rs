@@ -14,7 +14,7 @@ use std::iter::Chain;
 use std::iter::Map;
 use objects::{OsmObj, Node, Way, Relation, Ref, OsmId, Tags};
 
-pub type OsmObjs<'a> = Chain<Chain<Map<Node, OsmObj, Nodes<'a>, fn(Node) -> OsmObj>, Map<Way, OsmObj, Ways<'a>, fn(Way) -> OsmObj>>, Map<Relation, OsmObj, Relations<'a>, fn(Relation) -> OsmObj>>;
+pub type OsmObjs<'a> = Chain<Chain<Map<Nodes<'a>, fn(Node) -> OsmObj>, Map<Ways<'a>, fn(Way) -> OsmObj>>, Map<Relations<'a>, fn(Relation) -> OsmObj>>;
 
 pub fn iter<'a>(g: &'a PrimitiveGroup, b: &'a PrimitiveBlock) -> OsmObjs<'a> {
     nodes(g, b).map(node_into_obj as fn(Node) -> OsmObj)

@@ -6,7 +6,7 @@
 // more details.
 
 //#![deny(warnings)]
-#![feature(unboxed_closures, io, core, collections, hash)]
+#![feature(unboxed_closures, io, core, hash)]
 
 extern crate protobuf;
 extern crate flate2;
