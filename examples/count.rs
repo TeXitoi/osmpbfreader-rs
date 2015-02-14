@@ -5,7 +5,7 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-#![feature(os, path, io, core, env)]
+#![feature(os, path, io, env)]
 
 #[macro_use] extern crate log;
 extern crate osmpbfreader;
@@ -50,7 +50,7 @@ fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &str) {
 }
 
 fn main() {
-    let args: Vec<_> = std::env::args().collect();
+    let args: Vec<_> = std::env::args_os().collect();
     match &*args {
         [_, ref f] => {
             println!("counting objects...");

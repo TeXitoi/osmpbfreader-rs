@@ -5,12 +5,12 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-#![feature(os, path, io, core, env)]
+#![feature(os, path, io, env)]
 
 extern crate osmpbfreader;
 
 fn main() {
-    let filename = std::env::args().nth(1)
+    let filename = std::env::args_os().nth(1)
         .and_then(|s| s.into_string().ok()).unwrap();
     let path = std::old_path::Path::new(&*filename);
     let r = std::old_io::fs::File::open(&path).unwrap();

@@ -8,4 +8,4 @@ authors = ["Guillaume Pinot <texitoi@texitoi.eu>"]
 git = "https://github.com/stepancheg/rust-protobuf.git"
 
 [dependencies.flate2]
-[dependencies.log]
+[dev-dependencies.log]
