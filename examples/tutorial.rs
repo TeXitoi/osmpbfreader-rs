@@ -5,15 +5,14 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-#![feature(os, path, io, env)]
+#![feature(fs, path, env)]
 
 extern crate osmpbfreader;
 
 fn main() {
-    let filename = std::env::args_os().nth(1)
-        .and_then(|s| s.into_string().ok()).unwrap();
-    let path = std::old_path::Path::new(&*filename);
-    let r = std::old_io::fs::File::open(&path).unwrap();
+    let filename = std::env::args_os().nth(1).unwrap();
+    let path = std::path::Path::new(&filename);
+    let r = std::fs::File::open(&path).unwrap();
     let mut pbf = osmpbfreader::OsmPbfReader::with_reader(r);
     let mut nb = 0;
     for block in pbf.primitive_blocks().map(|r| r.unwrap()) {
@@ -21,5 +20,5 @@ fn main() {
             nb += 1;
         }
     }
-    println!("{} objects in {}", nb, filename);
+    println!("{} objects in {:?}", nb, filename);
 }

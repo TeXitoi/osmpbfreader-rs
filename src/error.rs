@@ -7,7 +7,7 @@
 
 use std::error::Error;
 use std::error::FromError;
-use std::old_io::IoError;
+use std::io::Error as IoError;
 use std::fmt;
 use protobuf;
 

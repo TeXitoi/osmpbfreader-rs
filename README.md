@@ -31,35 +31,29 @@ git = "https://github.com/TeXitoi/osmpbfreader-rs"
 ```
 and editing `src/main.rs`:
 ```rust
+#![feature(fs, path, env)]
+
 extern crate osmpbfreader;
 
 fn main() {
-    let args = std::os::args();
-    let filename = &args[1];
-    let path = std::path::Path::new(filename.as_slice());
-    let r = std::io::fs::File::open(&path).unwrap();
+    let filename = std::env::args_os().nth(1).unwrap();
+    let path = std::path::Path::new(&filename);
+    let r = std::fs::File::open(&path).unwrap();
     let mut pbf = osmpbfreader::OsmPbfReader::with_reader(r);
-    let mut nb = 0u;
+    let mut nb = 0;
     for block in pbf.primitive_blocks().map(|r| r.unwrap()) {
         for _obj in osmpbfreader::blocks::iter(&block) {
             nb += 1;
         }
     }
-    println!("{} objects in {}", nb, filename);
+    println!("{} objects in {:?}", nb, filename);
 }
 ```
 build and run:
 ```
 $ cargo build --release
-    Updating registry `https://github.com/rust-lang/crates.io-index`
-   Compiling protobuf v0.0.5 (https://github.com/stepancheg/rust-protobuf.git#0bc890cd)
-   Compiling gcc v0.1.0
-   Compiling miniz-sys v0.1.0 (https://github.com/alexcrichton/flate2-rs#f9ab9da8)
-   Compiling flate2 v0.1.0 (https://github.com/alexcrichton/flate2-rs#f9ab9da8)
-   Compiling osmpbfreader v0.0.1 (https://github.com/TeXitoi/osmpbfreader-rs#57ba5182)
-   Compiling test-osmpbfreader v0.0.1 (file:///home/gupinot/dev/test-osmpbfreader)
 $ ./target/test-osmpbfreader picardie-latest.osm.pbf
-9852873 objects in picardie-latest.osm.pbf
+9852873 objects in "picardie-latest.osm.pbf"
 ```
 
 You can find OSM PBF files at [Geofabrik's free download server](http://download.geofabrik.de/).

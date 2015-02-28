@@ -5,13 +5,13 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-#![feature(os, path, io, env)]
+#![feature(os, path, fs, env)]
 
 #[macro_use] extern crate log;
 extern crate osmpbfreader;
 
-fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &str) {
-    let r = std::old_io::fs::File::open(&std::old_path::Path::new(filename)).unwrap();
+fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &std::ffi::OsStr) {
+    let r = std::fs::File::open(&std::path::Path::new(filename)).unwrap();
     let mut pbf = osmpbfreader::OsmPbfReader::with_reader(r);
     let mut nb_nodes = 0;
     let mut sum_lon = 0.;
@@ -54,15 +54,14 @@ fn main() {
     match &*args {
         [_, ref f] => {
             println!("counting objects...");
-            count(|_| true, f.to_str().unwrap());
+            count(|_| true, f);
         }
         [_, ref f, ref key] => {
             let key = key.to_str().unwrap();
             println!("counting objects with \"{}\" in tags...", key);
-            count(|tags| tags.contains_key(key), f.to_str().unwrap());
+            count(|tags| tags.contains_key(key), f);
         }
         [_, ref f, ref key, ref val] => {
-            let f = f.to_str().unwrap();
             let key = key.to_str().unwrap();
             let val = val.to_str().unwrap();
             println!("counting objects with tags[\"{}\"] = \"{}\"...", key, val);
