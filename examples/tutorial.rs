@@ -5,7 +5,7 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-#![feature(fs, path, env)]
+#![feature(fs, path)]
 
 extern crate osmpbfreader;
 
