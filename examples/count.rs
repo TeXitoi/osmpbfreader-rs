@@ -5,8 +5,6 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-#![feature(os, path, fs)]
-
 #[macro_use] extern crate log;
 extern crate osmpbfreader;
 
