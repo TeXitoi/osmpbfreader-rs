@@ -6,7 +6,7 @@
 // more details.
 
 //#![deny(warnings)]
-#![feature(io, core)]
+#![feature(core)]
 
 extern crate protobuf;
 extern crate flate2;
@@ -45,7 +45,6 @@ impl<R: std::io::Read> OsmPbfReader<R> {
 
     fn push(&mut self, sz: u64) -> Result<(), OsmPbfError> {
         use std::io::Read;
-        use std::io::ReadExt;
         self.buf.clear();
         try!(self.r.by_ref().take(sz).read_to_end(&mut self.buf));
         assert_eq!(sz, self.buf.len() as u64);

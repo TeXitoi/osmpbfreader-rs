@@ -31,7 +31,7 @@ impl fmt::Display for OsmPbfError {
 impl Error for OsmPbfError {
     fn description(&self) -> &str {
         match *self {
-            OsmPbfError::Io(ref e) => e.description(),
+            OsmPbfError::Io(ref e) => (e as &Error).description(),
             OsmPbfError::Pbf(ref e) => e.description(),
             OsmPbfError::UnsupportedData => "Unsupported data",
             OsmPbfError::InvalidData => "Invalid data",
