@@ -10,6 +10,7 @@ use protobuf::ProtobufEnum as ProtobufEnum_imported_for_functions;
 
 #[derive(Clone,Default,Debug)]
 pub struct HeaderBlock {
+    // message fields
     bbox: ::protobuf::SingularPtrField<HeaderBBox>,
     required_features: ::protobuf::RepeatedField<::std::string::String>,
     optional_features: ::protobuf::RepeatedField<::std::string::String>,
@@ -18,6 +19,7 @@ pub struct HeaderBlock {
     osmosis_replication_timestamp: ::std::option::Option<i64>,
     osmosis_replication_sequence_number: ::std::option::Option<i64>,
     osmosis_replication_base_url: ::protobuf::SingularField<::std::string::String>,
+    // special fields
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
@@ -105,7 +107,7 @@ impl HeaderBlock {
     }
 
     pub fn get_required_features<'a>(&'a self) -> &'a [::std::string::String] {
-        self.required_features.as_slice()
+        &self.required_features
     }
 
     // repeated string optional_features = 5;
@@ -130,7 +132,7 @@ impl HeaderBlock {
     }
 
     pub fn get_optional_features<'a>(&'a self) -> &'a [::std::string::String] {
-        self.optional_features.as_slice()
+        &self.optional_features
     }
 
     // optional string writingprogram = 16;
@@ -164,7 +166,7 @@ impl HeaderBlock {
 
     pub fn get_writingprogram<'a>(&'a self) -> &'a str {
         match self.writingprogram.as_ref() {
-            Some(v) => v.as_slice(),
+            Some(v) => &v,
             None => "",
         }
     }
@@ -200,7 +202,7 @@ impl HeaderBlock {
 
     pub fn get_source<'a>(&'a self) -> &'a str {
         match self.source.as_ref() {
-            Some(v) => v.as_slice(),
+            Some(v) => &v,
             None => "",
         }
     }
@@ -274,7 +276,7 @@ impl HeaderBlock {
 
     pub fn get_osmosis_replication_base_url<'a>(&'a self) -> &'a str {
         match self.osmosis_replication_base_url.as_ref() {
-            Some(v) => v.as_slice(),
+            Some(v) => &v,
             None => "",
         }
     }
@@ -354,16 +356,16 @@ impl ::protobuf::Message for HeaderBlock {
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         for value in self.required_features.iter() {
-            my_size += ::protobuf::rt::string_size(4, value.as_slice());
+            my_size += ::protobuf::rt::string_size(4, &value);
         };
         for value in self.optional_features.iter() {
-            my_size += ::protobuf::rt::string_size(5, value.as_slice());
+            my_size += ::protobuf::rt::string_size(5, &value);
         };
         for value in self.writingprogram.iter() {
-            my_size += ::protobuf::rt::string_size(16, value.as_slice());
+            my_size += ::protobuf::rt::string_size(16, &value);
         };
         for value in self.source.iter() {
-            my_size += ::protobuf::rt::string_size(17, value.as_slice());
+            my_size += ::protobuf::rt::string_size(17, &value);
         };
         for value in self.osmosis_replication_timestamp.iter() {
             my_size += ::protobuf::rt::value_size(32, *value, ::protobuf::wire_format::WireTypeVarint);
@@ -372,7 +374,7 @@ impl ::protobuf::Message for HeaderBlock {
             my_size += ::protobuf::rt::value_size(33, *value, ::protobuf::wire_format::WireTypeVarint);
         };
         for value in self.osmosis_replication_base_url.iter() {
-            my_size += ::protobuf::rt::string_size(34, value.as_slice());
+            my_size += ::protobuf::rt::string_size(34, &value);
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
@@ -386,16 +388,16 @@ impl ::protobuf::Message for HeaderBlock {
             try!(v.write_to_with_cached_sizes(os));
         };
         for v in self.required_features.iter() {
-            try!(os.write_string(4, v.as_slice()));
+            try!(os.write_string(4, &v));
         };
         for v in self.optional_features.iter() {
-            try!(os.write_string(5, v.as_slice()));
+            try!(os.write_string(5, &v));
         };
         if let Some(v) = self.writingprogram.as_ref() {
-            try!(os.write_string(16, v.as_slice()));
+            try!(os.write_string(16, &v));
         };
         if let Some(v) = self.source.as_ref() {
-            try!(os.write_string(17, v.as_slice()));
+            try!(os.write_string(17, &v));
         };
         if let Some(v) = self.osmosis_replication_timestamp {
             try!(os.write_int64(32, v));
@@ -404,7 +406,7 @@ impl ::protobuf::Message for HeaderBlock {
             try!(os.write_int64(33, v));
         };
         if let Some(v) = self.osmosis_replication_base_url.as_ref() {
-            try!(os.write_string(34, v.as_slice()));
+            try!(os.write_string(34, &v));
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
         ::std::result::Result::Ok(())
@@ -467,10 +469,12 @@ impl ::std::cmp::PartialEq for HeaderBlock {
 
 #[derive(Clone,Default,Debug)]
 pub struct HeaderBBox {
+    // message fields
     left: ::std::option::Option<i64>,
     right: ::std::option::Option<i64>,
     top: ::std::option::Option<i64>,
     bottom: ::std::option::Option<i64>,
+    // special fields
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
@@ -720,12 +724,14 @@ impl ::std::cmp::PartialEq for HeaderBBox {
 
 #[derive(Clone,Default,Debug)]
 pub struct PrimitiveBlock {
+    // message fields
     stringtable: ::protobuf::SingularPtrField<StringTable>,
     primitivegroup: ::protobuf::RepeatedField<PrimitiveGroup>,
     granularity: ::std::option::Option<i32>,
     lat_offset: ::std::option::Option<i64>,
     lon_offset: ::std::option::Option<i64>,
     date_granularity: ::std::option::Option<i32>,
+    // special fields
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
@@ -811,7 +817,7 @@ impl PrimitiveBlock {
     }
 
     pub fn get_primitivegroup<'a>(&'a self) -> &'a [PrimitiveGroup] {
-        self.primitivegroup.as_slice()
+        &self.primitivegroup
     }
 
     // optional int32 granularity = 17;
@@ -1058,11 +1064,13 @@ impl ::std::cmp::PartialEq for PrimitiveBlock {
 
 #[derive(Clone,Default,Debug)]
 pub struct PrimitiveGroup {
+    // message fields
     nodes: ::protobuf::RepeatedField<Node>,
     dense: ::protobuf::SingularPtrField<DenseNodes>,
     ways: ::protobuf::RepeatedField<Way>,
     relations: ::protobuf::RepeatedField<Relation>,
     changesets: ::protobuf::RepeatedField<ChangeSet>,
+    // special fields
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
@@ -1114,7 +1122,7 @@ impl PrimitiveGroup {
     }
 
     pub fn get_nodes<'a>(&'a self) -> &'a [Node] {
-        self.nodes.as_slice()
+        &self.nodes
     }
 
     // optional .OSMPBF.DenseNodes dense = 2;
@@ -1172,7 +1180,7 @@ impl PrimitiveGroup {
     }
 
     pub fn get_ways<'a>(&'a self) -> &'a [Way] {
-        self.ways.as_slice()
+        &self.ways
     }
 
     // repeated .OSMPBF.Relation relations = 4;
@@ -1197,7 +1205,7 @@ impl PrimitiveGroup {
     }
 
     pub fn get_relations<'a>(&'a self) -> &'a [Relation] {
-        self.relations.as_slice()
+        &self.relations
     }
 
     // repeated .OSMPBF.ChangeSet changesets = 5;
@@ -1222,7 +1230,7 @@ impl PrimitiveGroup {
     }
 
     pub fn get_changesets<'a>(&'a self) -> &'a [ChangeSet] {
-        self.changesets.as_slice()
+        &self.changesets
     }
 }
 
@@ -1372,7 +1380,9 @@ impl ::std::cmp::PartialEq for PrimitiveGroup {
 
 #[derive(Clone,Default,Debug)]
 pub struct StringTable {
+    // message fields
     s: ::protobuf::RepeatedField<::std::vec::Vec<u8>>,
+    // special fields
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
@@ -1420,7 +1430,7 @@ impl StringTable {
     }
 
     pub fn get_s<'a>(&'a self) -> &'a [::std::vec::Vec<u8>] {
-        self.s.as_slice()
+        &self.s
     }
 }
 
@@ -1449,7 +1459,7 @@ impl ::protobuf::Message for StringTable {
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         for value in self.s.iter() {
-            my_size += ::protobuf::rt::bytes_size(1, value.as_slice());
+            my_size += ::protobuf::rt::bytes_size(1, &value);
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
@@ -1458,7 +1468,7 @@ impl ::protobuf::Message for StringTable {
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         for v in self.s.iter() {
-            try!(os.write_bytes(1, v.as_slice()));
+            try!(os.write_bytes(1, &v));
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
         ::std::result::Result::Ok(())
@@ -1507,12 +1517,14 @@ impl ::std::cmp::PartialEq for StringTable {
 
 #[derive(Clone,Default,Debug)]
 pub struct Info {
+    // message fields
     version: ::std::option::Option<i32>,
     timestamp: ::std::option::Option<i64>,
     changeset: ::std::option::Option<i64>,
     uid: ::std::option::Option<i32>,
     user_sid: ::std::option::Option<u32>,
     visible: ::std::option::Option<bool>,
+    // special fields
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
@@ -1820,12 +1832,14 @@ impl ::std::cmp::PartialEq for Info {
 
 #[derive(Clone,Default,Debug)]
 pub struct DenseInfo {
+    // message fields
     version: ::std::vec::Vec<i32>,
     timestamp: ::std::vec::Vec<i64>,
     changeset: ::std::vec::Vec<i64>,
     uid: ::std::vec::Vec<i32>,
     user_sid: ::std::vec::Vec<i32>,
     visible: ::std::vec::Vec<bool>,
+    // special fields
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
@@ -1878,7 +1892,7 @@ impl DenseInfo {
     }
 
     pub fn get_version<'a>(&'a self) -> &'a [i32] {
-        self.version.as_slice()
+        &self.version
     }
 
     // repeated sint64 timestamp = 2;
@@ -1903,7 +1917,7 @@ impl DenseInfo {
     }
 
     pub fn get_timestamp<'a>(&'a self) -> &'a [i64] {
-        self.timestamp.as_slice()
+        &self.timestamp
     }
 
     // repeated sint64 changeset = 3;
@@ -1928,7 +1942,7 @@ impl DenseInfo {
     }
 
     pub fn get_changeset<'a>(&'a self) -> &'a [i64] {
-        self.changeset.as_slice()
+        &self.changeset
     }
 
     // repeated sint32 uid = 4;
@@ -1953,7 +1967,7 @@ impl DenseInfo {
     }
 
     pub fn get_uid<'a>(&'a self) -> &'a [i32] {
-        self.uid.as_slice()
+        &self.uid
     }
 
     // repeated sint32 user_sid = 5;
@@ -1978,7 +1992,7 @@ impl DenseInfo {
     }
 
     pub fn get_user_sid<'a>(&'a self) -> &'a [i32] {
-        self.user_sid.as_slice()
+        &self.user_sid
     }
 
     // repeated bool visible = 6;
@@ -2003,7 +2017,7 @@ impl DenseInfo {
     }
 
     pub fn get_visible<'a>(&'a self) -> &'a [bool] {
-        self.visible.as_slice()
+        &self.visible
     }
 }
 
@@ -2047,19 +2061,19 @@ impl ::protobuf::Message for DenseInfo {
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         if !self.version.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_size(1, self.version.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_size(1, &self.version);
         };
         if !self.timestamp.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(2, self.timestamp.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(2, &self.timestamp);
         };
         if !self.changeset.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(3, self.changeset.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(3, &self.changeset);
         };
         if !self.uid.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(4, self.uid.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(4, &self.uid);
         };
         if !self.user_sid.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(5, self.user_sid.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(5, &self.user_sid);
         };
         if !self.visible.is_empty() {
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(self.visible.len() as u32) + (self.visible.len() * 1) as u32;
@@ -2073,7 +2087,7 @@ impl ::protobuf::Message for DenseInfo {
         if !self.version.is_empty() {
             try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.version.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(&self.version)));
             for v in self.version.iter() {
                 try!(os.write_int32_no_tag(*v));
             };
@@ -2081,7 +2095,7 @@ impl ::protobuf::Message for DenseInfo {
         if !self.timestamp.is_empty() {
             try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.timestamp.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(&self.timestamp)));
             for v in self.timestamp.iter() {
                 try!(os.write_sint64_no_tag(*v));
             };
@@ -2089,7 +2103,7 @@ impl ::protobuf::Message for DenseInfo {
         if !self.changeset.is_empty() {
             try!(os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.changeset.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(&self.changeset)));
             for v in self.changeset.iter() {
                 try!(os.write_sint64_no_tag(*v));
             };
@@ -2097,7 +2111,7 @@ impl ::protobuf::Message for DenseInfo {
         if !self.uid.is_empty() {
             try!(os.write_tag(4, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.uid.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(&self.uid)));
             for v in self.uid.iter() {
                 try!(os.write_sint32_no_tag(*v));
             };
@@ -2105,7 +2119,7 @@ impl ::protobuf::Message for DenseInfo {
         if !self.user_sid.is_empty() {
             try!(os.write_tag(5, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.user_sid.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(&self.user_sid)));
             for v in self.user_sid.iter() {
                 try!(os.write_sint32_no_tag(*v));
             };
@@ -2175,7 +2189,9 @@ impl ::std::cmp::PartialEq for DenseInfo {
 
 #[derive(Clone,Default,Debug)]
 pub struct ChangeSet {
+    // message fields
     id: ::std::option::Option<i64>,
+    // special fields
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
@@ -2311,12 +2327,14 @@ impl ::std::cmp::PartialEq for ChangeSet {
 
 #[derive(Clone,Default,Debug)]
 pub struct Node {
+    // message fields
     id: ::std::option::Option<i64>,
     keys: ::std::vec::Vec<u32>,
     vals: ::std::vec::Vec<u32>,
     info: ::protobuf::SingularPtrField<Info>,
     lat: ::std::option::Option<i64>,
     lon: ::std::option::Option<i64>,
+    // special fields
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
@@ -2388,7 +2406,7 @@ impl Node {
     }
 
     pub fn get_keys<'a>(&'a self) -> &'a [u32] {
-        self.keys.as_slice()
+        &self.keys
     }
 
     // repeated uint32 vals = 3;
@@ -2413,7 +2431,7 @@ impl Node {
     }
 
     pub fn get_vals<'a>(&'a self) -> &'a [u32] {
-        self.vals.as_slice()
+        &self.vals
     }
 
     // optional .OSMPBF.Info info = 4;
@@ -2556,10 +2574,10 @@ impl ::protobuf::Message for Node {
             my_size += ::protobuf::rt::value_size(1, *value, ::protobuf::wire_format::WireTypeVarint);
         };
         if !self.keys.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_size(2, self.keys.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_size(2, &self.keys);
         };
         if !self.vals.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_size(3, self.vals.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_size(3, &self.vals);
         };
         for value in self.info.iter() {
             let len = value.compute_size();
@@ -2583,7 +2601,7 @@ impl ::protobuf::Message for Node {
         if !self.keys.is_empty() {
             try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.keys.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(&self.keys)));
             for v in self.keys.iter() {
                 try!(os.write_uint32_no_tag(*v));
             };
@@ -2591,7 +2609,7 @@ impl ::protobuf::Message for Node {
         if !self.vals.is_empty() {
             try!(os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.vals.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(&self.vals)));
             for v in self.vals.iter() {
                 try!(os.write_uint32_no_tag(*v));
             };
@@ -2664,11 +2682,13 @@ impl ::std::cmp::PartialEq for Node {
 
 #[derive(Clone,Default,Debug)]
 pub struct DenseNodes {
+    // message fields
     id: ::std::vec::Vec<i64>,
     denseinfo: ::protobuf::SingularPtrField<DenseInfo>,
     lat: ::std::vec::Vec<i64>,
     lon: ::std::vec::Vec<i64>,
     keys_vals: ::std::vec::Vec<i32>,
+    // special fields
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
@@ -2720,7 +2740,7 @@ impl DenseNodes {
     }
 
     pub fn get_id<'a>(&'a self) -> &'a [i64] {
-        self.id.as_slice()
+        &self.id
     }
 
     // optional .OSMPBF.DenseInfo denseinfo = 5;
@@ -2778,7 +2798,7 @@ impl DenseNodes {
     }
 
     pub fn get_lat<'a>(&'a self) -> &'a [i64] {
-        self.lat.as_slice()
+        &self.lat
     }
 
     // repeated sint64 lon = 9;
@@ -2803,7 +2823,7 @@ impl DenseNodes {
     }
 
     pub fn get_lon<'a>(&'a self) -> &'a [i64] {
-        self.lon.as_slice()
+        &self.lon
     }
 
     // repeated int32 keys_vals = 10;
@@ -2828,7 +2848,7 @@ impl DenseNodes {
     }
 
     pub fn get_keys_vals<'a>(&'a self) -> &'a [i32] {
-        self.keys_vals.as_slice()
+        &self.keys_vals
     }
 }
 
@@ -2873,20 +2893,20 @@ impl ::protobuf::Message for DenseNodes {
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         if !self.id.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(1, self.id.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(1, &self.id);
         };
         for value in self.denseinfo.iter() {
             let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         if !self.lat.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(8, self.lat.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(8, &self.lat);
         };
         if !self.lon.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(9, self.lon.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(9, &self.lon);
         };
         if !self.keys_vals.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_size(10, self.keys_vals.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_size(10, &self.keys_vals);
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
@@ -2897,7 +2917,7 @@ impl ::protobuf::Message for DenseNodes {
         if !self.id.is_empty() {
             try!(os.write_tag(1, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.id.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(&self.id)));
             for v in self.id.iter() {
                 try!(os.write_sint64_no_tag(*v));
             };
@@ -2910,7 +2930,7 @@ impl ::protobuf::Message for DenseNodes {
         if !self.lat.is_empty() {
             try!(os.write_tag(8, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.lat.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(&self.lat)));
             for v in self.lat.iter() {
                 try!(os.write_sint64_no_tag(*v));
             };
@@ -2918,7 +2938,7 @@ impl ::protobuf::Message for DenseNodes {
         if !self.lon.is_empty() {
             try!(os.write_tag(9, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.lon.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(&self.lon)));
             for v in self.lon.iter() {
                 try!(os.write_sint64_no_tag(*v));
             };
@@ -2926,7 +2946,7 @@ impl ::protobuf::Message for DenseNodes {
         if !self.keys_vals.is_empty() {
             try!(os.write_tag(10, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.keys_vals.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(&self.keys_vals)));
             for v in self.keys_vals.iter() {
                 try!(os.write_int32_no_tag(*v));
             };
@@ -2986,11 +3006,13 @@ impl ::std::cmp::PartialEq for DenseNodes {
 
 #[derive(Clone,Default,Debug)]
 pub struct Way {
+    // message fields
     id: ::std::option::Option<i64>,
     keys: ::std::vec::Vec<u32>,
     vals: ::std::vec::Vec<u32>,
     info: ::protobuf::SingularPtrField<Info>,
     refs: ::std::vec::Vec<i64>,
+    // special fields
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
@@ -3061,7 +3083,7 @@ impl Way {
     }
 
     pub fn get_keys<'a>(&'a self) -> &'a [u32] {
-        self.keys.as_slice()
+        &self.keys
     }
 
     // repeated uint32 vals = 3;
@@ -3086,7 +3108,7 @@ impl Way {
     }
 
     pub fn get_vals<'a>(&'a self) -> &'a [u32] {
-        self.vals.as_slice()
+        &self.vals
     }
 
     // optional .OSMPBF.Info info = 4;
@@ -3144,7 +3166,7 @@ impl Way {
     }
 
     pub fn get_refs<'a>(&'a self) -> &'a [i64] {
-        self.refs.as_slice()
+        &self.refs
     }
 }
 
@@ -3199,17 +3221,17 @@ impl ::protobuf::Message for Way {
             my_size += ::protobuf::rt::value_size(1, *value, ::protobuf::wire_format::WireTypeVarint);
         };
         if !self.keys.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_size(2, self.keys.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_size(2, &self.keys);
         };
         if !self.vals.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_size(3, self.vals.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_size(3, &self.vals);
         };
         for value in self.info.iter() {
             let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         if !self.refs.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(8, self.refs.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(8, &self.refs);
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
@@ -3223,7 +3245,7 @@ impl ::protobuf::Message for Way {
         if !self.keys.is_empty() {
             try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.keys.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(&self.keys)));
             for v in self.keys.iter() {
                 try!(os.write_uint32_no_tag(*v));
             };
@@ -3231,7 +3253,7 @@ impl ::protobuf::Message for Way {
         if !self.vals.is_empty() {
             try!(os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.vals.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(&self.vals)));
             for v in self.vals.iter() {
                 try!(os.write_uint32_no_tag(*v));
             };
@@ -3244,7 +3266,7 @@ impl ::protobuf::Message for Way {
         if !self.refs.is_empty() {
             try!(os.write_tag(8, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.refs.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(&self.refs)));
             for v in self.refs.iter() {
                 try!(os.write_sint64_no_tag(*v));
             };
@@ -3304,6 +3326,7 @@ impl ::std::cmp::PartialEq for Way {
 
 #[derive(Clone,Default,Debug)]
 pub struct Relation {
+    // message fields
     id: ::std::option::Option<i64>,
     keys: ::std::vec::Vec<u32>,
     vals: ::std::vec::Vec<u32>,
@@ -3311,6 +3334,7 @@ pub struct Relation {
     roles_sid: ::std::vec::Vec<i32>,
     memids: ::std::vec::Vec<i64>,
     types: ::std::vec::Vec<Relation_MemberType>,
+    // special fields
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
@@ -3383,7 +3407,7 @@ impl Relation {
     }
 
     pub fn get_keys<'a>(&'a self) -> &'a [u32] {
-        self.keys.as_slice()
+        &self.keys
     }
 
     // repeated uint32 vals = 3;
@@ -3408,7 +3432,7 @@ impl Relation {
     }
 
     pub fn get_vals<'a>(&'a self) -> &'a [u32] {
-        self.vals.as_slice()
+        &self.vals
     }
 
     // optional .OSMPBF.Info info = 4;
@@ -3466,7 +3490,7 @@ impl Relation {
     }
 
     pub fn get_roles_sid<'a>(&'a self) -> &'a [i32] {
-        self.roles_sid.as_slice()
+        &self.roles_sid
     }
 
     // repeated sint64 memids = 9;
@@ -3491,7 +3515,7 @@ impl Relation {
     }
 
     pub fn get_memids<'a>(&'a self) -> &'a [i64] {
-        self.memids.as_slice()
+        &self.memids
     }
 
     // repeated .OSMPBF.Relation.MemberType types = 10;
@@ -3516,7 +3540,7 @@ impl Relation {
     }
 
     pub fn get_types<'a>(&'a self) -> &'a [Relation_MemberType] {
-        self.types.as_slice()
+        &self.types
     }
 }
 
@@ -3577,23 +3601,23 @@ impl ::protobuf::Message for Relation {
             my_size += ::protobuf::rt::value_size(1, *value, ::protobuf::wire_format::WireTypeVarint);
         };
         if !self.keys.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_size(2, self.keys.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_size(2, &self.keys);
         };
         if !self.vals.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_size(3, self.vals.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_size(3, &self.vals);
         };
         for value in self.info.iter() {
             let len = value.compute_size();
             my_size += 1 + ::protobuf::rt::compute_raw_varint32_size(len) + len;
         };
         if !self.roles_sid.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_size(8, self.roles_sid.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_size(8, &self.roles_sid);
         };
         if !self.memids.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(9, self.memids.as_slice());
+            my_size += ::protobuf::rt::vec_packed_varint_zigzag_size(9, &self.memids);
         };
         if !self.types.is_empty() {
-            my_size += ::protobuf::rt::vec_packed_enum_size(10, self.types.as_slice());
+            my_size += ::protobuf::rt::vec_packed_enum_size(10, &self.types);
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
@@ -3607,7 +3631,7 @@ impl ::protobuf::Message for Relation {
         if !self.keys.is_empty() {
             try!(os.write_tag(2, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.keys.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(&self.keys)));
             for v in self.keys.iter() {
                 try!(os.write_uint32_no_tag(*v));
             };
@@ -3615,7 +3639,7 @@ impl ::protobuf::Message for Relation {
         if !self.vals.is_empty() {
             try!(os.write_tag(3, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.vals.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(&self.vals)));
             for v in self.vals.iter() {
                 try!(os.write_uint32_no_tag(*v));
             };
@@ -3628,7 +3652,7 @@ impl ::protobuf::Message for Relation {
         if !self.roles_sid.is_empty() {
             try!(os.write_tag(8, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(self.roles_sid.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_data_size(&self.roles_sid)));
             for v in self.roles_sid.iter() {
                 try!(os.write_int32_no_tag(*v));
             };
@@ -3636,7 +3660,7 @@ impl ::protobuf::Message for Relation {
         if !self.memids.is_empty() {
             try!(os.write_tag(9, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(self.memids.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_varint_zigzag_data_size(&self.memids)));
             for v in self.memids.iter() {
                 try!(os.write_sint64_no_tag(*v));
             };
@@ -3644,7 +3668,7 @@ impl ::protobuf::Message for Relation {
         if !self.types.is_empty() {
             try!(os.write_tag(10, ::protobuf::wire_format::WireTypeLengthDelimited));
             // TODO: Data size is computed again, it should be cached
-            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_enum_data_size(self.types.as_slice())));
+            try!(os.write_raw_varint32(::protobuf::rt::vec_packed_enum_data_size(&self.types)));
             for v in self.types.iter() {
                 try!(os.write_enum_no_tag(*v as i32));
             };

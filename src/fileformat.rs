@@ -10,11 +10,13 @@ use protobuf::ProtobufEnum as ProtobufEnum_imported_for_functions;
 
 #[derive(Clone,Default,Debug)]
 pub struct Blob {
+    // message fields
     raw: ::protobuf::SingularField<::std::vec::Vec<u8>>,
     raw_size: ::std::option::Option<i32>,
     zlib_data: ::protobuf::SingularField<::std::vec::Vec<u8>>,
     lzma_data: ::protobuf::SingularField<::std::vec::Vec<u8>>,
     OBSOLETE_bzip2_data: ::protobuf::SingularField<::std::vec::Vec<u8>>,
+    // special fields
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
@@ -75,8 +77,8 @@ impl Blob {
 
     pub fn get_raw<'a>(&'a self) -> &'a [u8] {
         match self.raw.as_ref() {
-            Some(v) => v.as_slice(),
-            None => [].as_slice(),
+            Some(v) => &v,
+            None => &[],
         }
     }
 
@@ -130,8 +132,8 @@ impl Blob {
 
     pub fn get_zlib_data<'a>(&'a self) -> &'a [u8] {
         match self.zlib_data.as_ref() {
-            Some(v) => v.as_slice(),
-            None => [].as_slice(),
+            Some(v) => &v,
+            None => &[],
         }
     }
 
@@ -166,8 +168,8 @@ impl Blob {
 
     pub fn get_lzma_data<'a>(&'a self) -> &'a [u8] {
         match self.lzma_data.as_ref() {
-            Some(v) => v.as_slice(),
-            None => [].as_slice(),
+            Some(v) => &v,
+            None => &[],
         }
     }
 
@@ -202,8 +204,8 @@ impl Blob {
 
     pub fn get_OBSOLETE_bzip2_data<'a>(&'a self) -> &'a [u8] {
         match self.OBSOLETE_bzip2_data.as_ref() {
-            Some(v) => v.as_slice(),
-            None => [].as_slice(),
+            Some(v) => &v,
+            None => &[],
         }
     }
 }
@@ -265,19 +267,19 @@ impl ::protobuf::Message for Blob {
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         for value in self.raw.iter() {
-            my_size += ::protobuf::rt::bytes_size(1, value.as_slice());
+            my_size += ::protobuf::rt::bytes_size(1, &value);
         };
         for value in self.raw_size.iter() {
             my_size += ::protobuf::rt::value_size(2, *value, ::protobuf::wire_format::WireTypeVarint);
         };
         for value in self.zlib_data.iter() {
-            my_size += ::protobuf::rt::bytes_size(3, value.as_slice());
+            my_size += ::protobuf::rt::bytes_size(3, &value);
         };
         for value in self.lzma_data.iter() {
-            my_size += ::protobuf::rt::bytes_size(4, value.as_slice());
+            my_size += ::protobuf::rt::bytes_size(4, &value);
         };
         for value in self.OBSOLETE_bzip2_data.iter() {
-            my_size += ::protobuf::rt::bytes_size(5, value.as_slice());
+            my_size += ::protobuf::rt::bytes_size(5, &value);
         };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
@@ -286,19 +288,19 @@ impl ::protobuf::Message for Blob {
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         if let Some(v) = self.raw.as_ref() {
-            try!(os.write_bytes(1, v.as_slice()));
+            try!(os.write_bytes(1, &v));
         };
         if let Some(v) = self.raw_size {
             try!(os.write_int32(2, v));
         };
         if let Some(v) = self.zlib_data.as_ref() {
-            try!(os.write_bytes(3, v.as_slice()));
+            try!(os.write_bytes(3, &v));
         };
         if let Some(v) = self.lzma_data.as_ref() {
-            try!(os.write_bytes(4, v.as_slice()));
+            try!(os.write_bytes(4, &v));
         };
         if let Some(v) = self.OBSOLETE_bzip2_data.as_ref() {
-            try!(os.write_bytes(5, v.as_slice()));
+            try!(os.write_bytes(5, &v));
         };
         try!(os.write_unknown_fields(self.get_unknown_fields()));
         ::std::result::Result::Ok(())
@@ -355,9 +357,11 @@ impl ::std::cmp::PartialEq for Blob {
 
 #[derive(Clone,Default,Debug)]
 pub struct BlobHeader {
+    // message fields
     field_type: ::protobuf::SingularField<::std::string::String>,
     indexdata: ::protobuf::SingularField<::std::vec::Vec<u8>>,
     datasize: ::std::option::Option<i32>,
+    // special fields
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
@@ -416,7 +420,7 @@ impl BlobHeader {
 
     pub fn get_field_type<'a>(&'a self) -> &'a str {
         match self.field_type.as_ref() {
-            Some(v) => v.as_slice(),
+            Some(v) => &v,
             None => "",
         }
     }
@@ -452,8 +456,8 @@ impl BlobHeader {
 
     pub fn get_indexdata<'a>(&'a self) -> &'a [u8] {
         match self.indexdata.as_ref() {
-            Some(v) => v.as_slice(),
-            None => [].as_slice(),
+            Some(v) => &v,
+            None => &[],
         }
     }
 
@@ -526,10 +530,10 @@ impl ::protobuf::Message for BlobHeader {
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         for value in self.field_type.iter() {
-            my_size += ::protobuf::rt::string_size(1, value.as_slice());
+            my_size += ::protobuf::rt::string_size(1, &value);
         };
         for value in self.indexdata.iter() {
-            my_size += ::protobuf::rt::bytes_size(2, value.as_slice());
+            my_size += ::protobuf::rt::bytes_size(2, &value);
         };
         for value in self.datasize.iter() {
             my_size += ::protobuf::rt::value_size(3, *value, ::protobuf::wire_format::WireTypeVarint);
@@ -541,10 +545,10 @@ impl ::protobuf::Message for BlobHeader {
 
     fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         if let Some(v) = self.field_type.as_ref() {
-            try!(os.write_string(1, v.as_slice()));
+            try!(os.write_string(1, &v));
         };
         if let Some(v) = self.indexdata.as_ref() {
-            try!(os.write_bytes(2, v.as_slice()));
+            try!(os.write_bytes(2, &v));
         };
         if let Some(v) = self.datasize {
             try!(os.write_int32(3, v));
