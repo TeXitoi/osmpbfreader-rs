@@ -6,7 +6,6 @@
 // more details.
 
 //#![deny(warnings)]
-#![feature(core)]
 
 extern crate protobuf;
 extern crate flate2;
@@ -14,8 +13,6 @@ extern crate byteorder;
 
 pub use objects::{OsmObj, Node, Way, Relation, Ref, OsmId, Tags};
 pub use error::OsmPbfError;
-
-use std::error::FromError;
 
 #[allow(non_snake_case)] pub mod fileformat;
 pub mod osmformat;
@@ -101,7 +98,7 @@ impl<R: std::io::Read> OsmPbfReader<R> {
             }
             Err(Io(e)) => {
                 self.finished = true;
-                return Some(Err(FromError::from_error(e)));
+                return Some(Err(std::convert::From::from(e)));
             }
         } as u64;
         match self.try_primitive_block(sz) {

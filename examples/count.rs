@@ -49,21 +49,21 @@ fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &std::ffi::OsS
 
 fn main() {
     let args: Vec<_> = std::env::args_os().collect();
-    match &*args {
-        [_, ref f] => {
+    match args.len() {
+        2 => {
             println!("counting objects...");
-            count(|_| true, f);
+            count(|_| true, &args[1]);
         }
-        [_, ref f, ref key] => {
-            let key = key.to_str().unwrap();
+        3 => {
+            let key = args[2].to_str().unwrap();
             println!("counting objects with \"{}\" in tags...", key);
-            count(|tags| tags.contains_key(key), f);
+            count(|tags| tags.contains_key(key), &args[1]);
         }
-        [_, ref f, ref key, ref val] => {
-            let key = key.to_str().unwrap();
-            let val = val.to_str().unwrap();
+        4 => {
+            let key = args[2].to_str().unwrap();
+            let val = args[3].to_str().unwrap();
             println!("counting objects with tags[\"{}\"] = \"{}\"...", key, val);
-            count(|tags| tags.get(key).map(|v| *v == val).unwrap_or(false), f);
+            count(|tags| tags.get(key).map(|v| *v == val).unwrap_or(false), &args[1]);
         }
         _ => println!("usage: count filename [key [value]]", ),
     };

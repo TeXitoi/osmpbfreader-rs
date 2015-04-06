@@ -6,7 +6,7 @@
 // more details.
 
 use std::error::Error;
-use std::error::FromError;
+use std::convert::From;
 use std::io::Error as IoError;
 use std::fmt;
 use protobuf;
@@ -46,13 +46,13 @@ impl Error for OsmPbfError {
         }
     }
 }
-impl FromError<IoError> for OsmPbfError {
-    fn from_error(err: IoError) -> OsmPbfError {
+impl From<IoError> for OsmPbfError {
+    fn from(err: IoError) -> OsmPbfError {
         OsmPbfError::Io(err)
     }
 }
-impl FromError<protobuf::ProtobufError> for OsmPbfError {
-    fn from_error(err: protobuf::ProtobufError) -> OsmPbfError {
+impl From<protobuf::ProtobufError> for OsmPbfError {
+    fn from(err: protobuf::ProtobufError) -> OsmPbfError {
         OsmPbfError::Pbf(err)
     }
 }
