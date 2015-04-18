@@ -349,6 +349,7 @@ impl ::protobuf::Message for HeaderBlock {
     }
 
     // Compute sizes of nested messages
+    #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         for value in self.bbox.iter() {
@@ -426,6 +427,10 @@ impl ::protobuf::Message for HeaderBlock {
 
     fn type_id(&self) -> ::std::any::TypeId {
         ::std::any::TypeId::of::<HeaderBlock>()
+    }
+
+    fn as_any(&self) -> &::std::any::Any {
+        self as &::std::any::Any
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -639,6 +644,7 @@ impl ::protobuf::Message for HeaderBBox {
     }
 
     // Compute sizes of nested messages
+    #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         for value in self.left.iter() {
@@ -689,6 +695,10 @@ impl ::protobuf::Message for HeaderBBox {
 
     fn type_id(&self) -> ::std::any::TypeId {
         ::std::any::TypeId::of::<HeaderBBox>()
+    }
+
+    fn as_any(&self) -> &::std::any::Any {
+        self as &::std::any::Any
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -957,6 +967,7 @@ impl ::protobuf::Message for PrimitiveBlock {
     }
 
     // Compute sizes of nested messages
+    #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         for value in self.stringtable.iter() {
@@ -1025,6 +1036,10 @@ impl ::protobuf::Message for PrimitiveBlock {
 
     fn type_id(&self) -> ::std::any::TypeId {
         ::std::any::TypeId::of::<PrimitiveBlock>()
+    }
+
+    fn as_any(&self) -> &::std::any::Any {
+        self as &::std::any::Any
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -1272,6 +1287,7 @@ impl ::protobuf::Message for PrimitiveGroup {
     }
 
     // Compute sizes of nested messages
+    #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         for value in self.nodes.iter() {
@@ -1343,6 +1359,10 @@ impl ::protobuf::Message for PrimitiveGroup {
 
     fn type_id(&self) -> ::std::any::TypeId {
         ::std::any::TypeId::of::<PrimitiveGroup>()
+    }
+
+    fn as_any(&self) -> &::std::any::Any {
+        self as &::std::any::Any
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -1456,6 +1476,7 @@ impl ::protobuf::Message for StringTable {
     }
 
     // Compute sizes of nested messages
+    #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         for value in self.s.iter() {
@@ -1488,6 +1509,10 @@ impl ::protobuf::Message for StringTable {
 
     fn type_id(&self) -> ::std::any::TypeId {
         ::std::any::TypeId::of::<StringTable>()
+    }
+
+    fn as_any(&self) -> &::std::any::Any {
+        self as &::std::any::Any
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -1731,6 +1756,7 @@ impl ::protobuf::Message for Info {
     }
 
     // Compute sizes of nested messages
+    #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         for value in self.version.iter() {
@@ -1793,6 +1819,10 @@ impl ::protobuf::Message for Info {
 
     fn type_id(&self) -> ::std::any::TypeId {
         ::std::any::TypeId::of::<Info>()
+    }
+
+    fn as_any(&self) -> &::std::any::Any {
+        self as &::std::any::Any
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -2058,6 +2088,7 @@ impl ::protobuf::Message for DenseInfo {
     }
 
     // Compute sizes of nested messages
+    #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         if !self.version.is_empty() {
@@ -2150,6 +2181,10 @@ impl ::protobuf::Message for DenseInfo {
 
     fn type_id(&self) -> ::std::any::TypeId {
         ::std::any::TypeId::of::<DenseInfo>()
+    }
+
+    fn as_any(&self) -> &::std::any::Any {
+        self as &::std::any::Any
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -2266,6 +2301,7 @@ impl ::protobuf::Message for ChangeSet {
     }
 
     // Compute sizes of nested messages
+    #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         for value in self.id.iter() {
@@ -2298,6 +2334,10 @@ impl ::protobuf::Message for ChangeSet {
 
     fn type_id(&self) -> ::std::any::TypeId {
         ::std::any::TypeId::of::<ChangeSet>()
+    }
+
+    fn as_any(&self) -> &::std::any::Any {
+        self as &::std::any::Any
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -2568,6 +2608,7 @@ impl ::protobuf::Message for Node {
     }
 
     // Compute sizes of nested messages
+    #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         for value in self.id.iter() {
@@ -2643,6 +2684,10 @@ impl ::protobuf::Message for Node {
 
     fn type_id(&self) -> ::std::any::TypeId {
         ::std::any::TypeId::of::<Node>()
+    }
+
+    fn as_any(&self) -> &::std::any::Any {
+        self as &::std::any::Any
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -2890,6 +2935,7 @@ impl ::protobuf::Message for DenseNodes {
     }
 
     // Compute sizes of nested messages
+    #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         if !self.id.is_empty() {
@@ -2969,6 +3015,10 @@ impl ::protobuf::Message for DenseNodes {
 
     fn type_id(&self) -> ::std::any::TypeId {
         ::std::any::TypeId::of::<DenseNodes>()
+    }
+
+    fn as_any(&self) -> &::std::any::Any {
+        self as &::std::any::Any
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -3215,6 +3265,7 @@ impl ::protobuf::Message for Way {
     }
 
     // Compute sizes of nested messages
+    #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         for value in self.id.iter() {
@@ -3289,6 +3340,10 @@ impl ::protobuf::Message for Way {
 
     fn type_id(&self) -> ::std::any::TypeId {
         ::std::any::TypeId::of::<Way>()
+    }
+
+    fn as_any(&self) -> &::std::any::Any {
+        self as &::std::any::Any
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -3595,6 +3650,7 @@ impl ::protobuf::Message for Relation {
     }
 
     // Compute sizes of nested messages
+    #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         for value in self.id.iter() {
@@ -3691,6 +3747,10 @@ impl ::protobuf::Message for Relation {
 
     fn type_id(&self) -> ::std::any::TypeId {
         ::std::any::TypeId::of::<Relation>()
+    }
+
+    fn as_any(&self) -> &::std::any::Any {
+        self as &::std::any::Any
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {

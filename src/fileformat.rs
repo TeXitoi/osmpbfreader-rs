@@ -264,6 +264,7 @@ impl ::protobuf::Message for Blob {
     }
 
     // Compute sizes of nested messages
+    #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         for value in self.raw.iter() {
@@ -320,6 +321,10 @@ impl ::protobuf::Message for Blob {
 
     fn type_id(&self) -> ::std::any::TypeId {
         ::std::any::TypeId::of::<Blob>()
+    }
+
+    fn as_any(&self) -> &::std::any::Any {
+        self as &::std::any::Any
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
@@ -527,6 +532,7 @@ impl ::protobuf::Message for BlobHeader {
     }
 
     // Compute sizes of nested messages
+    #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
         for value in self.field_type.iter() {
@@ -571,6 +577,10 @@ impl ::protobuf::Message for BlobHeader {
 
     fn type_id(&self) -> ::std::any::TypeId {
         ::std::any::TypeId::of::<BlobHeader>()
+    }
+
+    fn as_any(&self) -> &::std::any::Any {
+        self as &::std::any::Any
     }
 
     fn descriptor(&self) -> &'static ::protobuf::reflect::MessageDescriptor {
