@@ -31,8 +31,6 @@ git = "https://github.com/TeXitoi/osmpbfreader-rs"
 ```
 and editing `src/main.rs`:
 ```rust
-#![feature(fs, path, env)]
-
 extern crate osmpbfreader;
 
 fn main() {
@@ -41,10 +39,8 @@ fn main() {
     let r = std::fs::File::open(&path).unwrap();
     let mut pbf = osmpbfreader::OsmPbfReader::with_reader(r);
     let mut nb = 0;
-    for block in pbf.primitive_blocks().map(|r| r.unwrap()) {
-        for _obj in osmpbfreader::blocks::iter(&block) {
-            nb += 1;
-        }
+    for _obj in pbf.iter() {
+        nb += 1;
     }
     println!("{} objects in {:?}", nb, filename);
 }
@@ -92,9 +88,7 @@ Note that `src/fileformat.proto` and `src/osmformat.proto` come from
 
 TODO list:
  - document until `#![deny(missing_docs)]` can be added;
- - provide `OsmPbfReader::iter(&mut self) -> Iterator<OsmObject>`
  - provide a high level function that, given a
    `|&OsmObject| -> bool`, returns a structure with all the
    filtered objects plus their dependencies;
- - decompress the `osmformat::Block`s in parallel;
  - read header to check that we support all needed features.
