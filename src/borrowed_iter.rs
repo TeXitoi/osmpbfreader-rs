@@ -1,4 +1,4 @@
-// Copyright (c) 2014 Guillaume Pinot <texitoi(a)texitoi.eu>
+// Copyright (c) 2015 Guillaume Pinot <texitoi(a)texitoi.eu>
 //
 // This work is free. You can redistribute it and/or modify it under
 // the terms of the Do What The Fuck You Want To Public License,

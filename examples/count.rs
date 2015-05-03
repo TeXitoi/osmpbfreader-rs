@@ -1,4 +1,4 @@
-// Copyright (c) 2014 Guillaume Pinot <texitoi(a)texitoi.eu>
+// Copyright (c) 2014-2015 Guillaume Pinot <texitoi(a)texitoi.eu>
 //
 // This work is free. You can redistribute it and/or modify it under
 // the terms of the Do What The Fuck You Want To Public License,
@@ -10,7 +10,7 @@ extern crate osmpbfreader;
 
 fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &std::ffi::OsStr) {
     let r = std::fs::File::open(&std::path::Path::new(filename)).unwrap();
-    let mut pbf = osmpbfreader::OsmPbfReader::with_reader(r);
+    let mut pbf = osmpbfreader::OsmPbfReader::new(r);
     let mut nb_nodes = 0;
     let mut sum_lon = 0.;
     let mut sum_lat = 0.;
