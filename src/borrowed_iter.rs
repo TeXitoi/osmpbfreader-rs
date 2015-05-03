@@ -18,8 +18,8 @@ impl<T, I> Iterator for BorrowedIter<T, I> where I: Iterator {
         self.iter.size_hint()
     }
 }
-pub fn borrowed_iter<'a, T: 'a, F, I>(mut f: F, t: T) -> BorrowedIter<T, I>
-    where I: 'a + Iterator, I::Item: 'a, F: FnMut(&'a T) -> I
+pub fn borrowed_iter<'a, T: 'a, F, I>(f: F, t: T) -> BorrowedIter<T, I>
+    where I: 'a + Iterator, I::Item: 'a, F: FnOnce(&'a T) -> I
 {
     use std::mem;
     let b = Box::new(t);

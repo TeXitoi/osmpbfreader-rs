@@ -17,13 +17,13 @@ use objects::{OsmObj, Node, Way, Relation, Ref, OsmId, Tags};
 pub type OsmObjs<'a> = Chain<Chain<Map<Nodes<'a>, fn(Node) -> OsmObj>, Map<Ways<'a>, fn(Way) -> OsmObj>>, Map<Relations<'a>, fn(Relation) -> OsmObj>>;
 
 pub fn iter<'a>(g: &'a PrimitiveGroup, b: &'a PrimitiveBlock) -> OsmObjs<'a> {
+    fn node_into_obj(n: Node) -> OsmObj { OsmObj::Node(n) }
+    fn way_into_obj(w: Way) -> OsmObj { OsmObj::Way(w) }
+    fn rel_into_obj(r: Relation) -> OsmObj { OsmObj::Relation(r) }
     nodes(g, b).map(node_into_obj as fn(Node) -> OsmObj)
         .chain(ways(g, b).map(way_into_obj as fn(Way) -> OsmObj))
         .chain(relations(g, b).map(rel_into_obj as fn(Relation) -> OsmObj))
 }
-fn node_into_obj(n: Node) -> OsmObj { OsmObj::Node(n) }
-fn way_into_obj(w: Way) -> OsmObj { OsmObj::Way(w) }
-fn rel_into_obj(r: Relation) -> OsmObj { OsmObj::Relation(r) }
 
 pub type Nodes<'a> = std::iter::Chain<SimpleNodes<'a>, DenseNodes<'a>>;
 
