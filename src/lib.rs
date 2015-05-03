@@ -21,6 +21,7 @@ pub mod error;
 pub mod objects;
 pub mod groups;
 pub mod blocks;
+pub mod borrowed_iter;
 
 pub struct OsmPbfReader<R> {
     buf: Vec<u8>,
@@ -46,6 +47,12 @@ impl<R: std::io::Read> OsmPbfReader<R> {
             blob_res.and_then(|b| primitive_block_from_blob(&b))
         }
         self.blobs().map(and_then_primitive_block)
+    }
+    pub fn iter<'a>(&'a mut self) -> Box<Iterator<Item = OsmObj> + 'a> {
+        let iter = self.primitive_blocks()
+            .map(|r| r.unwrap())
+            .flat_map(|b| borrowed_iter::borrowed_iter(blocks::iter, b));
+        Box::new(iter)
     }
 
     fn push(&mut self, sz: u64) -> Result<(), OsmPbfError> {

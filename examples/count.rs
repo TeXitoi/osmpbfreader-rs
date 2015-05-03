@@ -18,24 +18,22 @@ fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &std::ffi::OsS
     let mut nb_way_nodes = 0;
     let mut nb_rels = 0;
     let mut nb_rel_refs = 0;
-    for block in pbf.primitive_blocks().map(|r| r.unwrap()) {
-        for obj in osmpbfreader::blocks::iter(&block) {
-            if !filter(obj.tags()) { continue; }
-            info!("{:?}", obj);
-            match obj {
-                osmpbfreader::OsmObj::Node(node) => {
-                    nb_nodes += 1;
-                    sum_lon += node.lon;
-                    sum_lat += node.lat;
-                }
-                osmpbfreader::OsmObj::Way(way) => {
-                    nb_ways += 1;
-                    nb_way_nodes += way.nodes.len();
-                }
-                osmpbfreader::OsmObj::Relation(rel) => {
-                    nb_rels += 1;
-                    nb_rel_refs += rel.refs.len();
-                }
+    for obj in pbf.iter() {
+        if !filter(obj.tags()) { continue; }
+        info!("{:?}", obj);
+        match obj {
+            osmpbfreader::OsmObj::Node(node) => {
+                nb_nodes += 1;
+                sum_lon += node.lon;
+                sum_lat += node.lat;
+            }
+            osmpbfreader::OsmObj::Way(way) => {
+                nb_ways += 1;
+                nb_way_nodes += way.nodes.len();
+            }
+            osmpbfreader::OsmObj::Relation(rel) => {
+                nb_rels += 1;
+                nb_rel_refs += rel.refs.len();
             }
         }
     }
