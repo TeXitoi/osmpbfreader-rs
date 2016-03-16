@@ -78,16 +78,16 @@ impl<R: io::Read> OsmPbfReader<R> {
     fn next_blob(&mut self) -> Option<Result<fileformat::Blob, OsmPbfError>>
     {
         use byteorder::{BigEndian, ReadBytesExt};
-        use byteorder::Error::{UnexpectedEOF, Io};
+        use std::io::ErrorKind;
         if self.finished { return None; }
         let sz = match self.r.read_u32::<BigEndian>() {
             Ok(sz) if sz > 64 * 1024 => return Some(Err(OsmPbfError::InvalidData)),
             Ok(sz) => sz,
-            Err(UnexpectedEOF) => {
+            Err(ref e) if e.kind() == ErrorKind::UnexpectedEof => {
                 self.finished = true;
                 return None;
             }
-            Err(Io(e)) => {
+            Err(e) => {
                 self.finished = true;
                 return Some(Err(From::from(e)));
             }
