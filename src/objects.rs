@@ -23,6 +23,13 @@ impl OsmObj {
             OsmObj::Relation(ref rel) => &rel.tags,
         }
     }
+    pub fn id(&self) -> OsmId {
+        match *self {
+            OsmObj::Node(ref node) => OsmId::Node(node.id),
+            OsmObj::Way(ref way) => OsmId::Way(way.id),
+            OsmObj::Relation(ref rel) => OsmId::Relation(rel.id),
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, PartialOrd, Clone)]
