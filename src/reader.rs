@@ -50,6 +50,13 @@ impl<R: io::Read> OsmPbfReader<R> {
             .flat_map(|b| borrowed_iter::BorrowedIter::new(b, blocks::iter));
         Box::new(iter)
     }
+    pub fn rewind(&mut self) -> Result<(), OsmPbfError>
+        where R: io::Seek
+    {
+        try!(self.r.seek(io::SeekFrom::Start(0)));
+        self.finished = false;
+        Ok(())
+    }
 
     fn push(&mut self, sz: u64) -> Result<(), OsmPbfError> {
         self.buf.clear();
