@@ -5,54 +5,54 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-use std::error::Error;
+use std::{self, io, fmt};
 use std::convert::From;
-use std::io::Error as IoError;
-use std::fmt;
 use protobuf;
 
+pub type Result<T> = std::result::Result<T, Error>;
+
 #[derive(Debug)]
-pub enum OsmPbfError {
-    Io(IoError),
+pub enum Error {
+    Io(io::Error),
     Pbf(protobuf::ProtobufError),
     UnsupportedData,
     InvalidData,
 }
-impl fmt::Display for OsmPbfError {
+impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            OsmPbfError::Io(ref e) => write!(f, "Io({})", e),
-            OsmPbfError::Pbf(ref e) => write!(f, "Pbf({})", e),
-            OsmPbfError::UnsupportedData => write!(f, "UnsupportedData"),
-            OsmPbfError::InvalidData => write!(f, "InvalidData"),
+            Error::Io(ref e) => write!(f, "Io({})", e),
+            Error::Pbf(ref e) => write!(f, "Pbf({})", e),
+            Error::UnsupportedData => write!(f, "UnsupportedData"),
+            Error::InvalidData => write!(f, "InvalidData"),
         }
     }
 }
-impl Error for OsmPbfError {
+impl std::error::Error for Error {
     fn description(&self) -> &str {
         match *self {
-            OsmPbfError::Io(ref e) => (e as &Error).description(),
-            OsmPbfError::Pbf(ref e) => e.description(),
-            OsmPbfError::UnsupportedData => "Unsupported data",
-            OsmPbfError::InvalidData => "Invalid data",
+            Error::Io(ref e) => e.description(),
+            Error::Pbf(ref e) => e.description(),
+            Error::UnsupportedData => "Unsupported data",
+            Error::InvalidData => "Invalid data",
         }
     }
-    fn cause(&self) -> Option<&Error> {
+    fn cause(&self) -> Option<&std::error::Error> {
         match *self {
-            OsmPbfError::Io(ref e) => Some(e as &Error),
-            OsmPbfError::Pbf(ref e) => Some(e as &Error),
-            OsmPbfError::UnsupportedData => None,
-            OsmPbfError::InvalidData => None,
+            Error::Io(ref e) => Some(e),
+            Error::Pbf(ref e) => Some(e),
+            Error::UnsupportedData => None,
+            Error::InvalidData => None,
         }
     }
 }
-impl From<IoError> for OsmPbfError {
-    fn from(err: IoError) -> OsmPbfError {
-        OsmPbfError::Io(err)
+impl From<io::Error> for Error {
+    fn from(err: io::Error) -> Error {
+        Error::Io(err)
     }
 }
-impl From<protobuf::ProtobufError> for OsmPbfError {
-    fn from(err: protobuf::ProtobufError) -> OsmPbfError {
-        OsmPbfError::Pbf(err)
+impl From<protobuf::ProtobufError> for Error {
+    fn from(err: protobuf::ProtobufError) -> Error {
+        Error::Pbf(err)
     }
 }

@@ -107,7 +107,8 @@ extern crate flate2;
 extern crate byteorder;
 
 pub use objects::{OsmObj, Node, Way, Relation, Ref, OsmId, Tags};
-pub use error::OsmPbfError;
+pub use error::Error;
+pub use error::Result;
 pub use reader::{OsmPbfReader, primitive_block_from_blob};
 
 /// Generated from protobuf.
