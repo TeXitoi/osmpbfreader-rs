@@ -18,11 +18,13 @@ impl<T, I> Iterator for BorrowedIter<T, I> where I: Iterator {
         self.iter.size_hint()
     }
 }
-pub fn borrowed_iter<'a, T: 'a, F, I>(f: F, t: T) -> BorrowedIter<T, I>
-    where I: 'a + Iterator, I::Item: 'a, F: FnOnce(&'a T) -> I
-{
-    use std::mem;
-    let b = Box::new(t);
-    let i = f(unsafe { mem::transmute(&*b) });
-    BorrowedIter { _borrow: b, iter: i }
+impl<T, I> BorrowedIter<T, I> {
+    pub fn new<'a, F>(t: T, f: F) -> BorrowedIter<T, I>
+        where T: 'a, I: 'a + Iterator, I::Item: 'static, F: FnOnce(&'a T) -> I
+    {
+        use std::mem;
+        let b = Box::new(t);
+        let i = f(unsafe { mem::transmute(&*b) });
+        BorrowedIter { _borrow: b, iter: i }
+    }
 }

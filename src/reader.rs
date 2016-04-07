@@ -47,7 +47,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     pub fn iter<'a>(&'a mut self) -> Box<Iterator<Item = OsmObj> + 'a> {
         let iter = self.primitive_blocks()
             .map(|r| r.unwrap())
-            .flat_map(|b| borrowed_iter::borrowed_iter(blocks::iter, b));
+            .flat_map(|b| borrowed_iter::BorrowedIter::new(b, blocks::iter));
         Box::new(iter)
     }
 
