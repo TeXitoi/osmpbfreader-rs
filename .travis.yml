@@ -4,3 +4,7 @@ rust:
   - nightly
   - beta
   - stable
+script:
+  - cargo build --verbose
+  - cargo test --verbose
+  - if [ $TRAVIS_RUST_VERSION = nightly ]; then cargo test --verbose --features unstable; fi
