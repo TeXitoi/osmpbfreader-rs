@@ -5,6 +5,8 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
+use objects::OsmObj;
+
 pub struct BorrowedIter<T, I> {
     _borrow: Box<T>,
     iter: I,
@@ -19,8 +21,8 @@ impl<T, I> Iterator for BorrowedIter<T, I> where I: Iterator {
     }
 }
 impl<T, I> BorrowedIter<T, I> {
-    pub fn new<'a, F>(t: T, f: F) -> BorrowedIter<T, I>
-        where T: 'a, I: 'a + Iterator, I::Item: 'static, F: FnOnce(&'a T) -> I
+    pub fn new<'a>(t: T, f: fn(&'a T) -> I) -> BorrowedIter<T, I>
+        where T: 'a, I: 'a + Iterator<Item = OsmObj>, I::Item: 'static
     {
         use std::mem;
         let b = Box::new(t);
