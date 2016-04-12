@@ -1,4 +1,4 @@
-// Run with: cargo test --features nightly
+// Run with: cargo test --features unstable
 
 #![cfg(feature = "unstable")]
 
