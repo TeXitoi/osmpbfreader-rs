@@ -7,8 +7,11 @@ rust:
 script: |
   cargo build --verbose
   cargo test --verbose
-  [ $TRAVIS_RUST_VERSION = nightly ] && cargo test --verbose --features unstable
+  if [ $TRAVIS_RUST_VERSION = nightly ]; then
+      cargo test --verbose --features unstable
+  fi
 after_success: |
+  [ $TRAVIS_RUST_VERSION = stable ] &&
   [ $TRAVIS_BRANCH = master ] &&
   [ $TRAVIS_PULL_REQUEST = false ] &&
   cargo doc &&
