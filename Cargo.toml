@@ -8,7 +8,7 @@ documentation = "http://texitoi.github.io/osmpbfreader-rs/"
 homepage = "https://github.com/TeXitoi/osmpbfreader-rs"
 repository = "https://github.com/TeXitoi/osmpbfreader-rs"
 keywords = ["openstreetmap", "osm", "pbf"]
-license = "WTFPLv2"
+license = "WTFPL"
 
 [dependencies]
 flate2 = "0.2.13"
