@@ -3,6 +3,10 @@
 name = "osmpbfreader"
 version = "0.3.0"
 authors = ["Guillaume Pinot <texitoi@texitoi.eu>"]
+description = "Read OpenStreetMap PBF files in rust."
+documentation = "http://texitoi.github.io/osmpbfreader-rs/"
+repository = "https://github.com/TeXitoi/osmpbfreader-rs"
+license = "WTFPLv2"
 
 [dependencies]
 flate2 = "0.2.13"
