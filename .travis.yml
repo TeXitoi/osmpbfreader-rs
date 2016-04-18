@@ -4,7 +4,18 @@ rust:
   - nightly
   - beta
   - stable
-script:
-  - cargo build --verbose
-  - cargo test --verbose
-  - [ $TRAVIS_RUST_VERSION = nightly ] && cargo test --verbose --features unstable
+script: |
+  cargo build --verbose
+  cargo test --verbose
+  [ $TRAVIS_RUST_VERSION = nightly ] && cargo test --verbose --features unstable
+after_success: |
+  [ $TRAVIS_BRANCH = master ] &&
+  [ $TRAVIS_PULL_REQUEST = false ] &&
+  cargo doc &&
+  echo "<meta http-equiv=refresh content=0;url=`echo $TRAVIS_REPO_SLUG | cut -d '/' -f 2`/index.html>" > target/doc/index.html &&
+  sudo pip install ghp-import &&
+  ghp-import -n target/doc &&
+  git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
+env:
+  global:
+    secure: Aty/kKBZNElT13gBxcGMF0lA1yVZAl6mYDF63BqF+7j0rhCXdqRifXy6fxrYARr55JEXxAp1eK5DrjYDIvoVAJIS3dK90SFyCD/K6cE2fdqLgSfCYdv/XkcH2n8pgDcVL5/RzE4kUjqbdfyUkqQxIhBxuronU0Sff/OtzsTFAEw=
