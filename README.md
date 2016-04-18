@@ -1,4 +1,4 @@
-# osmpbfreader-rs [![Build Status](https://travis-ci.org/TeXitoi/osmpbfreader-rs.svg?branch=master)](https://travis-ci.org/TeXitoi/osmpbfreader-rs)
+# osmpbfreader-rs [![Build status](https://api.travis-ci.org/TeXitoi/osmpbfreader-rs.png)](https://travis-ci.org/TeXitoi/osmpbfreader-rs) [![](http://meritbadge.herokuapp.com/osmpbfreader)](https://crates.io/crates/osmpbfreader)
 
 ## Presentation
 
@@ -8,49 +8,22 @@ files](http://wiki.openstreetmap.org/wiki/PBF_Format) with
 library is
 [libosmpbfreader](https://github.com/CanalTP/libosmpbfreader).
 
-## Tutorial
+## Documentation
 
-We'll see how to use this library to count the number of objects in an
-OSM PBF file.
+[http://texitoi.github.io/osmpbfreader-rs/](http://texitoi.github.io/osmpbfreader-rs/)
 
-First, install rust:
-```
-$ curl -s https://static.rust-lang.org/rustup.sh | sudo sh
-```
+## Using this lib
 
-Create a new cargo project:
-```
-$ cargo new --bin test-osmpbfreader
-$ cd test-osmpbfreader/
-```
+This crate works with Cargo and is on
+[crates.io](https://crates.io/crates/osmpbfreader). The package is regularly
+updated.  Add it to your `Cargo.toml` like so:
 
-Add dependency to `osmpbfreader-rs` by adding this to your `Cargo.toml`:
 ```toml
-[dependencies.osmpbfreader]
-git = "https://github.com/TeXitoi/osmpbfreader-rs"
+[dependencies]
+osmpbfreader = "0.3"
 ```
-and editing `src/main.rs`:
-```rust
-extern crate osmpbfreader;
 
-fn main() {
-    let filename = std::env::args_os().nth(1).unwrap();
-    let path = std::path::Path::new(&filename);
-    let r = std::fs::File::open(&path).unwrap();
-    let mut pbf = osmpbfreader::OsmPbfReader::new(r);
-    let mut nb = 0;
-    for _obj in pbf.iter() {
-        nb += 1;
-    }
-    println!("{} objects in {:?}", nb, filename);
-}
-```
-build and run:
-```
-$ cargo build --release
-$ ./target/test-osmpbfreader picardie-latest.osm.pbf
-9852873 objects in "picardie-latest.osm.pbf"
-```
+For complete example, you can see the [examples](examples/).
 
 You can find OSM PBF files at [Geofabrik's free download server](http://download.geofabrik.de/).
 
