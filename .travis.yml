@@ -1,9 +1,9 @@
 language: rust
 sudo: false
 rust:
-  - nightly
-  - beta
-  - stable
+- nightly
+- beta
+- stable
 script: |
   cargo build --verbose
   cargo test --verbose
@@ -15,10 +15,11 @@ after_success: |
   [ $TRAVIS_BRANCH = master ] &&
   [ $TRAVIS_PULL_REQUEST = false ] &&
   cargo doc &&
-  echo "<meta http-equiv=refresh content=0;url=`echo $TRAVIS_REPO_SLUG | cut -d '/' -f 2`/index.html>" > target/doc/index.html &&
-  sudo pip install ghp-import &&
+  echo "<meta http-equiv=refresh content=0;url=osmpbfreader/index.html>" > target/doc/index.html &&
+  pip install --user ghp-import &&
+  export PATH="$PATH:$HOME/.local/bin" &&
   ghp-import -n target/doc &&
   git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
 env:
   global:
-    secure: Aty/kKBZNElT13gBxcGMF0lA1yVZAl6mYDF63BqF+7j0rhCXdqRifXy6fxrYARr55JEXxAp1eK5DrjYDIvoVAJIS3dK90SFyCD/K6cE2fdqLgSfCYdv/XkcH2n8pgDcVL5/RzE4kUjqbdfyUkqQxIhBxuronU0Sff/OtzsTFAEw=
+  - secure: JXoz6+cFipM3y6/Q8Zz6driMUM8aePLvIVGm39NEk9Y1GOqzeNElYzY5I8FLNnTNmMIqL8PwC4J8krlb/ZMB690MGJEDkpg31pyhVWr2VyQGrz2maw0AuVCe7naNdA8K6I7ftYAOPmzwqzmp6lB1M9rYbBtbmayoOP4sNqBtpVc=
