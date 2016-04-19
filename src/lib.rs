@@ -16,8 +16,8 @@
 //! `Cargo.toml`.
 //!
 //! ```toml
-//! [dependencies.osmpbfreader]
-//! git = "https://github.com/TeXitoi/osmpbfreader-rs"
+//! [dependencies]
+//! osmpbfreader = "0.3"
 //! ```
 //!
 //! and this to your crate root:
