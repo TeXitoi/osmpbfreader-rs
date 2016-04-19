@@ -100,7 +100,7 @@
 //! uncompress the blob.  Using some kind of parallel map can then
 //! improve the reading speed of the PBF file.
 
-//#![deny(missing_docs)]
+// #![deny(missing_docs)]
 
 extern crate protobuf;
 extern crate flate2;
@@ -112,10 +112,10 @@ pub use error::Result;
 pub use reader::{OsmPbfReader, primitive_block_from_blob};
 
 /// Generated from protobuf.
-#[allow(non_snake_case, missing_docs)] pub mod fileformat;
+#[allow(non_snake_case, missing_docs)]pub mod fileformat;
 
 /// Generated from protobuf.
-#[allow(missing_docs)] pub mod osmformat;
+#[allow(missing_docs)]pub mod osmformat;
 
 pub mod error;
 pub mod objects;
@@ -127,42 +127,44 @@ pub mod reader;
 use std::collections::{HashSet, HashMap};
 use std::io::{Seek, Read};
 
-pub fn get_objs_and_deps<R, F>(reader: &mut OsmPbfReader<R>, mut pred: F) -> Result<HashMap<OsmId, OsmObj>>
-    where R: Read + Seek,
-          F: FnMut(&OsmObj) -> bool
+pub fn get_objs_and_deps<R, F>(reader: &mut OsmPbfReader<R>,
+                               mut pred: F)
+-> Result<HashMap<OsmId, OsmObj>>
+where R: Read + Seek,
+      F: FnMut(&OsmObj) -> bool
 {
     let mut finished = false;
     let mut dependencies = HashSet::new();
     let mut objects = HashMap::new();
-    while !finished{
+    while !finished {
         finished = true;
-        for block in reader.primitive_blocks(){
+        for block in reader.primitive_blocks() {
             let block = try!(block);
             for obj in blocks::iter(&block) {
-                if dependencies.contains(&obj.id()) || pred(&obj){
-                    match obj{
-                        OsmObj::Relation(ref rel) => {
-                            for reference in &rel.refs{
-                                if dependencies.insert(reference.member) {
-                                    finished = false;
-                                }
-                            }
-                        }
-                        OsmObj::Way(ref way) => {
-                            for node in &way.nodes {
-                                if dependencies.insert(OsmId::Node(*node)) {
-                                    finished = false;
-                                }
-                            }
-                        }
-                        OsmObj::Node(_) => {}
-                    }
-                    objects.insert(obj.id(), obj);
+                if !dependencies.contains(&obj.id()) && !pred(&obj) {
+                    continue;
                 }
+                match obj {
+                    OsmObj::Relation(ref rel) => {
+                        for reference in &rel.refs {
+                            if dependencies.insert(reference.member) {
+                                finished = false;
+                            }
+                        }
+                    }
+                    OsmObj::Way(ref way) => {
+                        for node in &way.nodes {
+                            if dependencies.insert(OsmId::Node(*node)) {
+                                finished = false;
+                            }
+                        }
+                    }
+                    OsmObj::Node(_) => {}
+                }
+                objects.insert(obj.id(), obj);
             }
         }
         try!(reader.rewind());
     }
-    return Ok(objects);
-
+    Ok(objects)
 }
