@@ -127,6 +127,31 @@ pub mod reader;
 use std::collections::{HashSet, HashMap};
 use std::io::{Seek, Read};
 
+
+/// This function give you the ability to find all the objects validating
+/// a predicate and all there dependencies.
+///
+/// # Examples
+/// If you want to extract all the administrative boundaries
+/// and all there dependencies you can do something like that:
+///
+/// ```
+/// fn is_admin(obj: &osmpbfreader::OsmObj) -> bool{
+///     match *obj {
+///        osmpbfreader::OsmObj::Relation(ref rel) => {
+///            rel.tags.get("boundary").map_or(false, |v| v == "administrative")
+///         }
+///        _ => false,
+///     }
+/// }
+///
+/// let path = std::path::Path::new("/dev/null");
+/// let r = std::fs::File::open(&path).unwrap();
+/// let mut pbf = osmpbfreader::OsmPbfReader::new(r);
+/// for obj in osmpbfreader::get_objs_and_deps(&mut pbf, is_admin) {
+///     println!("{:?}", obj);
+/// }
+/// ```
 pub fn get_objs_and_deps<R, F>(reader: &mut OsmPbfReader<R>,
                                mut pred: F)
                                -> Result<HashMap<OsmId, OsmObj>>
