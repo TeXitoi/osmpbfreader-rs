@@ -129,38 +129,32 @@ use std::io::{Seek, Read};
 
 pub fn get_objs_and_deps<R, F>(reader: &mut OsmPbfReader<R>,
                                mut pred: F)
--> Result<HashMap<OsmId, OsmObj>>
-where R: Read + Seek,
-      F: FnMut(&OsmObj) -> bool
+                               -> Result<HashMap<OsmId, OsmObj>>
+    where R: Read + Seek,
+          F: FnMut(&OsmObj) -> bool
 {
     let mut finished = false;
-    let mut dependencies = HashSet::new();
+    let mut deps = HashSet::new();
     let mut objects = HashMap::new();
     while !finished {
         finished = true;
         for block in reader.primitive_blocks() {
             let block = try!(block);
             for obj in blocks::iter(&block) {
-                if !dependencies.contains(&obj.id()) && !pred(&obj) {
+                if !deps.contains(&obj.id()) && !pred(&obj) {
                     continue;
                 }
-                match obj {
+                finished = match obj {
                     OsmObj::Relation(ref rel) => {
-                        for reference in &rel.refs {
-                            if dependencies.insert(reference.member) {
-                                finished = false;
-                            }
-                        }
+                        rel.refs.iter().fold(finished, |accu, r| !deps.insert(r.member) && accu)
                     }
                     OsmObj::Way(ref way) => {
-                        for node in &way.nodes {
-                            if dependencies.insert(OsmId::Node(*node)) {
-                                finished = false;
-                            }
-                        }
+                        way.nodes
+                           .iter()
+                           .fold(finished, |accu, n| !deps.insert(OsmId::Node(*n)) && accu)
                     }
-                    OsmObj::Node(_) => {}
-                }
+                    OsmObj::Node(_) => finished,
+                };
                 objects.insert(obj.id(), obj);
             }
         }
