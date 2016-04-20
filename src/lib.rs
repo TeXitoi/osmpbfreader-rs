@@ -127,40 +127,59 @@ pub mod reader;
 use std::collections::{HashSet, HashMap};
 use std::io::{Seek, Read};
 
+
+/// This function give you the ability to find all the objects validating
+/// a predicate and all there dependencies.
+///
+/// # Examples
+/// If you want to extract all the administrative boundaries
+/// and all there dependencies you can do something like that:
+///
+/// ```
+/// fn is_admin(obj: &osmpbfreader::OsmObj) -> bool{
+///     match *obj {
+///        osmpbfreader::OsmObj::Relation(ref rel) => {
+///            rel.tags.get("boundary").map_or(false, |v| v == "administrative")
+///         }
+///        _ => false,
+///     }
+/// }
+///
+/// let path = std::path::Path::new("/dev/null");
+/// let r = std::fs::File::open(&path).unwrap();
+/// let mut pbf = osmpbfreader::OsmPbfReader::new(r);
+/// for obj in osmpbfreader::get_objs_and_deps(&mut pbf, is_admin) {
+///     println!("{:?}", obj);
+/// }
+/// ```
 pub fn get_objs_and_deps<R, F>(reader: &mut OsmPbfReader<R>,
                                mut pred: F)
--> Result<HashMap<OsmId, OsmObj>>
-where R: Read + Seek,
-      F: FnMut(&OsmObj) -> bool
+                               -> Result<HashMap<OsmId, OsmObj>>
+    where R: Read + Seek,
+          F: FnMut(&OsmObj) -> bool
 {
     let mut finished = false;
-    let mut dependencies = HashSet::new();
+    let mut deps = HashSet::new();
     let mut objects = HashMap::new();
     while !finished {
         finished = true;
         for block in reader.primitive_blocks() {
             let block = try!(block);
             for obj in blocks::iter(&block) {
-                if !dependencies.contains(&obj.id()) && !pred(&obj) {
+                if !deps.contains(&obj.id()) && !pred(&obj) {
                     continue;
                 }
-                match obj {
+                finished = match obj {
                     OsmObj::Relation(ref rel) => {
-                        for reference in &rel.refs {
-                            if dependencies.insert(reference.member) {
-                                finished = false;
-                            }
-                        }
+                        rel.refs.iter().fold(finished, |accu, r| !deps.insert(r.member) && accu)
                     }
                     OsmObj::Way(ref way) => {
-                        for node in &way.nodes {
-                            if dependencies.insert(OsmId::Node(*node)) {
-                                finished = false;
-                            }
-                        }
+                        way.nodes
+                           .iter()
+                           .fold(finished, |accu, n| !deps.insert(OsmId::Node(*n)) && accu)
                     }
-                    OsmObj::Node(_) => {}
-                }
+                    OsmObj::Node(_) => finished,
+                };
                 objects.insert(obj.id(), obj);
             }
         }
