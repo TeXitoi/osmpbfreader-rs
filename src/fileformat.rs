@@ -1,7 +1,9 @@
 // This file is generated. Do not edit
+// @generated
 
 #![allow(dead_code)]
 #![allow(non_camel_case_types)]
+#![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
 #![allow(unused_imports)]
 
@@ -20,6 +22,9 @@ pub struct Blob {
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
+
+// see codegen.rs for the explanation why impl Sync explicitly
+unsafe impl ::std::marker::Sync for Blob {}
 
 impl Blob {
     pub fn new() -> Blob {
@@ -220,43 +225,26 @@ impl ::protobuf::Message for Blob {
             let (field_number, wire_type) = try!(is.read_tag_unpack());
             match field_number {
                 1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                    };
-                    let tmp = self.raw.set_default();
-                    try!(is.read_bytes_into(tmp))
+                    try!(::protobuf::rt::read_singular_bytes_into(wire_type, is, &mut self.raw));
                 },
                 2 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     };
                     let tmp = try!(is.read_int32());
                     self.raw_size = ::std::option::Option::Some(tmp);
                 },
                 3 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                    };
-                    let tmp = self.zlib_data.set_default();
-                    try!(is.read_bytes_into(tmp))
+                    try!(::protobuf::rt::read_singular_bytes_into(wire_type, is, &mut self.zlib_data));
                 },
                 4 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                    };
-                    let tmp = self.lzma_data.set_default();
-                    try!(is.read_bytes_into(tmp))
+                    try!(::protobuf::rt::read_singular_bytes_into(wire_type, is, &mut self.lzma_data));
                 },
                 5 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                    };
-                    let tmp = self.OBSOLETE_bzip2_data.set_default();
-                    try!(is.read_bytes_into(tmp))
+                    try!(::protobuf::rt::read_singular_bytes_into(wire_type, is, &mut self.OBSOLETE_bzip2_data));
                 },
                 _ => {
-                    let unknown = try!(is.read_unknown(wire_type));
-                    self.mut_unknown_fields().add_value(field_number, unknown);
+                    try!(::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields()));
                 },
             };
         }
@@ -370,6 +358,9 @@ pub struct BlobHeader {
     unknown_fields: ::protobuf::UnknownFields,
     cached_size: ::std::cell::Cell<u32>,
 }
+
+// see codegen.rs for the explanation why impl Sync explicitly
+unsafe impl ::std::marker::Sync for BlobHeader {}
 
 impl BlobHeader {
     pub fn new() -> BlobHeader {
@@ -502,29 +493,20 @@ impl ::protobuf::Message for BlobHeader {
             let (field_number, wire_type) = try!(is.read_tag_unpack());
             match field_number {
                 1 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                    };
-                    let tmp = self.field_type.set_default();
-                    try!(is.read_string_into(tmp))
+                    try!(::protobuf::rt::read_singular_string_into(wire_type, is, &mut self.field_type));
                 },
                 2 => {
-                    if wire_type != ::protobuf::wire_format::WireTypeLengthDelimited {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
-                    };
-                    let tmp = self.indexdata.set_default();
-                    try!(is.read_bytes_into(tmp))
+                    try!(::protobuf::rt::read_singular_bytes_into(wire_type, is, &mut self.indexdata));
                 },
                 3 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
-                        return ::std::result::Result::Err(::protobuf::ProtobufError::WireError("unexpected wire type".to_string()));
+                        return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     };
                     let tmp = try!(is.read_int32());
                     self.datasize = ::std::option::Option::Some(tmp);
                 },
                 _ => {
-                    let unknown = try!(is.read_unknown(wire_type));
-                    self.mut_unknown_fields().add_value(field_number, unknown);
+                    try!(::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields()));
                 },
             };
         }
