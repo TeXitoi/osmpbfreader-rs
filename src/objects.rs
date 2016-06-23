@@ -30,6 +30,33 @@ impl OsmObj {
             OsmObj::Relation(ref rel) => OsmId::Relation(rel.id),
         }
     }
+    pub fn is_node(&self) -> bool {
+        self.node().is_some()
+    }
+    pub fn is_way(&self) -> bool {
+        self.way().is_some()
+    }
+    pub fn is_relation(&self) -> bool {
+        self.relation().is_some()
+    }
+    pub fn node(&self) -> Option<&Node> {
+        match *self {
+            OsmObj::Node(ref n) => Some(n),
+            _ => None
+        }
+    }
+    pub fn way(&self) -> Option<&Way> {
+        match *self {
+            OsmObj::Way(ref w) => Some(w),
+            _ => None
+        }
+    }
+    pub fn relation(&self) -> Option<&Relation> {
+        match *self {
+            OsmObj::Relation(ref r) => Some(r),
+            _ => None
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, PartialOrd, Clone)]
@@ -52,6 +79,26 @@ pub enum OsmId {
     Node(i64),
     Way(i64),
     Relation(i64),
+}
+impl OsmId {
+    pub fn is_node(&self) -> bool {
+        match *self {
+            OsmId::Node(_) => true,
+            _ => false
+        }
+    }
+    pub fn is_way(&self) -> bool {
+        match *self {
+            OsmId::Way(_) => true,
+            _ => false
+        }
+    }
+    pub fn is_relation(&self) -> bool {
+        match *self {
+            OsmId::Relation(_) => true,
+            _ => false
+        }
+    }
 }
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
