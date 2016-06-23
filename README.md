@@ -1,4 +1,6 @@
-# osmpbfreader-rs [![Build status](https://api.travis-ci.org/TeXitoi/osmpbfreader-rs.png)](https://travis-ci.org/TeXitoi/osmpbfreader-rs) [![](http://meritbadge.herokuapp.com/osmpbfreader)](https://crates.io/crates/osmpbfreader)
+# osmpbfreader-rs [![Build status](https://travis-ci.org/TeXitoi/osmpbfreader-rs.svg?branch=master)](https://travis-ci.org/TeXitoi/osmpbfreader-rs) [![](http://meritbadge.herokuapp.com/osmpbfreader)](https://crates.io/crates/osmpbfreader)
+
+
 
 ## Presentation
 
@@ -61,7 +63,4 @@ Note that `src/fileformat.proto` and `src/osmformat.proto` come from
 
 TODO list:
  - document until `#![deny(missing_docs)]` can be added;
- - provide a high level function that, given a
-   `|&OsmObject| -> bool`, returns a structure with all the
-   filtered objects plus their dependencies;
  - read header to check that we support all needed features.
