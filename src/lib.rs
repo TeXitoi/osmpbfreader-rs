@@ -124,7 +124,7 @@ pub mod blocks;
 pub mod borrowed_iter;
 pub mod reader;
 
-use std::collections::{HashSet, HashMap};
+use std::collections::{BTreeSet, BTreeMap};
 use std::io::{Seek, Read};
 
 
@@ -154,13 +154,13 @@ use std::io::{Seek, Read};
 /// ```
 pub fn get_objs_and_deps<R, F>(reader: &mut OsmPbfReader<R>,
                                mut pred: F)
-                               -> Result<HashMap<OsmId, OsmObj>>
+                               -> Result<BTreeMap<OsmId, OsmObj>>
     where R: Read + Seek,
           F: FnMut(&OsmObj) -> bool
 {
     let mut finished = false;
-    let mut deps = HashSet::new();
-    let mut objects = HashMap::new();
+    let mut deps = BTreeSet::new();
+    let mut objects = BTreeMap::new();
     while !finished {
         finished = true;
         for block in reader.primitive_blocks() {
