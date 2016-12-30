@@ -5,9 +5,7 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-use std::collections::BTreeMap;
-
-pub type Tags = BTreeMap<String, String>;
+pub type Tags = ::flat_map::FlatMap<String, String>;
 
 #[derive(Debug, PartialEq, PartialOrd, Clone)]
 pub enum OsmObj {

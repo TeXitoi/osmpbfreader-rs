@@ -9,7 +9,6 @@ use osmformat;
 use osmformat::{PrimitiveGroup, PrimitiveBlock};
 use std;
 use std::slice;
-use std::collections::BTreeMap;
 use std::iter::Chain;
 use std::iter::Map;
 use objects::{OsmObj, Node, Way, Relation, Ref, OsmId, Tags};
@@ -92,7 +91,7 @@ impl<'a> Iterator for DenseNodes<'a> {
             }
             _ => return None
         }
-        let mut tags = BTreeMap::new();
+        let mut tags = Tags::new();
         loop {
             let k = match self.keys_vals.next() {
                 None | Some(&0) => break,
@@ -104,6 +103,7 @@ impl<'a> Iterator for DenseNodes<'a> {
             };
             tags.insert(k, v);
         }
+        shrink_to_fit(&mut tags);
         Some(Node {
             id: self.cur_id,
             decimicro_lat: make_lat(self.cur_lat, self.block),
@@ -190,11 +190,14 @@ fn make_lon(c: i64, b: &osmformat::PrimitiveBlock) -> i32 {
     ((b.get_lon_offset() + granularity * c) / 100) as i32
 }
 fn make_tags(keys: &[u32], vals: &[u32], b: &PrimitiveBlock) -> Tags {
-    let mut tags = BTreeMap::new();
-    for (&k, &v) in keys.iter().zip(vals.iter()) {
-        let k = make_string(k as usize, b);
-        let v = make_string(v as usize, b);
-        tags.insert(k, v);
-    }
+    let mut tags = Tags::with_capacity(keys.len());
+    let iter = keys.iter().zip(vals.iter())
+        .map(|(&k, &v)| (make_string(k as usize, b), make_string(v as usize, b)));
+    tags.extend(iter);
     tags
+}
+fn shrink_to_fit(tags: &mut Tags) {
+    let mut other = Tags::with_capacity(tags.len());
+    ::std::mem::swap(tags, &mut other);
+    tags.extend(other.into_iter());
 }

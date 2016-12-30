@@ -105,6 +105,7 @@
 extern crate protobuf;
 extern crate flate2;
 extern crate byteorder;
+extern crate flat_map;
 
 pub use objects::{OsmObj, Node, Way, Relation, Ref, OsmId, Tags};
 pub use error::Error;
