@@ -1,18 +1,14 @@
 # osmpbfreader-rs [![Build status](https://travis-ci.org/TeXitoi/osmpbfreader-rs.svg?branch=master)](https://travis-ci.org/TeXitoi/osmpbfreader-rs) [![](http://meritbadge.herokuapp.com/osmpbfreader)](https://crates.io/crates/osmpbfreader)
 
-
-
-## Presentation
-
 Read [OpenStreetMap PBF
 files](http://wiki.openstreetmap.org/wiki/PBF_Format) with
-[rust](http://www.rust-lang.org).  The main inspiration of this
-library is
+[rust](http://www.rust-lang.org) in an easy and effective way.
+The main inspiration of this library is
 [libosmpbfreader](https://github.com/CanalTP/libosmpbfreader).
 
 ## Documentation
 
-[http://texitoi.github.io/osmpbfreader-rs/](http://texitoi.github.io/osmpbfreader-rs/)
+Find it on [Docs.rs](https://docs.rs/osmpbfreader)
 
 ## Using this lib
 
@@ -22,7 +18,7 @@ updated.  Add it to your `Cargo.toml` like so:
 
 ```toml
 [dependencies]
-osmpbfreader = "0.3"
+osmpbfreader = "0.6"
 ```
 
 For complete example, you can see the [examples](examples/).
@@ -34,20 +30,20 @@ You can find OSM PBF files at [Geofabrik's free download server](http://download
 Using the [count](examples/count.rs) example compiled in release mode:
 ```
 $ cat /proc/cpuinfo | grep name | head -1
-model name	: Intel(R) Core(TM) i7-4702HQ CPU @ 2.20GHz
+model name	: Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz
 $ rustc --version
-rustc 0.13.0-nightly (fac5a0767 2014-11-26 22:37:06 +0000)
-$ ls -sh france-latest.osm.pbf
-2,9G france-latest.osm.pbf
-$ time ./target/release/count-osm france-latest.osm.pbf admin_level 8
+rustc 1.14.0 (e8a012324 2016-12-16)
+$ ls -sh ile-de-france-latest.osm.pbf
+232M ile-de-france-latest.osm.pbf
+$ time ./target/release/examples/count ile-de-france-latest.osm.pbf admin_level 8
 counting objects with tags["admin_level"] = "8"...
-51 nodes, mean coord: 46.337052, 2.832865.
-105306 ways, mean |nodes|: 75.646221
-37229 relations, mean |references|: 8.220446
+4 nodes, mean coord: 48.795432325, 2.3825434.
+3941 ways, mean |nodes|: 37.275310834813496
+1423 relations, mean |references|: 8.586788475052705
 
-real	5m30.785s
-user	5m18.264s
-sys 	0m11.944s
+real	0m19.923s
+user	0m19.700s
+sys	0m0.208s
 ```
 
 ## License
@@ -63,4 +59,5 @@ Note that `src/fileformat.proto` and `src/osmformat.proto` come from
 
 TODO list:
  - document until `#![deny(missing_docs)]` can be added;
- - read header to check that we support all needed features.
+ - read pbf header to check that we support all needed features;
+ - do something better than `borrowed_iter`.
