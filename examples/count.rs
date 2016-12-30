@@ -24,8 +24,8 @@ fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &std::ffi::OsS
         match obj {
             osmpbfreader::OsmObj::Node(node) => {
                 nb_nodes += 1;
-                sum_lon += node.lon;
-                sum_lat += node.lat;
+                sum_lon += node.lon();
+                sum_lat += node.lat();
             }
             osmpbfreader::OsmObj::Way(way) => {
                 nb_ways += 1;

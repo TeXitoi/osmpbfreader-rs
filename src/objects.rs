@@ -62,9 +62,17 @@ impl OsmObj {
 #[derive(Debug, PartialEq, PartialOrd, Clone)]
 pub struct Node {
     pub id: i64,
-    pub lat: f64,
-    pub lon: f64,
+    pub decimicro_lat: i32,
+    pub decimicro_lon: i32,
     pub tags: Tags,
+}
+impl Node {
+    pub fn lat(&self) -> f64 {
+        self.decimicro_lat as f64 * 1e-7
+    }
+    pub fn lon(&self) -> f64 {
+        self.decimicro_lon as f64 * 1e-7
+    }
 }
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]

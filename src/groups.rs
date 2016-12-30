@@ -46,8 +46,8 @@ impl<'a> Iterator for SimpleNodes<'a> {
     fn next(&mut self) -> Option<Node> {
         self.iter.next().map(|n| Node {
             id: n.get_id(),
-            lat: make_lat(n.get_lat(), self.block),
-            lon: make_lat(n.get_lon(), self.block),
+            decimicro_lat: make_lat(n.get_lat(), self.block),
+            decimicro_lon: make_lon(n.get_lon(), self.block),
             tags: make_tags(n.get_keys(), n.get_vals(), self.block),
         })
     }
@@ -106,8 +106,8 @@ impl<'a> Iterator for DenseNodes<'a> {
         }
         Some(Node {
             id: self.cur_id,
-            lat: make_lat(self.cur_lat, self.block),
-            lon: make_lon(self.cur_lon, self.block),
+            decimicro_lat: make_lat(self.cur_lat, self.block),
+            decimicro_lon: make_lon(self.cur_lon, self.block),
             tags: tags,
         })
     }
@@ -181,13 +181,13 @@ fn make_string(k: usize, block: &osmformat::PrimitiveBlock) -> String {
     String::from_utf8_lossy(&*block.get_stringtable().get_s()[k])
         .into_owned()
 }
-fn make_lat(c: i64, b: &osmformat::PrimitiveBlock) -> f64 {
+fn make_lat(c: i64, b: &osmformat::PrimitiveBlock) -> i32 {
     let granularity = b.get_granularity() as i64;
-    1e-9 * (b.get_lat_offset() + granularity * c) as f64
+    ((b.get_lat_offset() + granularity * c) / 100) as i32
 }
-fn make_lon(c: i64, b: &osmformat::PrimitiveBlock) -> f64 {
+fn make_lon(c: i64, b: &osmformat::PrimitiveBlock) -> i32 {
     let granularity = b.get_granularity() as i64;
-    1e-9 * (b.get_lon_offset() + granularity * c) as f64
+    ((b.get_lon_offset() + granularity * c) / 100) as i32
 }
 fn make_tags(keys: &[u32], vals: &[u32], b: &PrimitiveBlock) -> Tags {
     let mut tags = BTreeMap::new();
