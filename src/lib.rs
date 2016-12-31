@@ -37,7 +37,7 @@
 //! let path = std::path::Path::new("/dev/null");
 //! let r = std::fs::File::open(&path).unwrap();
 //! let mut pbf = osmpbfreader::OsmPbfReader::new(r);
-//! let objs = osmpbfreader::get_objs_and_deps(&mut pbf, |obj| {
+//! let objs = pbf.get_objs_and_deps(|obj| {
 //!         obj.way().map_or(false, |w| w.tags.contains_key("highway"))
 //!     })
 //!     .unwrap();
@@ -145,66 +145,16 @@ pub mod blocks;
 pub mod borrowed_iter;
 pub mod reader;
 
-use std::collections::{BTreeSet, BTreeMap};
+use std::collections::BTreeMap;
 use std::io::{Seek, Read};
 
-
-/// This function give you the ability to find all the objects validating
-/// a predicate and all there dependencies.
-///
-/// # Examples
-/// If you want to extract all the administrative boundaries
-/// and all there dependencies you can do something like that:
-///
-/// ```
-/// fn is_admin(obj: &osmpbfreader::OsmObj) -> bool{
-///     match *obj {
-///        osmpbfreader::OsmObj::Relation(ref rel) => {
-///            rel.tags.get("boundary").map_or(false, |v| v == "administrative")
-///         }
-///        _ => false,
-///     }
-/// }
-///
-/// let path = std::path::Path::new("/dev/null");
-/// let r = std::fs::File::open(&path).unwrap();
-/// let mut pbf = osmpbfreader::OsmPbfReader::new(r);
-/// for obj in osmpbfreader::get_objs_and_deps(&mut pbf, is_admin) {
-///     println!("{:?}", obj);
-/// }
-/// ```
+// TODO: Uncomment when 0.7.0 is out.
+//#[deprecated(since="0.7.0", note="please use `OsmPbfReader::get_objs_and_deps` instead")]
 pub fn get_objs_and_deps<R, F>(reader: &mut OsmPbfReader<R>,
-                               mut pred: F)
+                               pred: F)
                                -> Result<BTreeMap<OsmId, OsmObj>>
     where R: Read + Seek,
           F: FnMut(&OsmObj) -> bool
 {
-    let mut finished = false;
-    let mut deps = BTreeSet::new();
-    let mut objects = BTreeMap::new();
-    while !finished {
-        finished = true;
-        for block in reader.primitive_blocks() {
-            let block = try!(block);
-            for obj in blocks::iter(&block) {
-                if !deps.contains(&obj.id()) && !pred(&obj) {
-                    continue;
-                }
-                finished = match obj {
-                    OsmObj::Relation(ref rel) => {
-                        rel.refs.iter().fold(finished, |accu, r| !deps.insert(r.member) && accu)
-                    }
-                    OsmObj::Way(ref way) => {
-                        way.nodes
-                           .iter()
-                           .fold(finished, |accu, n| !deps.insert(OsmId::Node(*n)) && accu)
-                    }
-                    OsmObj::Node(_) => finished,
-                };
-                objects.insert(obj.id(), obj);
-            }
-        }
-        try!(reader.rewind());
-    }
-    Ok(objects)
+    reader.get_objs_and_deps(pred)
 }

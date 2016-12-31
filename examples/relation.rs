@@ -7,11 +7,8 @@
 //
 extern crate osmpbfreader;
 
-fn wanted(obj: &osmpbfreader::OsmObj) -> bool{
-    match *obj {
-        osmpbfreader::OsmObj::Relation(ref rel) => rel.id == 7444,//id of relation for Paris
-        _ => false,
-    }
+fn wanted(obj: &osmpbfreader::OsmObj) -> bool {
+    obj.id() == osmpbfreader::OsmId::Relation(7444)//id of relation for Paris
 }
 
 fn main() {
@@ -19,9 +16,9 @@ fn main() {
     let path = std::path::Path::new(&filename);
     let r = std::fs::File::open(&path).unwrap();
     let mut pbf = osmpbfreader::OsmPbfReader::new(r);
-    let objects = osmpbfreader::get_objs_and_deps(&mut pbf, wanted).unwrap();
+    let objects = pbf.get_objs_and_deps(wanted).unwrap();
     println!("The relation Paris is composed of {:?} items", objects.len());
-    for (id, _) in objects{
+    for (id, _) in objects {
         println!("{:?}", id);
     }
 }

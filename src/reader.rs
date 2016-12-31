@@ -9,12 +9,14 @@ use fileformat;
 use osmformat;
 use error::{Error, Result};
 use blocks;
-use objects::OsmObj;
+use objects::{OsmId, OsmObj};
 use borrowed_iter;
 use protobuf;
 use std::convert::From;
 use std::io::{self, Read};
 use std::iter;
+use std::collections::btree_map::{BTreeMap, Entry};
+use std::collections::BTreeSet;
 
 pub struct OsmPbfReader<R> {
     buf: Vec<u8>,
@@ -56,6 +58,70 @@ impl<R: io::Read> OsmPbfReader<R> {
         try!(self.r.seek(io::SeekFrom::Start(0)));
         self.finished = false;
         Ok(())
+    }
+
+    /// This function give you the ability to find all the objects validating
+    /// a predicate and all there dependencies.
+    ///
+    /// # Examples
+    /// If you want to extract all the administrative boundaries
+    /// and all there dependencies you can do something like that:
+    ///
+    /// ```
+    /// fn is_admin(obj: &osmpbfreader::OsmObj) -> bool {
+    ///     // get relations with tags[boundary] == administrative
+    ///     obj.relation()
+    ///         .and_then(|rel| rel.tags.get("boundary"))
+    ///         .map_or(false, |v| v == "administrative")
+    /// }
+    ///
+    /// let path = std::path::Path::new("/dev/null");
+    /// let r = std::fs::File::open(&path).unwrap();
+    /// let mut pbf = osmpbfreader::OsmPbfReader::new(r);
+    /// let objs = pbf.get_objs_and_deps(is_admin).unwrap();
+    /// for (id, obj) in &objs {
+    ///     println!("{:?}: {:?}", id, obj);
+    /// }
+    /// ```
+    pub fn get_objs_and_deps<F>(&mut self, mut pred: F)
+                                -> Result<BTreeMap<OsmId, OsmObj>>
+        where R: io::Seek, F: FnMut(&OsmObj) -> bool
+    {
+        let mut finished = false;
+        let mut deps = BTreeSet::new();
+        let mut objects = BTreeMap::new();
+        while !finished {
+            try!(self.rewind());
+            finished = true;
+            let mut nb = 0;
+            for block in self.primitive_blocks() {
+                let block = try!(block);
+                for obj in blocks::iter(&block) {
+                    if !deps.contains(&obj.id()) && !pred(&obj) {
+                        continue;
+                    }
+                    let vacant = match objects.entry(obj.id()) {
+                        Entry::Vacant(v) => v,
+                        Entry::Occupied(..) => continue,
+                    };
+                    finished = match obj {
+                        OsmObj::Relation(ref rel) => {
+                            rel.refs.iter().fold(finished, |accu, r| !deps.insert(r.member) && accu)
+                        }
+                        OsmObj::Way(ref way) => {
+                            way.nodes
+                                .iter()
+                                .fold(finished, |accu, n| !deps.insert(OsmId::Node(*n)) && accu)
+                        }
+                        OsmObj::Node(_) => finished,
+                    };
+                    vacant.insert(obj);
+                    nb += 1;
+                }
+            }
+            println!("{} objs added", nb);
+        }
+        Ok(objects)
     }
 
     fn push(&mut self, sz: u64) -> Result<()> {
