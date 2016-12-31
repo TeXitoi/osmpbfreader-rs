@@ -93,7 +93,6 @@ impl<R: io::Read> OsmPbfReader<R> {
         while !finished {
             try!(self.rewind());
             finished = true;
-            let mut nb = 0;
             for block in self.primitive_blocks() {
                 let block = try!(block);
                 for obj in blocks::iter(&block) {
@@ -116,10 +115,8 @@ impl<R: io::Read> OsmPbfReader<R> {
                         OsmObj::Node(_) => finished,
                     };
                     vacant.insert(obj);
-                    nb += 1;
                 }
             }
-            println!("{} objs added", nb);
         }
         Ok(objects)
     }
