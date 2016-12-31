@@ -17,7 +17,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! osmpbfreader = "0.3"
+//! osmpbfreader = "0.6"
 //! ```
 //!
 //! and this to your crate root:
@@ -25,6 +25,26 @@
 //! ```rust
 //! extern crate osmpbfreader;
 //! ```
+//!
+//! # Getting objects and their dependencies
+//!
+//! Most of the time, you'll want a subset of the OSM objects and its
+//! dependencies (i.e. the nodes inside a way, and not only the ids of
+//! the nodes of this way).  For that, an easy to use function is
+//! availlable.
+//!
+//!```
+//! let path = std::path::Path::new("/dev/null");
+//! let r = std::fs::File::open(&path).unwrap();
+//! let mut pbf = osmpbfreader::OsmPbfReader::new(r);
+//! let objs = osmpbfreader::get_objs_and_deps(&mut pbf, |obj| {
+//!         obj.way().map_or(false, |w| w.tags.contains_key("highway"))
+//!     })
+//!     .unwrap();
+//! for (id, obj) in &objs {
+//!     println!("{:?}: {:?}", id, obj);
+//! }
+//!```
 //!
 //! # Readding without error handling
 //!
