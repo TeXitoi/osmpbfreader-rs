@@ -11,17 +11,15 @@ use std;
 use std::slice;
 use std::iter::Chain;
 use std::iter::Map;
-use objects::{OsmObj, Node, Way, Relation, Ref, OsmId, Tags};
+use std::convert::From;
+use objects::*;
 
 pub type OsmObjs<'a> = Chain<Chain<Map<Nodes<'a>, fn(Node) -> OsmObj>, Map<Ways<'a>, fn(Way) -> OsmObj>>, Map<Relations<'a>, fn(Relation) -> OsmObj>>;
 
 pub fn iter<'a>(g: &'a PrimitiveGroup, b: &'a PrimitiveBlock) -> OsmObjs<'a> {
-    fn node_into_obj(n: Node) -> OsmObj { OsmObj::Node(n) }
-    fn way_into_obj(w: Way) -> OsmObj { OsmObj::Way(w) }
-    fn rel_into_obj(r: Relation) -> OsmObj { OsmObj::Relation(r) }
-    nodes(g, b).map(node_into_obj as fn(Node) -> OsmObj)
-        .chain(ways(g, b).map(way_into_obj as fn(Way) -> OsmObj))
-        .chain(relations(g, b).map(rel_into_obj as fn(Relation) -> OsmObj))
+    nodes(g, b).map(From::from as fn(Node) -> OsmObj)
+        .chain(ways(g, b).map(From::from as fn(Way) -> OsmObj))
+        .chain(relations(g, b).map(From::from as fn(Relation) -> OsmObj))
 }
 
 pub type Nodes<'a> = std::iter::Chain<SimpleNodes<'a>, DenseNodes<'a>>;
@@ -44,7 +42,7 @@ impl<'a> Iterator for SimpleNodes<'a> {
     type Item = Node;
     fn next(&mut self) -> Option<Node> {
         self.iter.next().map(|n| Node {
-            id: n.get_id(),
+            id: NodeId(n.get_id()),
             decimicro_lat: make_lat(n.get_lat(), self.block),
             decimicro_lon: make_lon(n.get_lon(), self.block),
             tags: make_tags(n.get_keys(), n.get_vals(), self.block),
@@ -105,7 +103,7 @@ impl<'a> Iterator for DenseNodes<'a> {
         }
         tags.shrink_to_fit();
         Some(Node {
-            id: self.cur_id,
+            id: NodeId(self.cur_id),
             decimicro_lat: make_lat(self.cur_lat, self.block),
             decimicro_lon: make_lon(self.cur_lon, self.block),
             tags: tags,
@@ -125,9 +123,9 @@ impl<'a> Iterator for Ways<'a> {
     fn next(&mut self) -> Option<Way> {
         self.iter.next().map(|w| {
             let mut n = 0;
-            let nodes = w.get_refs().iter().map(|&dn| { n += dn; n }).collect();
+            let nodes = w.get_refs().iter().map(|&dn| { n += dn; NodeId(n) }).collect();
             Way {
-                id: w.get_id(),
+                id: WayId(w.get_id()),
                 nodes: nodes,
                 tags: make_tags(w.get_keys(), w.get_vals(), self.block),
             }
@@ -158,15 +156,15 @@ impl<'a> Iterator for Relations<'a> {
                     m += dm;
                     Ref {
                         member: match t {
-                            NODE => OsmId::Node(m),
-                            WAY => OsmId::Way(m),
-                            RELATION => OsmId::Relation(m),
+                            NODE => NodeId(m).into(),
+                            WAY => WayId(m).into(),
+                            RELATION => RelationId(m).into(),
                         },
                         role: make_string(role as usize, self.block),
                     }
                 }).collect();
             Relation {
-                id: rel.get_id(),
+                id: RelationId(rel.get_id()),
                 refs: refs,
                 tags: make_tags(rel.get_keys(), rel.get_vals(), self.block),
             }

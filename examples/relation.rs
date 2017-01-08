@@ -8,7 +8,7 @@
 extern crate osmpbfreader;
 
 fn wanted(obj: &osmpbfreader::OsmObj) -> bool {
-    obj.id() == osmpbfreader::OsmId::Relation(7444)//id of relation for Paris
+    obj.id() == osmpbfreader::RelationId(7444).into()//id of relation for Paris
 }
 
 fn main() {

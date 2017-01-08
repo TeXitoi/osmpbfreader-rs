@@ -127,7 +127,7 @@ extern crate flate2;
 extern crate byteorder;
 extern crate flat_map;
 
-pub use objects::{OsmObj, Node, Way, Relation, Ref, OsmId, Tags};
+pub use objects::*;
 pub use error::Error;
 pub use error::Result;
 pub use reader::{OsmPbfReader, primitive_block_from_blob};
@@ -148,8 +148,7 @@ pub mod reader;
 use std::collections::BTreeMap;
 use std::io::{Seek, Read};
 
-// TODO: Uncomment when 0.7.0 is out.
-//#[deprecated(since="0.7.0", note="please use `OsmPbfReader::get_objs_and_deps` instead")]
+#[deprecated(since="0.7.0", note="please use `OsmPbfReader::get_objs_and_deps` instead")]
 pub fn get_objs_and_deps<R, F>(reader: &mut OsmPbfReader<R>,
                                pred: F)
                                -> Result<BTreeMap<OsmId, OsmObj>>
