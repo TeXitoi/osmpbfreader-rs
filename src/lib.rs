@@ -142,8 +142,8 @@ pub mod error;
 pub mod objects;
 pub mod groups;
 pub mod blocks;
-pub mod borrowed_iter;
 pub mod reader;
+mod borrowed_iter;
 
 use std::collections::BTreeMap;
 use std::io::{Seek, Read};
