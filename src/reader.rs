@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2015 Guillaume Pinot <texitoi(a)texitoi.eu>
+// Copyright (c) 2014-2017 Guillaume Pinot <texitoi(a)texitoi.eu>
 //
 // This work is free. You can redistribute it and/or modify it under
 // the terms of the Do What The Fuck You Want To Public License,
@@ -51,6 +51,9 @@ impl<R: io::Read> OsmPbfReader<R> {
             .map(|r| r.unwrap())
             .flat_map(|b| borrowed_iter::BorrowedIter::new(b, blocks::iter));
         Box::new(iter)
+    }
+    pub fn par_iter<'a>(&'a mut self) -> ::par::Iter<'a, R> {
+        ::par::Iter::new(self)
     }
     pub fn rewind(&mut self) -> Result<()>
         where R: io::Seek

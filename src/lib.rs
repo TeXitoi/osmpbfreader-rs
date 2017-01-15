@@ -126,6 +126,8 @@ extern crate protobuf;
 extern crate flate2;
 extern crate byteorder;
 extern crate flat_map;
+extern crate threadpool;
+extern crate num_cpus;
 
 pub use objects::*;
 pub use error::Error;
@@ -143,6 +145,7 @@ pub mod objects;
 pub mod groups;
 pub mod blocks;
 pub mod reader;
+pub mod par;
 mod borrowed_iter;
 
 use std::collections::BTreeMap;
