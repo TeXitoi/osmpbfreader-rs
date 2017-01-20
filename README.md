@@ -14,12 +14,7 @@ Find it on [Docs.rs](https://docs.rs/osmpbfreader)
 
 This crate works with Cargo and is on
 [crates.io](https://crates.io/crates/osmpbfreader). The package is regularly
-updated.  Add it to your `Cargo.toml` like so:
-
-```toml
-[dependencies]
-osmpbfreader = "0.6"
-```
+updated.
 
 For complete example, you can see the [examples](examples/).
 
