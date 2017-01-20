@@ -141,16 +141,3 @@ pub mod blocks;
 pub mod reader;
 pub mod par;
 mod borrowed_iter;
-
-use std::collections::BTreeMap;
-use std::io::{Seek, Read};
-
-#[deprecated(since="0.7.0", note="please use `OsmPbfReader::get_objs_and_deps` instead")]
-pub fn get_objs_and_deps<R, F>(reader: &mut OsmPbfReader<R>,
-                               pred: F)
-                               -> Result<BTreeMap<OsmId, OsmObj>>
-    where R: Read + Seek,
-          F: FnMut(&OsmObj) -> bool
-{
-    reader.get_objs_and_deps(pred)
-}

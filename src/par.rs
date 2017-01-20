@@ -5,6 +5,8 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
+//! Parallel iterator for OsmPbfReader.
+
 use ::std::sync::mpsc::{channel, Sender, Receiver};
 use ::threadpool::ThreadPool;
 use ::{Result, OsmObj};
