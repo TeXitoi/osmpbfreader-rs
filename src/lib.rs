@@ -17,7 +17,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! osmpbfreader = "0.6"
+//! osmpbfreader = "0.8"
 //! ```
 //!
 //! and this to your crate root:
@@ -135,10 +135,12 @@ pub use error::Result;
 pub use reader::{OsmPbfReader, primitive_block_from_blob};
 
 /// Generated from protobuf.
-#[allow(non_snake_case, missing_docs)]pub mod fileformat;
+#[allow(non_snake_case, missing_docs)]
+mod fileformat;
 
 /// Generated from protobuf.
-#[allow(missing_docs)]pub mod osmformat;
+#[allow(missing_docs)]
+mod osmformat;
 
 pub mod error;
 pub mod objects;

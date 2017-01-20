@@ -9,6 +9,7 @@ use ::std::sync::mpsc::{channel, Sender, Receiver};
 use ::threadpool::ThreadPool;
 use ::{Result, OsmObj};
 
+/// A parallel iterator over the OsmObj of an OsmPbfReader.
 pub struct Iter<'a, R: 'a> {
     tx: Option<Sender<Vec<Result<OsmObj>>>>,
     rx: Receiver<Vec<Result<OsmObj>>>,
@@ -17,6 +18,7 @@ pub struct Iter<'a, R: 'a> {
     obj_iter: ::std::vec::IntoIter<Result<OsmObj>>,
 }
 impl<'a, R> Iter<'a, R> where R: ::std::io::Read {
+    /// Creates a parallel iterator.
     pub fn new<'b>(reader: &'b mut ::reader::OsmPbfReader<R>) -> Iter<'b, R> {
         let num_threads = ::num_cpus::get();
         let (tx, rx) = channel();
