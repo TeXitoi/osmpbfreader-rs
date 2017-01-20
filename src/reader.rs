@@ -96,29 +96,27 @@ impl<R: io::Read> OsmPbfReader<R> {
         while !finished {
             try!(self.rewind());
             finished = true;
-            for block in self.primitive_blocks() {
-                let block = try!(block);
-                for obj in blocks::iter(&block) {
-                    if !deps.contains(&obj.id()) && !pred(&obj) {
-                        continue;
-                    }
-                    let vacant = match objects.entry(obj.id()) {
-                        Entry::Vacant(v) => v,
-                        Entry::Occupied(..) => continue,
-                    };
-                    finished = match obj {
-                        OsmObj::Relation(ref rel) => {
-                            rel.refs.iter().fold(finished, |accu, r| !deps.insert(r.member) && accu)
-                        }
-                        OsmObj::Way(ref way) => {
-                            way.nodes
-                                .iter()
-                                .fold(finished, |accu, n| !deps.insert(OsmId::Node(*n)) && accu)
-                        }
-                        OsmObj::Node(_) => finished,
-                    };
-                    vacant.insert(obj);
+            for obj in self.par_iter() {
+                let obj = try!(obj);
+                if !deps.contains(&obj.id()) && !pred(&obj) {
+                    continue;
                 }
+                let vacant = match objects.entry(obj.id()) {
+                    Entry::Vacant(v) => v,
+                    Entry::Occupied(..) => continue,
+                };
+                finished = match obj {
+                    OsmObj::Relation(ref rel) => {
+                        rel.refs.iter().fold(finished, |accu, r| !deps.insert(r.member) && accu)
+                    }
+                    OsmObj::Way(ref way) => {
+                        way.nodes
+                            .iter()
+                            .fold(finished, |accu, n| !deps.insert(OsmId::Node(*n)) && accu)
+                    }
+                    OsmObj::Node(_) => finished,
+                };
+                vacant.insert(obj);
             }
         }
         Ok(objects)
