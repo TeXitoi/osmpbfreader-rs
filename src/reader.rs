@@ -15,7 +15,7 @@ use protobuf;
 use std::convert::From;
 use std::io::{self, Read};
 use std::iter;
-use std::collections::btree_map::{BTreeMap, Entry};
+use std::collections::btree_map::BTreeMap;
 use std::collections::BTreeSet;
 
 pub struct OsmPbfReader<R> {
@@ -101,13 +101,15 @@ impl<R: io::Read> OsmPbfReader<R> {
                 if !deps.contains(&obj.id()) && !pred(&obj) {
                     continue;
                 }
-                let vacant = match objects.entry(obj.id()) {
-                    Entry::Vacant(v) => v,
-                    Entry::Occupied(..) => continue,
-                };
+                if objects.contains_key(&obj.id()) {
+                    continue;
+                }
                 finished = match obj {
                     OsmObj::Relation(ref rel) => {
-                        rel.refs.iter().fold(finished, |accu, r| !deps.insert(r.member) && accu)
+                        rel.refs
+                            .iter()
+                            .filter(|r| ! objects.contains_key(&r.member))
+                            .fold(finished, |accu, r| !deps.insert(r.member) && accu)
                     }
                     OsmObj::Way(ref way) => {
                         way.nodes
@@ -116,7 +118,8 @@ impl<R: io::Read> OsmPbfReader<R> {
                     }
                     OsmObj::Node(_) => finished,
                 };
-                vacant.insert(obj);
+                deps.remove(&obj.id());
+                objects.insert(obj.id(), obj);
             }
         }
         Ok(objects)
