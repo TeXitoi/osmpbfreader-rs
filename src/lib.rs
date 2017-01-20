@@ -34,9 +34,7 @@
 //! availlable.
 //!
 //!```
-//! let path = std::path::Path::new("/dev/null");
-//! let r = std::fs::File::open(&path).unwrap();
-//! let mut pbf = osmpbfreader::OsmPbfReader::new(r);
+//! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::Cursor::new([]));
 //! let objs = pbf.get_objs_and_deps(|obj| {
 //!         obj.way().map_or(false, |w| w.tags.contains_key("highway"))
 //!     })
@@ -52,9 +50,7 @@
 //! `OsmObj`.
 //!
 //! ```rust
-//! let path = std::path::Path::new("/dev/null");
-//! let r = std::fs::File::open(&path).unwrap();
-//! let mut pbf = osmpbfreader::OsmPbfReader::new(r);
+//! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
 //! for obj in pbf.iter() {
 //!     println!("{:?}", obj);
 //! }
@@ -72,9 +68,7 @@
 //! ```rust
 //! use std::process::exit;
 //! use osmpbfreader::blocks;
-//! let path = std::path::Path::new("/dev/null");
-//! let r = std::fs::File::open(&path).unwrap();
-//! let mut pbf = osmpbfreader::OsmPbfReader::new(r);
+//! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
 //! for block in pbf.primitive_blocks() {
 //!     // error handling:
 //!     let block = block.unwrap_or_else(|e| {println!("{:?}", e); exit(1)});
@@ -94,9 +88,7 @@
 //!
 //! ```rust
 //! use osmpbfreader::{primitive_block_from_blob, groups};
-//! let path = std::path::Path::new("/dev/null");
-//! let r = std::fs::File::open(&path).unwrap();
-//! let mut pbf = osmpbfreader::OsmPbfReader::new(r);
+//! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
 //! for block in pbf.blobs().map(|b| primitive_block_from_blob(&b.unwrap())) {
 //!     let block = block.unwrap();
 //!     for group in block.get_primitivegroup().iter() {

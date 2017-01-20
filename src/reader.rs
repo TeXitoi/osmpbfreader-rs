@@ -78,9 +78,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     ///         .map_or(false, |v| v == "administrative")
     /// }
     ///
-    /// let path = std::path::Path::new("/dev/null");
-    /// let r = std::fs::File::open(&path).unwrap();
-    /// let mut pbf = osmpbfreader::OsmPbfReader::new(r);
+    /// let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::Cursor::new([]));
     /// let objs = pbf.get_objs_and_deps(is_admin).unwrap();
     /// for (id, obj) in &objs {
     ///     println!("{:?}: {:?}", id, obj);
