@@ -1,14 +1,18 @@
 [package]
-
 name = "osmpbfreader"
-version = "0.8.0"
+version = "0.8.1"
 authors = ["Guillaume Pinot <texitoi@texitoi.eu>"]
 description = "Read OpenStreetMap PBF files in rust."
 documentation = "https://docs.rs/osmpbfreader"
 repository = "https://github.com/TeXitoi/osmpbfreader-rs"
 keywords = ["openstreetmap", "osm", "pbf"]
+categories = ["encoding", "science"]
 license = "WTFPL"
 readme = "README.md"
+
+[badges]
+travis-ci = { repository = "TeXitoi/osmpbfreader-rs" }
+appveyor = { repository = "TeXitoi/osmpbfreader-rs" }
 
 [dependencies]
 flate2 = "0.2.17"
