@@ -13,7 +13,7 @@ fn main() {
     let r = std::fs::File::open(&path).unwrap();
     let mut pbf = osmpbfreader::OsmPbfReader::new(r);
     let mut nb = 0;
-    for _obj in pbf.iter() {
+    for _obj in pbf.iter().map(Result::unwrap) {
         nb += 1;
     }
     println!("{} objects in {:?}", nb, filename);

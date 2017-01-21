@@ -22,23 +22,38 @@ You can find OSM PBF files at [Geofabrik's free download server](http://download
 
 ## Performances
 
-Using the [count](examples/count.rs) example compiled in release mode:
+Using the different examples compiled in release mode:
 ```
-$ cat /proc/cpuinfo | grep name | head -1
-model name	: Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz
+$ grep CPU /proc/cpuinfo | uniq -c
+      4 model name	: Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz
 $ rustc --version
 rustc 1.14.0 (e8a012324 2016-12-16)
-$ ls -sh ile-de-france-latest.osm.pbf
-232M ile-de-france-latest.osm.pbf
-$ time ./target/release/examples/count ile-de-france-latest.osm.pbf admin_level 8
-counting objects with tags["admin_level"] = "8"...
-4 nodes, mean coord: 48.795432325, 2.3825434.
-3941 ways, mean |nodes|: 37.275310834813496
-1423 relations, mean |references|: 8.586788475052705
+$ ls -sh france-latest.osm.pbf
+3,3G france-latest.osm.pbf
+$ time ./target/release/examples/tutorial france-latest.osm.pbf
+415229844 objects in "france-latest.osm.pbf"
 
-real	0m19.923s
-user	0m19.700s
-sys	0m0.208s
+real	4m51.018s
+user	4m43.500s
+sys	0m5.788s
+$ time ./target/release/examples/count france-latest.osm.pbf admin_level 8
+counting objects with tags["admin_level"] = "8"...
+54 nodes, mean coord: 46.296170755555565, 2.8982805611111107.
+107969 ways, mean |nodes|: 72.17152145523252
+35989 relations, mean |references|: 8.701408763788935
+
+real	3m3.350s
+user	11m26.852s
+sys	0m29.964s
+$ time ./target/release/examples/count_with_deps france-latest.osm.pbf admin_level 8
+counting objects with tags["admin_level"] = "8" and their depedencies...
+9517850 nodes, mean coord: 46.694558024657404, 2.2541158816049762.
+138463 ways, mean |nodes|: 69.74443714205239
+36790 relations, mean |references|: 8.920549062245176
+
+real	16m58.378s
+user	64m31.564s
+sys	0m41.624s
 ```
 
 ## License

@@ -8,9 +8,7 @@
 use fileformat;
 use osmformat;
 use error::{Error, Result};
-use blocks;
 use objects::{OsmId, OsmObj};
-use borrowed_iter;
 use protobuf;
 use std::convert::From;
 use std::io::{self, Read};
@@ -46,11 +44,8 @@ impl<R: io::Read> OsmPbfReader<R> {
         }
         self.blobs().map(and_then_primitive_block)
     }
-    pub fn iter<'a>(&'a mut self) -> Box<Iterator<Item = OsmObj> + 'a> {
-        let iter = self.primitive_blocks()
-            .map(|r| r.unwrap())
-            .flat_map(|b| borrowed_iter::BorrowedIter::new(b, blocks::iter));
-        Box::new(iter)
+    pub fn iter<'a>(&'a mut self) -> ::iter::Iter<'a, R> {
+        ::iter::Iter::new(self.primitive_blocks())
     }
     pub fn par_iter<'a>(&'a mut self) -> ::par::Iter<'a, R> {
         ::par::Iter::new(self)

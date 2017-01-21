@@ -44,38 +44,33 @@
 //! }
 //!```
 //!
-//! # Readding without error handling
+//! # Readding
 //!
 //! The easiest way to read a PBF file is to directly iterate on the
 //! `OsmObj`.
 //!
 //! ```rust
+//! use std::process::exit;
 //! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
 //! for obj in pbf.iter() {
+//!     // error handling:
+//!     let obj = obj.unwrap_or_else(|e| {println!("{:?}", e); exit(1)});
+//!
 //!     println!("{:?}", obj);
 //! }
 //! ```
 //!
-//! Notice that, in case of any error, it'll panic.
-//!
-//! # Readding with error handling
-//!
-//! To manage error handling, a little more work is needed.  First,
-//! iteration on the different blocks is done, and then, for each
-//! blocks, after error handling, iteration on the `OsmObj` can be
-//! done.
+//! There is also a parallel version of this iterator. The file is
+//! decoded in parallel.
 //!
 //! ```rust
 //! use std::process::exit;
-//! use osmpbfreader::blocks;
 //! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
-//! for block in pbf.primitive_blocks() {
+//! for obj in pbf.par_iter() {
 //!     // error handling:
-//!     let block = block.unwrap_or_else(|e| {println!("{:?}", e); exit(1)});
+//!     let obj = obj.unwrap_or_else(|e| {println!("{:?}", e); exit(1)});
 //!
-//!     for obj in blocks::iter(&block) {
-//!         println!("{:?}", obj);
-//!     }
+//!     println!("{:?}", obj);
 //! }
 //! ```
 //!
@@ -140,4 +135,5 @@ pub mod groups;
 pub mod blocks;
 pub mod reader;
 pub mod par;
+pub mod iter;
 mod borrowed_iter;
