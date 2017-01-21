@@ -11,7 +11,9 @@ pub struct BorrowedIter<T, I> {
     _borrow: Box<T>,
     iter: I,
 }
-impl<T, I> Iterator for BorrowedIter<T, I> where I: Iterator {
+impl<T, I> Iterator for BorrowedIter<T, I>
+    where I: Iterator
+{
     type Item = I::Item;
     fn next(&mut self) -> Option<Self::Item> {
         self.iter.next()
@@ -22,11 +24,16 @@ impl<T, I> Iterator for BorrowedIter<T, I> where I: Iterator {
 }
 impl<T, I> BorrowedIter<T, I> {
     pub fn new<'a>(t: T, f: fn(&'a T) -> I) -> BorrowedIter<T, I>
-        where T: 'a, I: 'a + Iterator<Item = OsmObj>, I::Item: 'static
+        where T: 'a,
+              I: 'a + Iterator<Item = OsmObj>,
+              I::Item: 'static
     {
         use std::mem;
         let b = Box::new(t);
         let i = f(unsafe { mem::transmute(&*b) });
-        BorrowedIter { _borrow: b, iter: i }
+        BorrowedIter {
+            _borrow: b,
+            iter: i,
+        }
     }
 }

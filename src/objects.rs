@@ -39,21 +39,21 @@ impl OsmId {
     pub fn is_node(&self) -> bool {
         match *self {
             OsmId::Node(_) => true,
-            _ => false
+            _ => false,
         }
     }
     /// Returns `true` if the id is a way id.
     pub fn is_way(&self) -> bool {
         match *self {
             OsmId::Way(_) => true,
-            _ => false
+            _ => false,
         }
     }
     /// Returns `true` if the id is a relation id.
     pub fn is_relation(&self) -> bool {
         match *self {
             OsmId::Relation(_) => true,
-            _ => false
+            _ => false,
         }
     }
 }
@@ -98,21 +98,21 @@ impl OsmObj {
     pub fn node(&self) -> Option<&Node> {
         match *self {
             OsmObj::Node(ref n) => Some(n),
-            _ => None
+            _ => None,
         }
     }
     /// Gets a reference to the way in an `Option`.
     pub fn way(&self) -> Option<&Way> {
         match *self {
             OsmObj::Way(ref w) => Some(w),
-            _ => None
+            _ => None,
         }
     }
     /// Gets a reference to the relation in an `Option`.
     pub fn relation(&self) -> Option<&Relation> {
         match *self {
             OsmObj::Relation(ref r) => Some(r),
-            _ => None
+            _ => None,
         }
     }
 }

@@ -1,6 +1,9 @@
 language: rust
-cache: cargo
 sudo: false
+cache: cargo
+before_script:
+- cargo install -f rustfmt
+- export PATH=$PATH:$HOME/.cargo/bin
 rust:
 - nightly
 - beta
@@ -9,6 +12,7 @@ matrix:
   allow_failures:
   - rust: nightly
 script:
+- cargo fmt -- --write-mode=diff
 - cargo build --verbose
 - cargo test --verbose
 after_success: |

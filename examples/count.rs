@@ -5,7 +5,8 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-#[macro_use] extern crate log;
+#[macro_use]
+extern crate log;
 extern crate osmpbfreader;
 
 fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &std::ffi::OsStr) {
@@ -19,7 +20,9 @@ fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &std::ffi::OsS
     let mut nb_rels = 0;
     let mut nb_rel_refs = 0;
     for obj in pbf.par_iter().map(Result::unwrap) {
-        if !filter(obj.tags()) { continue; }
+        if !filter(obj.tags()) {
+            continue;
+        }
         info!("{:?}", obj);
         match obj {
             osmpbfreader::OsmObj::Node(node) => {
@@ -38,11 +41,15 @@ fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &std::ffi::OsS
         }
     }
     println!("{} nodes, mean coord: {}, {}.",
-             nb_nodes, sum_lat / nb_nodes as f64, sum_lon / nb_nodes as f64);
+             nb_nodes,
+             sum_lat / nb_nodes as f64,
+             sum_lon / nb_nodes as f64);
     println!("{} ways, mean |nodes|: {}",
-             nb_ways, nb_way_nodes as f64 / nb_ways as f64);
+             nb_ways,
+             nb_way_nodes as f64 / nb_ways as f64);
     println!("{} relations, mean |references|: {}",
-             nb_rels, nb_rel_refs as f64 / nb_rels as f64);
+             nb_rels,
+             nb_rel_refs as f64 / nb_rels as f64);
 }
 
 fn main() {

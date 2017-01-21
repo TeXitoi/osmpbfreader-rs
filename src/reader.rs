@@ -38,8 +38,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     }
     pub fn primitive_blocks<'a>(&'a mut self) -> PrimitiveBlocks<'a, R> {
         fn and_then_primitive_block(blob_res: Result<fileformat::Blob>)
-                                    -> Result<osmformat::PrimitiveBlock>
-        {
+                                    -> Result<osmformat::PrimitiveBlock> {
             blob_res.and_then(|b| primitive_block_from_blob(&b))
         }
         self.blobs().map(and_then_primitive_block)
@@ -79,9 +78,9 @@ impl<R: io::Read> OsmPbfReader<R> {
     ///     println!("{:?}: {:?}", id, obj);
     /// }
     /// ```
-    pub fn get_objs_and_deps<F>(&mut self, mut pred: F)
-                                -> Result<BTreeMap<OsmId, OsmObj>>
-        where R: io::Seek, F: FnMut(&OsmObj) -> bool
+    pub fn get_objs_and_deps<F>(&mut self, mut pred: F) -> Result<BTreeMap<OsmId, OsmObj>>
+        where R: io::Seek,
+              F: FnMut(&OsmObj) -> bool
     {
         let mut finished = false;
         let mut deps = BTreeSet::new();
@@ -101,7 +100,7 @@ impl<R: io::Read> OsmPbfReader<R> {
                     OsmObj::Relation(ref rel) => {
                         rel.refs
                             .iter()
-                            .filter(|r| ! objects.contains_key(&r.member))
+                            .filter(|r| !objects.contains_key(&r.member))
                             .fold(finished, |accu, r| !deps.insert(r.member) && accu)
                     }
                     OsmObj::Way(ref way) => {
@@ -124,12 +123,9 @@ impl<R: io::Read> OsmPbfReader<R> {
         assert_eq!(sz, self.buf.len() as u64);
         Ok(())
     }
-    fn try_blob(&mut self, sz: u64)
-                 -> Result<Option<fileformat::Blob>>
-    {
+    fn try_blob(&mut self, sz: u64) -> Result<Option<fileformat::Blob>> {
         try!(self.push(sz));
-        let header: fileformat::BlobHeader =
-            try!(protobuf::parse_from_bytes(&self.buf));
+        let header: fileformat::BlobHeader = try!(protobuf::parse_from_bytes(&self.buf));
         let sz = header.get_datasize() as u64;
         try!(self.push(sz));
         let blob: fileformat::Blob = try!(protobuf::parse_from_bytes(&self.buf));
@@ -142,11 +138,12 @@ impl<R: io::Read> OsmPbfReader<R> {
             Ok(None)
         }
     }
-    fn next_blob(&mut self) -> Option<Result<fileformat::Blob>>
-    {
+    fn next_blob(&mut self) -> Option<Result<fileformat::Blob>> {
         use byteorder::{BigEndian, ReadBytesExt};
         use std::io::ErrorKind;
-        if self.finished { return None; }
+        if self.finished {
+            return None;
+        }
         let sz = match self.r.read_u32::<BigEndian>() {
             Ok(sz) if sz > 64 * 1024 => return Some(Err(Error::InvalidData)),
             Ok(sz) => sz,
@@ -171,7 +168,7 @@ impl<R: io::Read> OsmPbfReader<R> {
 }
 
 pub struct Blobs<'a, R: 'a> {
-    opr: &'a mut OsmPbfReader<R>
+    opr: &'a mut OsmPbfReader<R>,
 }
 impl<'a, R: io::Read> Iterator for Blobs<'a, R> {
     type Item = Result<fileformat::Blob>;
@@ -180,14 +177,11 @@ impl<'a, R: io::Read> Iterator for Blobs<'a, R> {
     }
 }
 
-pub type PrimitiveBlocks<'a, R: 'a> =
-    iter::Map<Blobs<'a, R>, fn(Result<fileformat::Blob>)
-                               -> Result<osmformat::PrimitiveBlock>
-    >;
+pub type PrimitiveBlocks<'a, R: 'a> = iter::Map<Blobs<'a, R>,
+                                                fn(Result<fileformat::Blob>)
+                                                   -> Result<osmformat::PrimitiveBlock>>;
 
-pub fn primitive_block_from_blob(blob: &fileformat::Blob)
-                                 -> Result<osmformat::PrimitiveBlock>
-{
+pub fn primitive_block_from_blob(blob: &fileformat::Blob) -> Result<osmformat::PrimitiveBlock> {
     if blob.has_raw() {
         protobuf::parse_from_bytes(blob.get_raw()).map_err(From::from)
     } else if blob.has_zlib_data() {

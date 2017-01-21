@@ -10,7 +10,7 @@ use borrowed_iter::BorrowedIter;
 use reader::PrimitiveBlocks;
 use osmformat::PrimitiveBlock;
 use blocks;
-use ::Result;
+use Result;
 use objects::OsmObj;
 
 pub struct Iter<'a, R: io::Read + 'a> {
@@ -19,7 +19,7 @@ pub struct Iter<'a, R: io::Read + 'a> {
 }
 
 impl<'a, R: io::Read + 'a> Iter<'a, R> {
-    pub fn new(blocks: PrimitiveBlocks<'a, R>)-> Self {
+    pub fn new(blocks: PrimitiveBlocks<'a, R>) -> Self {
         Iter {
             blocks: blocks,
             objs: BorrowedIter::new(PrimitiveBlock::new(), blocks::iter),
@@ -27,7 +27,7 @@ impl<'a, R: io::Read + 'a> Iter<'a, R> {
     }
 }
 
-impl <'a, R: io::Read + 'a> Iterator for Iter<'a, R> {
+impl<'a, R: io::Read + 'a> Iterator for Iter<'a, R> {
     type Item = Result<OsmObj>;
     fn next(&mut self) -> Option<Self::Item> {
         loop {

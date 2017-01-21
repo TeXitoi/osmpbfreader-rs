@@ -7,9 +7,9 @@
 
 //! Parallel iterator for OsmPbfReader.
 
-use ::std::sync::mpsc::{channel, Sender, Receiver};
-use ::threadpool::ThreadPool;
-use ::{Result, OsmObj};
+use std::sync::mpsc::{channel, Sender, Receiver};
+use threadpool::ThreadPool;
+use {Result, OsmObj};
 
 /// A parallel iterator over the OsmObj of an OsmPbfReader.
 pub struct Iter<'a, R: 'a> {
@@ -19,7 +19,9 @@ pub struct Iter<'a, R: 'a> {
     blob_iter: ::reader::Blobs<'a, R>,
     obj_iter: ::std::vec::IntoIter<Result<OsmObj>>,
 }
-impl<'a, R> Iter<'a, R> where R: ::std::io::Read {
+impl<'a, R> Iter<'a, R>
+    where R: ::std::io::Read
+{
     /// Creates a parallel iterator.
     pub fn new<'b>(reader: &'b mut ::reader::OsmPbfReader<R>) -> Iter<'b, R> {
         let num_threads = ::num_cpus::get();
@@ -52,7 +54,7 @@ impl<'a, R> Iter<'a, R> where R: ::std::io::Read {
                 return;
             }
         };
-        self.pool.execute(move|| {
+        self.pool.execute(move || {
             let block = ::reader::primitive_block_from_blob(&blob);
             let block = match block {
                 Ok(b) => b,
@@ -66,7 +68,9 @@ impl<'a, R> Iter<'a, R> where R: ::std::io::Read {
     }
 }
 
-impl<'a, R> Iterator for Iter<'a, R> where R: ::std::io::Read {
+impl<'a, R> Iterator for Iter<'a, R>
+    where R: ::std::io::Read
+{
     type Item = Result<OsmObj>;
     fn next(&mut self) -> Option<Self::Item> {
         loop {
