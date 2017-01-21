@@ -30,8 +30,11 @@ pub struct RelationId(pub i64);
 /// An OpenStreetMap object identifier
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Copy)]
 pub enum OsmId {
+    /// The identifier of a node
     Node(NodeId),
+    /// The identifier of a way
     Way(WayId),
+    /// The identifier of a relation
     Relation(RelationId),
 }
 impl OsmId {
@@ -61,8 +64,11 @@ impl OsmId {
 /// An OpenStreetMap object.
 #[derive(Debug, PartialEq, PartialOrd, Clone)]
 pub enum OsmObj {
+    /// A node
     Node(Node),
+    /// A way
     Way(Way),
+    /// A relation
     Relation(Relation),
 }
 impl OsmObj {

@@ -107,7 +107,7 @@
 //! uncompress the blob.  Using some kind of parallel map can then
 //! improve the reading speed of the PBF file.
 
-// #![deny(missing_docs)]
+#![deny(missing_docs)]
 
 extern crate protobuf;
 extern crate flate2;
@@ -121,19 +121,25 @@ pub use error::Error;
 pub use error::Result;
 pub use reader::{OsmPbfReader, primitive_block_from_blob};
 
+pub mod reader;
+pub mod objects;
+pub mod par;
+
+#[allow(missing_docs)]
+pub mod error;
+#[allow(missing_docs)]
+pub mod iter;
+#[allow(missing_docs)]
+pub mod blocks;
+#[allow(missing_docs)]
+pub mod groups;
+
 /// Generated from protobuf.
 #[allow(non_snake_case, missing_docs)]
-mod fileformat;
+pub mod fileformat;
 
 /// Generated from protobuf.
 #[allow(missing_docs)]
-mod osmformat;
+pub mod osmformat;
 
-pub mod error;
-pub mod objects;
-pub mod groups;
-pub mod blocks;
-pub mod reader;
-pub mod par;
-pub mod iter;
 mod borrowed_iter;

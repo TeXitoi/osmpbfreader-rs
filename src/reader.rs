@@ -5,6 +5,8 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
+//! Tools for reading a pbf file.
+
 use fileformat;
 use osmformat;
 use error::{Error, Result};
@@ -16,6 +18,7 @@ use std::iter;
 use std::collections::btree_map::BTreeMap;
 use std::collections::BTreeSet;
 
+/// The object to manage a pbf file.
 pub struct OsmPbfReader<R> {
     buf: Vec<u8>,
     r: R,
@@ -23,6 +26,7 @@ pub struct OsmPbfReader<R> {
 }
 
 impl<R: io::Read> OsmPbfReader<R> {
+    /// Creates an OsmPbfReader from a Read object.
     pub fn new(r: R) -> OsmPbfReader<R> {
         OsmPbfReader {
             buf: vec![],
@@ -30,25 +34,57 @@ impl<R: io::Read> OsmPbfReader<R> {
             finished: false,
         }
     }
-    pub fn into_inner(self) -> R {
-        self.r
-    }
-    pub fn blobs<'a>(&'a mut self) -> Blobs<'a, R> {
-        Blobs { opr: self }
-    }
-    pub fn primitive_blocks<'a>(&'a mut self) -> PrimitiveBlocks<'a, R> {
-        fn and_then_primitive_block(blob_res: Result<fileformat::Blob>)
-                                    -> Result<osmformat::PrimitiveBlock> {
-            blob_res.and_then(|b| primitive_block_from_blob(&b))
-        }
-        self.blobs().map(and_then_primitive_block)
-    }
+
+    /// Returns an iterator on the OsmObj of the pbf file.
+    ///
+    /// #Example
+    ///
+    /// ```
+    /// let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
+    /// for obj in pbf.iter().map(Result::unwrap) {
+    ///     println!("{:?}", obj);
+    /// }
+    /// ```
     pub fn iter<'a>(&'a mut self) -> ::iter::Iter<'a, R> {
         ::iter::Iter::new(self.primitive_blocks())
     }
+
+    /// Returns a parallel iterator on the OsmObj of the pbf file.
+    ///
+    /// Several threads decode in parallel the file.  The memory and
+    /// CPU usage are guaranteed to be bounded even if the caller stop
+    /// consuming items.
+    ///
+    /// # Node
+    ///
+    /// The order of the object is not determinist.
+    ///
+    /// #Example
+    ///
+    /// ```
+    /// let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
+    /// for obj in pbf.par_iter().map(Result::unwrap) {
+    ///     println!("{:?}", obj);
+    /// }
+    /// ```
     pub fn par_iter<'a>(&'a mut self) -> ::par::Iter<'a, R> {
         ::par::Iter::new(self)
     }
+
+    /// Rewinds the pbf file to the begining.
+    ///
+    /// Useful if you want to read several consecutive times the same
+    /// file.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let mut cursor = std::io::Cursor::new([0, 0, 0]);
+    /// cursor.set_position(2);
+    /// let mut pbf = osmpbfreader::OsmPbfReader::new(cursor);
+    /// pbf.rewind().unwrap();
+    /// assert_eq!(pbf.into_inner().position(), 0);
+    /// ```
     pub fn rewind(&mut self) -> Result<()>
         where R: io::Seek
     {
@@ -57,10 +93,12 @@ impl<R: io::Read> OsmPbfReader<R> {
         Ok(())
     }
 
-    /// This function give you the ability to find all the objects validating
-    /// a predicate and all there dependencies.
+    /// This function give you the ability to find all the objects
+    /// validating a predicate and all there dependencies.  The file
+    /// will be decoded in parallel.
     ///
-    /// # Examples
+    /// # Example
+    ///
     /// If you want to extract all the administrative boundaries
     /// and all there dependencies you can do something like that:
     ///
@@ -116,6 +154,24 @@ impl<R: io::Read> OsmPbfReader<R> {
         }
         Ok(objects)
     }
+    /// Extract the Read object.
+    ///
+    /// Consumes the object.
+    pub fn into_inner(self) -> R {
+        self.r
+    }
+    /// Returns an iterator on the blobs of the pbf file.
+    pub fn blobs<'a>(&'a mut self) -> Blobs<'a, R> {
+        Blobs { opr: self }
+    }
+    /// Returns an iterator on the blocks of the pbf file.
+    pub fn primitive_blocks<'a>(&'a mut self) -> PrimitiveBlocks<'a, R> {
+        fn and_then_primitive_block(blob_res: Result<fileformat::Blob>)
+                                    -> Result<osmformat::PrimitiveBlock> {
+            blob_res.and_then(|b| primitive_block_from_blob(&b))
+        }
+        self.blobs().map(and_then_primitive_block)
+    }
 
     fn push(&mut self, sz: u64) -> Result<()> {
         self.buf.clear();
@@ -167,6 +223,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     }
 }
 
+/// Iterator on the blobs of a file.
 pub struct Blobs<'a, R: 'a> {
     opr: &'a mut OsmPbfReader<R>,
 }
@@ -177,10 +234,12 @@ impl<'a, R: io::Read> Iterator for Blobs<'a, R> {
     }
 }
 
+/// Iterator on the blocks of a file.
 pub type PrimitiveBlocks<'a, R: 'a> = iter::Map<Blobs<'a, R>,
                                                 fn(Result<fileformat::Blob>)
                                                    -> Result<osmformat::PrimitiveBlock>>;
 
+/// Returns an iterator on the blocks of a blob.
 pub fn primitive_block_from_blob(blob: &fileformat::Blob) -> Result<osmformat::PrimitiveBlock> {
     if blob.has_raw() {
         protobuf::parse_from_bytes(blob.get_raw()).map_err(From::from)
