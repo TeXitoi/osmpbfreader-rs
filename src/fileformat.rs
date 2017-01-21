@@ -1,16 +1,26 @@
 // This file is generated. Do not edit
 // @generated
 
+// https://github.com/Manishearth/rust-clippy/issues/702
+#![allow(unknown_lints)]
+#![allow(clippy)]
+
+#![cfg_attr(rustfmt, rustfmt_skip)]
+
+#![allow(box_pointers)]
 #![allow(dead_code)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
+#![allow(trivial_casts)]
+#![allow(unsafe_code)]
 #![allow(unused_imports)]
+#![allow(unused_results)]
 
 use protobuf::Message as Message_imported_for_functions;
 use protobuf::ProtobufEnum as ProtobufEnum_imported_for_functions;
 
-#[derive(Clone,Default,Debug)]
+#[derive(PartialEq,Clone,Default,Debug)]
 pub struct Blob {
     // message fields
     raw: ::protobuf::SingularField<::std::vec::Vec<u8>>,
@@ -20,7 +30,7 @@ pub struct Blob {
     OBSOLETE_bzip2_data: ::protobuf::SingularField<::std::vec::Vec<u8>>,
     // special fields
     unknown_fields: ::protobuf::UnknownFields,
-    cached_size: ::std::cell::Cell<u32>,
+    cached_size: ::protobuf::CachedSize,
 }
 
 // see codegen.rs for the explanation why impl Sync explicitly
@@ -37,17 +47,7 @@ impl Blob {
             ptr: 0 as *const Blob,
         };
         unsafe {
-            instance.get(|| {
-                Blob {
-                    raw: ::protobuf::SingularField::none(),
-                    raw_size: ::std::option::Option::None,
-                    zlib_data: ::protobuf::SingularField::none(),
-                    lzma_data: ::protobuf::SingularField::none(),
-                    OBSOLETE_bzip2_data: ::protobuf::SingularField::none(),
-                    unknown_fields: ::protobuf::UnknownFields::new(),
-                    cached_size: ::std::cell::Cell::new(0),
-                }
-            })
+            instance.get(Blob::new)
         }
     }
 
@@ -68,7 +68,7 @@ impl Blob {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_raw<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u8> {
+    pub fn mut_raw(&mut self) -> &mut ::std::vec::Vec<u8> {
         if self.raw.is_none() {
             self.raw.set_default();
         };
@@ -80,11 +80,19 @@ impl Blob {
         self.raw.take().unwrap_or_else(|| ::std::vec::Vec::new())
     }
 
-    pub fn get_raw<'a>(&'a self) -> &'a [u8] {
+    pub fn get_raw(&self) -> &[u8] {
         match self.raw.as_ref() {
             Some(v) => &v,
             None => &[],
         }
+    }
+
+    fn get_raw_for_reflect(&self) -> &::protobuf::SingularField<::std::vec::Vec<u8>> {
+        &self.raw
+    }
+
+    fn mut_raw_for_reflect(&mut self) -> &mut ::protobuf::SingularField<::std::vec::Vec<u8>> {
+        &mut self.raw
     }
 
     // optional int32 raw_size = 2;
@@ -102,8 +110,16 @@ impl Blob {
         self.raw_size = ::std::option::Option::Some(v);
     }
 
-    pub fn get_raw_size<'a>(&self) -> i32 {
+    pub fn get_raw_size(&self) -> i32 {
         self.raw_size.unwrap_or(0)
+    }
+
+    fn get_raw_size_for_reflect(&self) -> &::std::option::Option<i32> {
+        &self.raw_size
+    }
+
+    fn mut_raw_size_for_reflect(&mut self) -> &mut ::std::option::Option<i32> {
+        &mut self.raw_size
     }
 
     // optional bytes zlib_data = 3;
@@ -123,7 +139,7 @@ impl Blob {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_zlib_data<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u8> {
+    pub fn mut_zlib_data(&mut self) -> &mut ::std::vec::Vec<u8> {
         if self.zlib_data.is_none() {
             self.zlib_data.set_default();
         };
@@ -135,11 +151,19 @@ impl Blob {
         self.zlib_data.take().unwrap_or_else(|| ::std::vec::Vec::new())
     }
 
-    pub fn get_zlib_data<'a>(&'a self) -> &'a [u8] {
+    pub fn get_zlib_data(&self) -> &[u8] {
         match self.zlib_data.as_ref() {
             Some(v) => &v,
             None => &[],
         }
+    }
+
+    fn get_zlib_data_for_reflect(&self) -> &::protobuf::SingularField<::std::vec::Vec<u8>> {
+        &self.zlib_data
+    }
+
+    fn mut_zlib_data_for_reflect(&mut self) -> &mut ::protobuf::SingularField<::std::vec::Vec<u8>> {
+        &mut self.zlib_data
     }
 
     // optional bytes lzma_data = 4;
@@ -159,7 +183,7 @@ impl Blob {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_lzma_data<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u8> {
+    pub fn mut_lzma_data(&mut self) -> &mut ::std::vec::Vec<u8> {
         if self.lzma_data.is_none() {
             self.lzma_data.set_default();
         };
@@ -171,11 +195,19 @@ impl Blob {
         self.lzma_data.take().unwrap_or_else(|| ::std::vec::Vec::new())
     }
 
-    pub fn get_lzma_data<'a>(&'a self) -> &'a [u8] {
+    pub fn get_lzma_data(&self) -> &[u8] {
         match self.lzma_data.as_ref() {
             Some(v) => &v,
             None => &[],
         }
+    }
+
+    fn get_lzma_data_for_reflect(&self) -> &::protobuf::SingularField<::std::vec::Vec<u8>> {
+        &self.lzma_data
+    }
+
+    fn mut_lzma_data_for_reflect(&mut self) -> &mut ::protobuf::SingularField<::std::vec::Vec<u8>> {
+        &mut self.lzma_data
     }
 
     // optional bytes OBSOLETE_bzip2_data = 5;
@@ -195,7 +227,7 @@ impl Blob {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_OBSOLETE_bzip2_data<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u8> {
+    pub fn mut_OBSOLETE_bzip2_data(&mut self) -> &mut ::std::vec::Vec<u8> {
         if self.OBSOLETE_bzip2_data.is_none() {
             self.OBSOLETE_bzip2_data.set_default();
         };
@@ -207,11 +239,19 @@ impl Blob {
         self.OBSOLETE_bzip2_data.take().unwrap_or_else(|| ::std::vec::Vec::new())
     }
 
-    pub fn get_OBSOLETE_bzip2_data<'a>(&'a self) -> &'a [u8] {
+    pub fn get_OBSOLETE_bzip2_data(&self) -> &[u8] {
         match self.OBSOLETE_bzip2_data.as_ref() {
             Some(v) => &v,
             None => &[],
         }
+    }
+
+    fn get_OBSOLETE_bzip2_data_for_reflect(&self) -> &::protobuf::SingularField<::std::vec::Vec<u8>> {
+        &self.OBSOLETE_bzip2_data
+    }
+
+    fn mut_OBSOLETE_bzip2_data_for_reflect(&mut self) -> &mut ::protobuf::SingularField<::std::vec::Vec<u8>> {
+        &mut self.OBSOLETE_bzip2_data
     }
 }
 
@@ -220,43 +260,32 @@ impl ::protobuf::Message for Blob {
         true
     }
 
-    fn merge_from(&mut self,
-                  is: &mut ::protobuf::CodedInputStream)
-                  -> ::protobuf::ProtobufResult<()> {
-        while !try!(is.eof()) {
-            let (field_number, wire_type) = try!(is.read_tag_unpack());
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
             match field_number {
                 1 => {
-                    try!(::protobuf::rt::read_singular_bytes_into(wire_type, is, &mut self.raw));
-                }
+                    ::protobuf::rt::read_singular_bytes_into(wire_type, is, &mut self.raw)?;
+                },
                 2 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     };
-                    let tmp = try!(is.read_int32());
+                    let tmp = is.read_int32()?;
                     self.raw_size = ::std::option::Option::Some(tmp);
-                }
+                },
                 3 => {
-                    try!(::protobuf::rt::read_singular_bytes_into(wire_type,
-                                                                  is,
-                                                                  &mut self.zlib_data));
-                }
+                    ::protobuf::rt::read_singular_bytes_into(wire_type, is, &mut self.zlib_data)?;
+                },
                 4 => {
-                    try!(::protobuf::rt::read_singular_bytes_into(wire_type,
-                                                                  is,
-                                                                  &mut self.lzma_data));
-                }
+                    ::protobuf::rt::read_singular_bytes_into(wire_type, is, &mut self.lzma_data)?;
+                },
                 5 => {
-                    try!(::protobuf::rt::read_singular_bytes_into(wire_type,
-                                                                  is,
-                                                                  &mut self.OBSOLETE_bzip2_data));
-                }
+                    ::protobuf::rt::read_singular_bytes_into(wire_type, is, &mut self.OBSOLETE_bzip2_data)?;
+                },
                 _ => {
-                    try!(::protobuf::rt::read_unknown_or_skip_group(field_number,
-                                                                    wire_type,
-                                                                    is,
-                                                                    self.mut_unknown_fields()));
-                }
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
             };
         }
         ::std::result::Result::Ok(())
@@ -266,46 +295,43 @@ impl ::protobuf::Message for Blob {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
-        for value in self.raw.iter() {
-            my_size += ::protobuf::rt::bytes_size(1, &value);
-        }
-        for value in self.raw_size.iter() {
-            my_size +=
-                ::protobuf::rt::value_size(2, *value, ::protobuf::wire_format::WireTypeVarint);
-        }
-        for value in self.zlib_data.iter() {
-            my_size += ::protobuf::rt::bytes_size(3, &value);
-        }
-        for value in self.lzma_data.iter() {
-            my_size += ::protobuf::rt::bytes_size(4, &value);
-        }
-        for value in self.OBSOLETE_bzip2_data.iter() {
-            my_size += ::protobuf::rt::bytes_size(5, &value);
-        }
+        if let Some(v) = self.raw.as_ref() {
+            my_size += ::protobuf::rt::bytes_size(1, &v);
+        };
+        if let Some(v) = self.raw_size {
+            my_size += ::protobuf::rt::value_size(2, v, ::protobuf::wire_format::WireTypeVarint);
+        };
+        if let Some(v) = self.zlib_data.as_ref() {
+            my_size += ::protobuf::rt::bytes_size(3, &v);
+        };
+        if let Some(v) = self.lzma_data.as_ref() {
+            my_size += ::protobuf::rt::bytes_size(4, &v);
+        };
+        if let Some(v) = self.OBSOLETE_bzip2_data.as_ref() {
+            my_size += ::protobuf::rt::bytes_size(5, &v);
+        };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
         my_size
     }
 
-    fn write_to_with_cached_sizes(&self,
-                                  os: &mut ::protobuf::CodedOutputStream)
-                                  -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         if let Some(v) = self.raw.as_ref() {
-            try!(os.write_bytes(1, &v));
+            os.write_bytes(1, &v)?;
         };
         if let Some(v) = self.raw_size {
-            try!(os.write_int32(2, v));
+            os.write_int32(2, v)?;
         };
         if let Some(v) = self.zlib_data.as_ref() {
-            try!(os.write_bytes(3, &v));
+            os.write_bytes(3, &v)?;
         };
         if let Some(v) = self.lzma_data.as_ref() {
-            try!(os.write_bytes(4, &v));
+            os.write_bytes(4, &v)?;
         };
         if let Some(v) = self.OBSOLETE_bzip2_data.as_ref() {
-            try!(os.write_bytes(5, &v));
+            os.write_bytes(5, &v)?;
         };
-        try!(os.write_unknown_fields(self.get_unknown_fields()));
+        os.write_unknown_fields(self.get_unknown_fields())?;
         ::std::result::Result::Ok(())
     }
 
@@ -313,16 +339,12 @@ impl ::protobuf::Message for Blob {
         self.cached_size.get()
     }
 
-    fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
         &self.unknown_fields
     }
 
-    fn mut_unknown_fields<'s>(&'s mut self) -> &'s mut ::protobuf::UnknownFields {
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
         &mut self.unknown_fields
-    }
-
-    fn type_id(&self) -> ::std::any::TypeId {
-        ::std::any::TypeId::of::<Blob>()
     }
 
     fn as_any(&self) -> &::std::any::Any {
@@ -351,16 +373,7 @@ impl ::protobuf::Clear for Blob {
     }
 }
 
-impl ::std::cmp::PartialEq for Blob {
-    fn eq(&self, other: &Blob) -> bool {
-        self.raw == other.raw && self.raw_size == other.raw_size &&
-        self.zlib_data == other.zlib_data && self.lzma_data == other.lzma_data &&
-        self.OBSOLETE_bzip2_data == other.OBSOLETE_bzip2_data &&
-        self.unknown_fields == other.unknown_fields
-    }
-}
-
-#[derive(Clone,Default,Debug)]
+#[derive(PartialEq,Clone,Default,Debug)]
 pub struct BlobHeader {
     // message fields
     field_type: ::protobuf::SingularField<::std::string::String>,
@@ -368,7 +381,7 @@ pub struct BlobHeader {
     datasize: ::std::option::Option<i32>,
     // special fields
     unknown_fields: ::protobuf::UnknownFields,
-    cached_size: ::std::cell::Cell<u32>,
+    cached_size: ::protobuf::CachedSize,
 }
 
 // see codegen.rs for the explanation why impl Sync explicitly
@@ -385,15 +398,7 @@ impl BlobHeader {
             ptr: 0 as *const BlobHeader,
         };
         unsafe {
-            instance.get(|| {
-                BlobHeader {
-                    field_type: ::protobuf::SingularField::none(),
-                    indexdata: ::protobuf::SingularField::none(),
-                    datasize: ::std::option::Option::None,
-                    unknown_fields: ::protobuf::UnknownFields::new(),
-                    cached_size: ::std::cell::Cell::new(0),
-                }
-            })
+            instance.get(BlobHeader::new)
         }
     }
 
@@ -414,7 +419,7 @@ impl BlobHeader {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_field_type<'a>(&'a mut self) -> &'a mut ::std::string::String {
+    pub fn mut_field_type(&mut self) -> &mut ::std::string::String {
         if self.field_type.is_none() {
             self.field_type.set_default();
         };
@@ -426,11 +431,19 @@ impl BlobHeader {
         self.field_type.take().unwrap_or_else(|| ::std::string::String::new())
     }
 
-    pub fn get_field_type<'a>(&'a self) -> &'a str {
+    pub fn get_field_type(&self) -> &str {
         match self.field_type.as_ref() {
             Some(v) => &v,
             None => "",
         }
+    }
+
+    fn get_field_type_for_reflect(&self) -> &::protobuf::SingularField<::std::string::String> {
+        &self.field_type
+    }
+
+    fn mut_field_type_for_reflect(&mut self) -> &mut ::protobuf::SingularField<::std::string::String> {
+        &mut self.field_type
     }
 
     // optional bytes indexdata = 2;
@@ -450,7 +463,7 @@ impl BlobHeader {
 
     // Mutable pointer to the field.
     // If field is not initialized, it is initialized with default value first.
-    pub fn mut_indexdata<'a>(&'a mut self) -> &'a mut ::std::vec::Vec<u8> {
+    pub fn mut_indexdata(&mut self) -> &mut ::std::vec::Vec<u8> {
         if self.indexdata.is_none() {
             self.indexdata.set_default();
         };
@@ -462,11 +475,19 @@ impl BlobHeader {
         self.indexdata.take().unwrap_or_else(|| ::std::vec::Vec::new())
     }
 
-    pub fn get_indexdata<'a>(&'a self) -> &'a [u8] {
+    pub fn get_indexdata(&self) -> &[u8] {
         match self.indexdata.as_ref() {
             Some(v) => &v,
             None => &[],
         }
+    }
+
+    fn get_indexdata_for_reflect(&self) -> &::protobuf::SingularField<::std::vec::Vec<u8>> {
+        &self.indexdata
+    }
+
+    fn mut_indexdata_for_reflect(&mut self) -> &mut ::protobuf::SingularField<::std::vec::Vec<u8>> {
+        &mut self.indexdata
     }
 
     // required int32 datasize = 3;
@@ -484,8 +505,16 @@ impl BlobHeader {
         self.datasize = ::std::option::Option::Some(v);
     }
 
-    pub fn get_datasize<'a>(&self) -> i32 {
+    pub fn get_datasize(&self) -> i32 {
         self.datasize.unwrap_or(0)
+    }
+
+    fn get_datasize_for_reflect(&self) -> &::std::option::Option<i32> {
+        &self.datasize
+    }
+
+    fn mut_datasize_for_reflect(&mut self) -> &mut ::std::option::Option<i32> {
+        &mut self.datasize
     }
 }
 
@@ -500,35 +529,26 @@ impl ::protobuf::Message for BlobHeader {
         true
     }
 
-    fn merge_from(&mut self,
-                  is: &mut ::protobuf::CodedInputStream)
-                  -> ::protobuf::ProtobufResult<()> {
-        while !try!(is.eof()) {
-            let (field_number, wire_type) = try!(is.read_tag_unpack());
+    fn merge_from(&mut self, is: &mut ::protobuf::CodedInputStream) -> ::protobuf::ProtobufResult<()> {
+        while !is.eof()? {
+            let (field_number, wire_type) = is.read_tag_unpack()?;
             match field_number {
                 1 => {
-                    try!(::protobuf::rt::read_singular_string_into(wire_type,
-                                                                   is,
-                                                                   &mut self.field_type));
-                }
+                    ::protobuf::rt::read_singular_string_into(wire_type, is, &mut self.field_type)?;
+                },
                 2 => {
-                    try!(::protobuf::rt::read_singular_bytes_into(wire_type,
-                                                                  is,
-                                                                  &mut self.indexdata));
-                }
+                    ::protobuf::rt::read_singular_bytes_into(wire_type, is, &mut self.indexdata)?;
+                },
                 3 => {
                     if wire_type != ::protobuf::wire_format::WireTypeVarint {
                         return ::std::result::Result::Err(::protobuf::rt::unexpected_wire_type(wire_type));
                     };
-                    let tmp = try!(is.read_int32());
+                    let tmp = is.read_int32()?;
                     self.datasize = ::std::option::Option::Some(tmp);
-                }
+                },
                 _ => {
-                    try!(::protobuf::rt::read_unknown_or_skip_group(field_number,
-                                                                    wire_type,
-                                                                    is,
-                                                                    self.mut_unknown_fields()));
-                }
+                    ::protobuf::rt::read_unknown_or_skip_group(field_number, wire_type, is, self.mut_unknown_fields())?;
+                },
             };
         }
         ::std::result::Result::Ok(())
@@ -538,34 +558,31 @@ impl ::protobuf::Message for BlobHeader {
     #[allow(unused_variables)]
     fn compute_size(&self) -> u32 {
         let mut my_size = 0;
-        for value in self.field_type.iter() {
-            my_size += ::protobuf::rt::string_size(1, &value);
-        }
-        for value in self.indexdata.iter() {
-            my_size += ::protobuf::rt::bytes_size(2, &value);
-        }
-        for value in self.datasize.iter() {
-            my_size +=
-                ::protobuf::rt::value_size(3, *value, ::protobuf::wire_format::WireTypeVarint);
-        }
+        if let Some(v) = self.field_type.as_ref() {
+            my_size += ::protobuf::rt::string_size(1, &v);
+        };
+        if let Some(v) = self.indexdata.as_ref() {
+            my_size += ::protobuf::rt::bytes_size(2, &v);
+        };
+        if let Some(v) = self.datasize {
+            my_size += ::protobuf::rt::value_size(3, v, ::protobuf::wire_format::WireTypeVarint);
+        };
         my_size += ::protobuf::rt::unknown_fields_size(self.get_unknown_fields());
         self.cached_size.set(my_size);
         my_size
     }
 
-    fn write_to_with_cached_sizes(&self,
-                                  os: &mut ::protobuf::CodedOutputStream)
-                                  -> ::protobuf::ProtobufResult<()> {
+    fn write_to_with_cached_sizes(&self, os: &mut ::protobuf::CodedOutputStream) -> ::protobuf::ProtobufResult<()> {
         if let Some(v) = self.field_type.as_ref() {
-            try!(os.write_string(1, &v));
+            os.write_string(1, &v)?;
         };
         if let Some(v) = self.indexdata.as_ref() {
-            try!(os.write_bytes(2, &v));
+            os.write_bytes(2, &v)?;
         };
         if let Some(v) = self.datasize {
-            try!(os.write_int32(3, v));
+            os.write_int32(3, v)?;
         };
-        try!(os.write_unknown_fields(self.get_unknown_fields()));
+        os.write_unknown_fields(self.get_unknown_fields())?;
         ::std::result::Result::Ok(())
     }
 
@@ -573,16 +590,12 @@ impl ::protobuf::Message for BlobHeader {
         self.cached_size.get()
     }
 
-    fn get_unknown_fields<'s>(&'s self) -> &'s ::protobuf::UnknownFields {
+    fn get_unknown_fields(&self) -> &::protobuf::UnknownFields {
         &self.unknown_fields
     }
 
-    fn mut_unknown_fields<'s>(&'s mut self) -> &'s mut ::protobuf::UnknownFields {
+    fn mut_unknown_fields(&mut self) -> &mut ::protobuf::UnknownFields {
         &mut self.unknown_fields
-    }
-
-    fn type_id(&self) -> ::std::any::TypeId {
-        ::std::any::TypeId::of::<BlobHeader>()
     }
 
     fn as_any(&self) -> &::std::any::Any {
@@ -606,12 +619,5 @@ impl ::protobuf::Clear for BlobHeader {
         self.clear_indexdata();
         self.clear_datasize();
         self.unknown_fields.clear();
-    }
-}
-
-impl ::std::cmp::PartialEq for BlobHeader {
-    fn eq(&self, other: &BlobHeader) -> bool {
-        self.field_type == other.field_type && self.indexdata == other.indexdata &&
-        self.datasize == other.datasize && self.unknown_fields == other.unknown_fields
     }
 }
