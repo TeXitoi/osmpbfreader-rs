@@ -17,7 +17,7 @@
 //! the nodes of this way).  For that, an easy to use function is
 //! availlable.
 //!
-//!```
+//! ```
 //! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::Cursor::new([]));
 //! let objs = pbf.get_objs_and_deps(|obj| {
 //!         obj.way().map_or(false, |w| w.tags.contains_key("highway"))
@@ -26,7 +26,7 @@
 //! for (id, obj) in &objs {
 //!     println!("{:?}: {:?}", id, obj);
 //! }
-//!```
+//! ```
 //!
 //! # Readding
 //!
