@@ -10,22 +10,6 @@
 //! inspiration is
 //! [libosmpbfreader](https://github.com/CanalTP/libosmpbfreader).
 //!
-//! # Usage
-//!
-//! You can add `osmpbfreader` to your dependencies in your project's
-//! `Cargo.toml`.
-//!
-//! ```toml
-//! [dependencies]
-//! osmpbfreader = "0.8"
-//! ```
-//!
-//! and this to your crate root:
-//!
-//! ```rust
-//! extern crate osmpbfreader;
-//! ```
-//!
 //! # Getting objects and their dependencies
 //!
 //! Most of the time, you'll want a subset of the OSM objects and its
