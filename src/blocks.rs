@@ -11,28 +11,28 @@ use objects::{OsmObj, Node, Way, Relation};
 
 pub type OsmObjs<'a> = Box<Iterator<Item = OsmObj> + 'a>;
 
-pub fn iter<'a>(block: &'a PrimitiveBlock) -> OsmObjs<'a> {
+pub fn iter(block: &PrimitiveBlock) -> OsmObjs {
     let f = move |g| groups::iter(g, block);
     Box::new(block.get_primitivegroup().iter().flat_map(f))
 }
 
 pub type Nodes<'a> = Box<Iterator<Item = Node> + 'a>;
 
-pub fn nodes<'a>(block: &'a PrimitiveBlock) -> Nodes<'a> {
+pub fn nodes(block: &PrimitiveBlock) -> Nodes {
     let f = move |g| groups::nodes(g, block);
     Box::new(block.get_primitivegroup().iter().flat_map(f))
 }
 
 pub type Ways<'a> = Box<Iterator<Item = Way> + 'a>;
 
-pub fn ways<'a>(block: &'a PrimitiveBlock) -> Ways<'a> {
+pub fn ways(block: &PrimitiveBlock) -> Ways {
     let f = move |g| groups::ways(g, block);
     Box::new(block.get_primitivegroup().iter().flat_map(f))
 }
 
 pub type Relations<'a> = Box<Iterator<Item = Relation> + 'a>;
 
-pub fn relations<'a>(block: &'a PrimitiveBlock) -> Relations<'a> {
+pub fn relations(block: &PrimitiveBlock) -> Relations {
     let f = move |g| groups::relations(g, block);
     Box::new(block.get_primitivegroup().iter().flat_map(f))
 }

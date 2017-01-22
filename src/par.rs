@@ -5,13 +5,13 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-//! Parallel iterator for OsmPbfReader.
+//! Parallel iterator for `OsmPbfReader`.
 
 use std::sync::mpsc::{channel, Sender, Receiver};
 use threadpool::ThreadPool;
 use {Result, OsmObj};
 
-/// A parallel iterator over the OsmObj of an OsmPbfReader.
+/// A parallel iterator over the `OsmObj` of an `OsmPbfReader`.
 pub struct Iter<'a, R: 'a> {
     tx: Option<Sender<Vec<Result<OsmObj>>>>,
     rx: Receiver<Vec<Result<OsmObj>>>,
@@ -23,7 +23,7 @@ impl<'a, R> Iter<'a, R>
     where R: ::std::io::Read
 {
     /// Creates a parallel iterator.
-    pub fn new<'b>(reader: &'b mut ::reader::OsmPbfReader<R>) -> Iter<'b, R> {
+    pub fn new(reader: &mut ::reader::OsmPbfReader<R>) -> Iter<R> {
         let num_threads = ::num_cpus::get();
         let (tx, rx) = channel();
         let mut res = Iter {
@@ -63,7 +63,7 @@ impl<'a, R> Iter<'a, R>
                     return;
                 }
             };
-            tx.send(::blocks::iter(&block).map(|o| Ok(o)).collect()).unwrap();
+            tx.send(::blocks::iter(&block).map(Ok).collect()).unwrap();
         });
     }
 }

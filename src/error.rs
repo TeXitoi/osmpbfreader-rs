@@ -41,8 +41,7 @@ impl std::error::Error for Error {
         match *self {
             Error::Io(ref e) => Some(e),
             Error::Pbf(ref e) => Some(e),
-            Error::UnsupportedData => None,
-            Error::InvalidData => None,
+            Error::UnsupportedData | Error::InvalidData => None,
         }
     }
 }

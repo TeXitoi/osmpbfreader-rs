@@ -45,7 +45,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     ///     println!("{:?}", obj);
     /// }
     /// ```
-    pub fn iter<'a>(&'a mut self) -> ::iter::Iter<'a, R> {
+    pub fn iter(&mut self) -> ::iter::Iter<R> {
         ::iter::Iter::new(self.primitive_blocks())
     }
 
@@ -67,7 +67,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     ///     println!("{:?}", obj);
     /// }
     /// ```
-    pub fn par_iter<'a>(&'a mut self) -> ::par::Iter<'a, R> {
+    pub fn par_iter(&mut self) -> ::par::Iter<R> {
         ::par::Iter::new(self)
     }
 
@@ -161,11 +161,11 @@ impl<R: io::Read> OsmPbfReader<R> {
         self.r
     }
     /// Returns an iterator on the blobs of the pbf file.
-    pub fn blobs<'a>(&'a mut self) -> Blobs<'a, R> {
+    pub fn blobs(&mut self) -> Blobs<R> {
         Blobs { opr: self }
     }
     /// Returns an iterator on the blocks of the pbf file.
-    pub fn primitive_blocks<'a>(&'a mut self) -> PrimitiveBlocks<'a, R> {
+    pub fn primitive_blocks(&mut self) -> PrimitiveBlocks<R> {
         fn and_then_primitive_block(blob_res: Result<fileformat::Blob>)
                                     -> Result<osmformat::PrimitiveBlock> {
             blob_res.and_then(|b| primitive_block_from_blob(&b))
