@@ -121,6 +121,22 @@ pub use error::Error;
 pub use error::Result;
 pub use reader::{OsmPbfReader, primitive_block_from_blob};
 
+/// Abstract behind a tuple struct an iterator.
+macro_rules! pub_iterator_type {
+    ( $Name:ident [ $($NameParam:tt)* ] = $From:ident [ $($FromParam:tt)* ] ) => {
+        pub struct $Name < $($NameParam)* > ( $From < $($FromParam)* > );
+        impl< $($NameParam)* > Iterator for $Name < $($NameParam)* > {
+            type Item = < $From< $($FromParam)* > as Iterator>::Item;
+            fn next(&mut self) -> Option<Self::Item> {
+                self.0.next()
+            }
+            fn size_hint(&self) -> (usize, Option<usize>) {
+                self.0.size_hint()
+            }
+        }
+    }
+}
+
 pub mod reader;
 pub mod objects;
 pub mod par;

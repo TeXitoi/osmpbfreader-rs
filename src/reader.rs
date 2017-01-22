@@ -14,7 +14,7 @@ use objects::{OsmId, OsmObj};
 use protobuf;
 use std::convert::From;
 use std::io::{self, Read};
-use std::iter;
+use std::iter::Map;
 use std::collections::btree_map::BTreeMap;
 use std::collections::BTreeSet;
 
@@ -170,7 +170,7 @@ impl<R: io::Read> OsmPbfReader<R> {
                                     -> Result<osmformat::PrimitiveBlock> {
             blob_res.and_then(|b| primitive_block_from_blob(&b))
         }
-        self.blobs().map(and_then_primitive_block)
+        PrimitiveBlocks(self.blobs().map(and_then_primitive_block))
     }
 
     fn push(&mut self, sz: u64) -> Result<()> {
@@ -235,9 +235,18 @@ impl<'a, R: io::Read> Iterator for Blobs<'a, R> {
 }
 
 /// Iterator on the blocks of a file.
-pub type PrimitiveBlocks<'a, R: 'a> = iter::Map<Blobs<'a, R>,
-                                                fn(Result<fileformat::Blob>)
-                                                   -> Result<osmformat::PrimitiveBlock>>;
+pub struct PrimitiveBlocks<'a, R: 'a>(Map<Blobs<'a, R>,
+                                          fn(Result<fileformat::Blob>)
+                                             -> Result<osmformat::PrimitiveBlock>>);
+impl<'a, R: 'a + Read> Iterator for PrimitiveBlocks<'a, R> {
+    type Item = Result<osmformat::PrimitiveBlock>;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.0.next()
+    }
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.0.size_hint()
+    }
+}
 
 /// Returns an iterator on the blocks of a blob.
 pub fn primitive_block_from_blob(blob: &fileformat::Blob) -> Result<osmformat::PrimitiveBlock> {

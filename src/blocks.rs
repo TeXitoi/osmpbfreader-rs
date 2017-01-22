@@ -5,34 +5,36 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
+//! Iterators of OpenStreetMap objects from a block.
+
 use osmformat::PrimitiveBlock;
 use groups;
 use objects::{OsmObj, Node, Way, Relation};
 
-pub type OsmObjs<'a> = Box<Iterator<Item = OsmObj> + 'a>;
+pub_iterator_type!(OsmObjs['a] = Box[Iterator<Item = OsmObj> + 'a]);
 
 pub fn iter(block: &PrimitiveBlock) -> OsmObjs {
     let f = move |g| groups::iter(g, block);
-    Box::new(block.get_primitivegroup().iter().flat_map(f))
+    OsmObjs(Box::new(block.get_primitivegroup().iter().flat_map(f)))
 }
 
-pub type Nodes<'a> = Box<Iterator<Item = Node> + 'a>;
+pub_iterator_type!(Nodes['a] = Box[Iterator<Item = Node> + 'a]);
 
 pub fn nodes(block: &PrimitiveBlock) -> Nodes {
     let f = move |g| groups::nodes(g, block);
-    Box::new(block.get_primitivegroup().iter().flat_map(f))
+    Nodes(Box::new(block.get_primitivegroup().iter().flat_map(f)))
 }
 
-pub type Ways<'a> = Box<Iterator<Item = Way> + 'a>;
+pub_iterator_type!(Ways['a] = Box[Iterator<Item = Way> + 'a]);
 
 pub fn ways(block: &PrimitiveBlock) -> Ways {
     let f = move |g| groups::ways(g, block);
-    Box::new(block.get_primitivegroup().iter().flat_map(f))
+    Ways(Box::new(block.get_primitivegroup().iter().flat_map(f)))
 }
 
-pub type Relations<'a> = Box<Iterator<Item = Relation> + 'a>;
+pub_iterator_type!(Relations['a] = Box[Iterator<Item = Relation> + 'a]);
 
 pub fn relations(block: &PrimitiveBlock) -> Relations {
     let f = move |g| groups::relations(g, block);
-    Box::new(block.get_primitivegroup().iter().flat_map(f))
+    Relations(Box::new(block.get_primitivegroup().iter().flat_map(f)))
 }

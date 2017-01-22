@@ -7,28 +7,29 @@
 
 use osmformat;
 use osmformat::{PrimitiveGroup, PrimitiveBlock};
-use std;
 use std::slice;
 use std::iter::Chain;
 use std::iter::Map;
 use std::convert::From;
 use objects::*;
 
-pub type OsmObjs<'a> = Chain<Chain<Map<Nodes<'a>, fn(Node) -> OsmObj>,
-                                   Map<Ways<'a>, fn(Way) -> OsmObj>>,
-                             Map<Relations<'a>, fn(Relation) -> OsmObj>>;
+pub_iterator_type!(OsmObjs['a] =
+                   Chain[Chain<Map<Nodes<'a>, fn(Node) -> OsmObj>,
+                               Map<Ways<'a>, fn(Way) -> OsmObj>>,
+                         Map<Relations<'a>, fn(Relation) -> OsmObj>]);
 
 pub fn iter<'a>(g: &'a PrimitiveGroup, b: &'a PrimitiveBlock) -> OsmObjs<'a> {
-    nodes(g, b)
+    let iter = nodes(g, b)
         .map(From::from as fn(Node) -> OsmObj)
         .chain(ways(g, b).map(From::from as fn(Way) -> OsmObj))
-        .chain(relations(g, b).map(From::from as fn(Relation) -> OsmObj))
+        .chain(relations(g, b).map(From::from as fn(Relation) -> OsmObj));
+    OsmObjs(iter)
 }
 
-pub type Nodes<'a> = std::iter::Chain<SimpleNodes<'a>, DenseNodes<'a>>;
+pub_iterator_type!(Nodes['a] = Chain[SimpleNodes<'a>, DenseNodes<'a>]);
 
 pub fn nodes<'a>(g: &'a PrimitiveGroup, b: &'a PrimitiveBlock) -> Nodes<'a> {
-    simple_nodes(g, b).chain(dense_nodes(g, b))
+    Nodes(simple_nodes(g, b).chain(dense_nodes(g, b)))
 }
 
 pub fn simple_nodes<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock) -> SimpleNodes<'a> {
