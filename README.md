@@ -25,35 +25,35 @@ You can find OSM PBF files at [Geofabrik's free download server](http://download
 Using the different examples compiled in release mode:
 ```
 $ grep CPU /proc/cpuinfo | uniq -c
-      4 model name	: Intel(R) Core(TM) i5-4200U CPU @ 1.60GHz
+      8 model name	: Intel(R) Core(TM) i7-4702HQ CPU @ 2.20GHz
 $ rustc --version
 rustc 1.14.0 (e8a012324 2016-12-16)
 $ ls -sh france-latest.osm.pbf
 3,3G france-latest.osm.pbf
 $ time ./target/release/examples/tutorial france-latest.osm.pbf
-415229844 objects in "france-latest.osm.pbf"
+416483839 objects in "france-latest.osm.pbf"
 
-real	4m51.018s
-user	4m43.500s
-sys	0m5.788s
+real	4m24.784s
+user	4m18.476s
+sys		0m6.164s
 $ time ./target/release/examples/count france-latest.osm.pbf admin_level 8
 counting objects with tags["admin_level"] = "8"...
-54 nodes, mean coord: 46.296170755555565, 2.8982805611111107.
-107969 ways, mean |nodes|: 72.17152145523252
-35989 relations, mean |references|: 8.701408763788935
+53 nodes, mean coord: 46.25862766415095, 2.9082348867924517.
+108190 ways, mean |nodes|: 72.09304926518162
+35984 relations, mean |references|: 8.705369052912406
 
-real	3m3.350s
-user	11m26.852s
-sys	0m29.964s
+real	1m10.117s
+user	8m16.164s
+sys		0m23.120s
 $ time ./target/release/examples/count_with_deps france-latest.osm.pbf admin_level 8
 counting objects with tags["admin_level"] = "8" and their depedencies...
-9517850 nodes, mean coord: 46.694558024657404, 2.2541158816049762.
-138463 ways, mean |nodes|: 69.74443714205239
-36790 relations, mean |references|: 8.920549062245176
+9497221 nodes, mean coord: 46.69071931974348, 2.2632424769587915.
+136950 ways, mean |nodes|: 70.35282949981745
+36408 relations, mean |references|: 8.771121731487586
 
-real	16m58.378s
-user	64m31.564s
-sys	0m41.624s
+real	5m9.814s
+user	33m52.820s
+sys	0m28.624s
 ```
 
 ## License

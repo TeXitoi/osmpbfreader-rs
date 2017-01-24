@@ -123,15 +123,13 @@ impl<R: io::Read> OsmPbfReader<R> {
         let mut finished = false;
         let mut deps = BTreeSet::new();
         let mut objects = BTreeMap::new();
+        let mut first_pass = true;
         while !finished {
             try!(self.rewind());
             finished = true;
             for obj in self.par_iter() {
                 let obj = try!(obj);
-                if !deps.contains(&obj.id()) && !pred(&obj) {
-                    continue;
-                }
-                if objects.contains_key(&obj.id()) {
+                if (!first_pass || !pred(&obj)) && !deps.contains(&obj.id()) {
                     continue;
                 }
                 finished = match obj {
@@ -144,13 +142,15 @@ impl<R: io::Read> OsmPbfReader<R> {
                     OsmObj::Way(ref way) => {
                         way.nodes
                             .iter()
-                            .fold(finished, |accu, n| !deps.insert(OsmId::Node(*n)) && accu)
+                            .filter(|n| !objects.contains_key(&(**n).into()))
+                            .fold(finished, |accu, n| !deps.insert((*n).into()) && accu)
                     }
                     OsmObj::Node(_) => finished,
                 };
                 deps.remove(&obj.id());
                 objects.insert(obj.id(), obj);
             }
+            first_pass = false;
         }
         Ok(objects)
     }
