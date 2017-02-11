@@ -105,9 +105,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     /// ```
     /// fn is_admin(obj: &osmpbfreader::OsmObj) -> bool {
     ///     // get relations with tags[boundary] == administrative
-    ///     obj.relation()
-    ///         .and_then(|rel| rel.tags.get("boundary"))
-    ///         .map_or(false, |v| v == "administrative")
+    ///     obj.is_relation() && obj.tags().contains("boundary", "administrative")
     /// }
     ///
     /// let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::Cursor::new([]));

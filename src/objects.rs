@@ -9,11 +9,42 @@
 //!
 //! There is 3 types of object: nodes, ways and relations.
 
+use std::ops::{Deref, DerefMut};
+use std::iter::FromIterator;
+
 /// Tags represents the features of the objects.  See the
 /// [OpenStreetMap wiki page about
 /// tags](http://wiki.openstreetmap.org/wiki/Tags) for more
 /// information.
-pub type Tags = ::flat_map::FlatMap<String, String>;
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+pub struct Tags(TagsImpl);
+type TagsImpl = ::flat_map::FlatMap<String, String>;
+impl Tags {
+    /// Creates a new, empty `Tags` object.
+    pub fn new() -> Tags {
+        Tags(TagsImpl::new())
+    }
+    /// Returns if contains the tag `(key, value)`.
+    pub fn contains(&self, key: &str, value: &str) -> bool {
+        self.0.get(key).map_or(false, |v| v.as_str() == value)
+    }
+}
+impl Deref for Tags {
+    type Target = TagsImpl;
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
+impl DerefMut for Tags {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.0
+    }
+}
+impl FromIterator<(String, String)> for Tags {
+    fn from_iter<T: IntoIterator<Item=(String, String)>>(iter: T) -> Self {
+        Tags(iter.into_iter().collect())
+    }
+}
 
 /// A node identifier
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Copy)]

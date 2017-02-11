@@ -68,7 +68,7 @@ fn main() {
             let key = args[2].to_str().unwrap();
             let val = args[3].to_str().unwrap();
             println!("counting objects with tags[\"{}\"] = \"{}\"...", key, val);
-            count(|tags| tags.get(key).map_or(false, |v| *v == val), &args[1]);
+            count(|tags| tags.contains(key, val), &args[1]);
         }
         _ => println!("usage: count filename [key [value]]", ),
     };

@@ -65,7 +65,7 @@ fn main() {
             println!("counting objects with tags[\"{}\"] = \"{}\" and their depedencies...",
                      key,
                      val);
-            count(|tags| tags.get(key).map_or(false, |v| *v == val), &args[1]);
+            count(|tags| tags.contains(key, val), &args[1]);
         }
         _ => println!("usage: count filename key [value]", ),
     };

@@ -20,7 +20,7 @@
 //! ```
 //! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::Cursor::new([]));
 //! let objs = pbf.get_objs_and_deps(|obj| {
-//!         obj.way().map_or(false, |w| w.tags.contains_key("highway"))
+//!         obj.is_way() && obj.tags().contains_key("highway")
 //!     })
 //!     .unwrap();
 //! for (id, obj) in &objs {
