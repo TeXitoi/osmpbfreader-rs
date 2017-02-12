@@ -55,10 +55,6 @@ impl<R: io::Read> OsmPbfReader<R> {
     /// CPU usage are guaranteed to be bounded even if the caller stop
     /// consuming items.
     ///
-    /// # Node
-    ///
-    /// The order of the object is not determinist.
-    ///
     /// #Example
     ///
     /// ```

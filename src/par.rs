@@ -7,15 +7,15 @@
 
 //! Parallel iterator for `OsmPbfReader`.
 
-use std::sync::mpsc::{channel, Sender, Receiver};
-use threadpool::ThreadPool;
+use std::collections::VecDeque;
 use {Result, OsmObj};
+use futures::Future;
+use futures_cpupool::{CpuPool, CpuFuture};
 
 /// A parallel iterator over the `OsmObj` of an `OsmPbfReader`.
 pub struct Iter<'a, R: 'a> {
-    tx: Option<Sender<Vec<Result<OsmObj>>>>,
-    rx: Receiver<Vec<Result<OsmObj>>>,
-    pool: ThreadPool,
+    pool: CpuPool,
+    queue: VecDeque<CpuFuture<Vec<Result<OsmObj>>, ()>>,
     blob_iter: ::reader::Blobs<'a, R>,
     obj_iter: ::std::vec::IntoIter<Result<OsmObj>>,
 }
@@ -25,11 +25,9 @@ impl<'a, R> Iter<'a, R>
     /// Creates a parallel iterator.
     pub fn new(reader: &mut ::reader::OsmPbfReader<R>) -> Iter<R> {
         let num_threads = ::num_cpus::get();
-        let (tx, rx) = channel();
         let mut res = Iter {
-            tx: Some(tx),
-            rx: rx,
-            pool: ThreadPool::new(num_threads),
+            pool: CpuPool::new(num_threads),
+            queue: VecDeque::new(),
             blob_iter: reader.blobs(),
             obj_iter: vec![].into_iter(),
         };
@@ -39,32 +37,19 @@ impl<'a, R> Iter<'a, R>
         res
     }
     fn push_block(&mut self) {
-        let tx = match self.tx.as_ref() {
-            Some(tx) => tx.clone(),
+        let future = match self.blob_iter.next() {
             None => return,
+            Some(Err(e)) => self.pool.spawn_fn(move || Ok(vec![Err(e)])),
+            Some(Ok(blob)) => self.pool.spawn_fn(move || {
+                let block = match ::reader::primitive_block_from_blob(&blob) {
+                    Ok(b) => b,
+                    Err(e) => return Ok(vec![Err(e)]),
+                };
+                let res = ::blocks::iter(&block).map(Ok).collect();
+                Ok(res)
+            }),
         };
-        let blob = match self.blob_iter.next() {
-            Some(Ok(b)) => b,
-            Some(Err(e)) => {
-                tx.send(vec![Err(e)]).unwrap();
-                return;
-            }
-            None => {
-                self.tx = None;
-                return;
-            }
-        };
-        self.pool.execute(move || {
-            let block = ::reader::primitive_block_from_blob(&blob);
-            let block = match block {
-                Ok(b) => b,
-                Err(e) => {
-                    tx.send(vec![Err(e)]).unwrap();
-                    return;
-                }
-            };
-            tx.send(::blocks::iter(&block).map(Ok).collect()).unwrap();
-        });
+        self.queue.push_back(future);
     }
 }
 
@@ -77,9 +62,9 @@ impl<'a, R> Iterator for Iter<'a, R>
             if let Some(obj) = self.obj_iter.next() {
                 return Some(obj);
             }
-            let v = match self.rx.recv() {
-                Ok(v) => v,
-                Err(_) => return None,
+            let v = match self.queue.pop_front(){
+                Some(f) => f.wait().unwrap(),
+                None => return None,
             };
             self.obj_iter = v.into_iter();
             self.push_block();

@@ -97,7 +97,8 @@ extern crate protobuf;
 extern crate flate2;
 extern crate byteorder;
 extern crate flat_map;
-extern crate threadpool;
+extern crate futures;
+extern crate futures_cpupool;
 extern crate num_cpus;
 
 pub use objects::*;
