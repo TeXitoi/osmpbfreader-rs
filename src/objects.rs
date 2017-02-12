@@ -71,23 +71,35 @@ pub enum OsmId {
 impl OsmId {
     /// Returns `true` if the id is a node id.
     pub fn is_node(&self) -> bool {
-        match *self {
-            OsmId::Node(_) => true,
-            _ => false,
-        }
+        self.node().is_some()
     }
     /// Returns `true` if the id is a way id.
     pub fn is_way(&self) -> bool {
-        match *self {
-            OsmId::Way(_) => true,
-            _ => false,
-        }
+        self.way().is_some()
     }
     /// Returns `true` if the id is a relation id.
     pub fn is_relation(&self) -> bool {
+        self.relation().is_some()
+    }
+    /// Returns the `NodeId` wrapped in an `Option`.
+    pub fn node(&self) -> Option<NodeId> {
         match *self {
-            OsmId::Relation(_) => true,
-            _ => false,
+            OsmId::Node(id) => Some(id),
+            _ => None,
+        }
+    }
+    /// Returns the `WayId` wrapped in an `Option`.
+    pub fn way(&self) -> Option<WayId> {
+        match *self {
+            OsmId::Way(id) => Some(id),
+            _ => None,
+        }
+    }
+    /// Returns the `RelationId` wrapped in an `Option`.
+    pub fn relation(&self) -> Option<RelationId> {
+        match *self {
+            OsmId::Relation(id) => Some(id),
+            _ => None,
         }
     }
 }
