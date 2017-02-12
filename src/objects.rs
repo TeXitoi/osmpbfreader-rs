@@ -41,7 +41,7 @@ impl DerefMut for Tags {
     }
 }
 impl FromIterator<(String, String)> for Tags {
-    fn from_iter<T: IntoIterator<Item=(String, String)>>(iter: T) -> Self {
+    fn from_iter<T: IntoIterator<Item = (String, String)>>(iter: T) -> Self {
         Tags(iter.into_iter().collect())
     }
 }

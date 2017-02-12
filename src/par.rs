@@ -40,14 +40,16 @@ impl<'a, R> Iter<'a, R>
         let future = match self.blob_iter.next() {
             None => return,
             Some(Err(e)) => self.pool.spawn_fn(move || Ok(vec![Err(e)])),
-            Some(Ok(blob)) => self.pool.spawn_fn(move || {
-                let block = match ::reader::primitive_block_from_blob(&blob) {
-                    Ok(b) => b,
-                    Err(e) => return Ok(vec![Err(e)]),
-                };
-                let res = ::blocks::iter(&block).map(Ok).collect();
-                Ok(res)
-            }),
+            Some(Ok(blob)) => {
+                self.pool.spawn_fn(move || {
+                    let block = match ::reader::primitive_block_from_blob(&blob) {
+                        Ok(b) => b,
+                        Err(e) => return Ok(vec![Err(e)]),
+                    };
+                    let res = ::blocks::iter(&block).map(Ok).collect();
+                    Ok(res)
+                })
+            }
         };
         self.queue.push_back(future);
     }
@@ -62,7 +64,7 @@ impl<'a, R> Iterator for Iter<'a, R>
             if let Some(obj) = self.obj_iter.next() {
                 return Some(obj);
             }
-            let v = match self.queue.pop_front(){
+            let v = match self.queue.pop_front() {
                 Some(f) => f.wait().unwrap(),
                 None => return None,
             };
