@@ -203,6 +203,18 @@ pub struct Way {
     /// The ordered list of nodes as id.
     pub nodes: Vec<NodeId>,
 }
+impl Way {
+    /// Returns true if the way is
+    /// [open](http://wiki.openstreetmap.org/wiki/Way#Open_way).
+    pub fn is_open(&self) -> bool {
+        !self.is_closed()
+    }
+    /// Returns true if the way is
+    /// [closed](http://wiki.openstreetmap.org/wiki/Way#Closed_way).
+    pub fn is_closed(&self) -> bool {
+        self.nodes.first() == self.nodes.last()
+    }
+}
 
 /// A reference to an object with a role.  Used in the relation object.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
