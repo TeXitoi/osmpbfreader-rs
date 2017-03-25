@@ -69,5 +69,4 @@ Note that `src/fileformat.proto` and `src/osmformat.proto` come from
 
 TODO list:
  - document until `#![deny(missing_docs)]` can be added;
- - read pbf header to check that we support all needed features;
- - do something better than `borrowed_iter`.
+ - read pbf header to check that we support all needed features.

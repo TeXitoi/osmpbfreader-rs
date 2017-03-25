@@ -6,23 +6,34 @@
 // more details.
 
 use std::io;
-use borrowed_iter::BorrowedIter;
 use reader::PrimitiveBlocks;
 use osmformat::PrimitiveBlock;
 use blocks;
 use Result;
 use objects::OsmObj;
 
+rental!{
+    mod rent {
+        use osmformat::PrimitiveBlock;
+        use blocks;
+        pub rental mut OsmObjs<'rental>(Box<PrimitiveBlock>, blocks::OsmObjs<'rental>);
+    }
+}
+
+fn new_rent_osm_objs(block: PrimitiveBlock) -> rent::OsmObjs<'static> {
+    rent::OsmObjs::new(Box::new(block), |b| blocks::iter(b))
+}
+
 pub struct Iter<'a, R: io::Read + 'a> {
     blocks: PrimitiveBlocks<'a, R>,
-    objs: BorrowedIter<PrimitiveBlock, blocks::OsmObjs<'static>>,
+    objs: rent::OsmObjs<'static>,
 }
 
 impl<'a, R: io::Read + 'a> Iter<'a, R> {
     pub fn new(blocks: PrimitiveBlocks<'a, R>) -> Self {
         Iter {
             blocks: blocks,
-            objs: BorrowedIter::new(PrimitiveBlock::new(), blocks::iter),
+            objs: new_rent_osm_objs(PrimitiveBlock::new()),
         }
     }
 }
@@ -31,13 +42,13 @@ impl<'a, R: io::Read + 'a> Iterator for Iter<'a, R> {
     type Item = Result<OsmObj>;
     fn next(&mut self) -> Option<Self::Item> {
         loop {
-            if let Some(obj) = self.objs.next() {
+            if let Some(obj) = self.objs.rent_mut(|iter| iter.next()) {
                 return Some(Ok(obj));
             }
             match self.blocks.next() {
                 None => return None,
                 Some(Err(e)) => return Some(Err(e)),
-                Some(Ok(block)) => self.objs = BorrowedIter::new(block, blocks::iter),
+                Some(Ok(block)) => self.objs = new_rent_osm_objs(block),
             }
         }
     }

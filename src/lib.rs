@@ -100,6 +100,8 @@ extern crate flat_map;
 extern crate futures;
 extern crate futures_cpupool;
 extern crate num_cpus;
+#[macro_use]
+extern crate rental;
 
 pub use objects::*;
 pub use error::Error;
@@ -142,5 +144,3 @@ pub mod fileformat;
 /// Generated from protobuf.
 #[allow(missing_docs)]
 pub mod osmformat;
-
-mod borrowed_iter;

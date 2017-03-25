@@ -2,7 +2,7 @@ language: rust
 sudo: false
 cache: cargo
 before_script:
-- cargo install -f rustfmt
+- cargo install -f --vers=0.7.1 rustfmt
 - export PATH=$PATH:$HOME/.cargo/bin
 rust:
 - nightly
