@@ -13,10 +13,12 @@ use std::iter::Map;
 use std::convert::From;
 use objects::*;
 
-pub_iterator_type!(OsmObjs['a] =
-                   Chain[Chain<Map<Nodes<'a>, fn(Node) -> OsmObj>,
-                               Map<Ways<'a>, fn(Way) -> OsmObj>>,
-                         Map<Relations<'a>, fn(Relation) -> OsmObj>]);
+pub_iterator_type! {
+    #[doc="Iterator on the `OsmObj` of a `PrimitiveGroup`."]
+    OsmObjs['a] = Chain<Chain<Map<Nodes<'a>, fn(Node) -> OsmObj>,
+                              Map<Ways<'a>, fn(Way) -> OsmObj>>,
+                        Map<Relations<'a>, fn(Relation) -> OsmObj>>
+}
 
 pub fn iter<'a>(g: &'a PrimitiveGroup, b: &'a PrimitiveBlock) -> OsmObjs<'a> {
     let iter = nodes(g, b)
@@ -26,7 +28,10 @@ pub fn iter<'a>(g: &'a PrimitiveGroup, b: &'a PrimitiveBlock) -> OsmObjs<'a> {
     OsmObjs(iter)
 }
 
-pub_iterator_type!(Nodes['a] = Chain[SimpleNodes<'a>, DenseNodes<'a>]);
+pub_iterator_type! {
+    #[doc="Iterator on the `Node` of a `PrimitiveGroup`."]
+    Nodes['a] = Chain<SimpleNodes<'a>, DenseNodes<'a>>
+}
 
 pub fn nodes<'a>(g: &'a PrimitiveGroup, b: &'a PrimitiveBlock) -> Nodes<'a> {
     Nodes(simple_nodes(g, b).chain(dense_nodes(g, b)))

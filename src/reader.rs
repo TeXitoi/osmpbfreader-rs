@@ -228,18 +228,12 @@ impl<'a, R: io::Read> Iterator for Blobs<'a, R> {
     }
 }
 
-/// Iterator on the blocks of a file.
-pub struct PrimitiveBlocks<'a, R: 'a>(Map<Blobs<'a, R>,
-                                          fn(Result<fileformat::Blob>)
-                                             -> Result<osmformat::PrimitiveBlock>>);
-impl<'a, R: 'a + Read> Iterator for PrimitiveBlocks<'a, R> {
-    type Item = Result<osmformat::PrimitiveBlock>;
-    fn next(&mut self) -> Option<Self::Item> {
-        self.0.next()
-    }
-    fn size_hint(&self) -> (usize, Option<usize>) {
-        self.0.size_hint()
-    }
+pub_iterator_type! {
+    #[doc="Iterator on the blocks of a file."]
+    PrimitiveBlocks['a, R] = Map<
+        Blobs<'a, R>,
+        fn(Result<fileformat::Blob>) -> Result<osmformat::PrimitiveBlock>>
+    where R: Read + 'a
 }
 
 /// Returns an iterator on the blocks of a blob.

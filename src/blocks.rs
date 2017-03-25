@@ -11,28 +11,40 @@ use osmformat::PrimitiveBlock;
 use groups;
 use objects::{OsmObj, Node, Way, Relation};
 
-pub_iterator_type!(OsmObjs['a] = Box[Iterator<Item = OsmObj> + 'a]);
+pub_iterator_type! {
+    #[doc="Iterator on the `OsmObj` of a `PrimitiveBlock`."]
+    OsmObjs['a] = Box<Iterator<Item = OsmObj> + 'a>
+}
 
 pub fn iter(block: &PrimitiveBlock) -> OsmObjs {
     let f = move |g| groups::iter(g, block);
     OsmObjs(Box::new(block.get_primitivegroup().iter().flat_map(f)))
 }
 
-pub_iterator_type!(Nodes['a] = Box[Iterator<Item = Node> + 'a]);
+pub_iterator_type! {
+    #[doc="Iterator on the `Node` of a `PrimitiveBlock`."]
+    Nodes['a] = Box<Iterator<Item = Node> + 'a>
+}
 
 pub fn nodes(block: &PrimitiveBlock) -> Nodes {
     let f = move |g| groups::nodes(g, block);
     Nodes(Box::new(block.get_primitivegroup().iter().flat_map(f)))
 }
 
-pub_iterator_type!(Ways['a] = Box[Iterator<Item = Way> + 'a]);
+pub_iterator_type! {
+    #[doc="Iterator on the `Way` of a `PrimitiveBlock`."]
+    Ways['a] = Box<Iterator<Item = Way> + 'a>
+}
 
 pub fn ways(block: &PrimitiveBlock) -> Ways {
     let f = move |g| groups::ways(g, block);
     Ways(Box::new(block.get_primitivegroup().iter().flat_map(f)))
 }
 
-pub_iterator_type!(Relations['a] = Box[Iterator<Item = Relation> + 'a]);
+pub_iterator_type! {
+    #[doc="Iterator on the `Relation` of a `PrimitiveBlock`."]
+    Relations['a] = Box<Iterator<Item = Relation> + 'a>
+}
 
 pub fn relations(block: &PrimitiveBlock) -> Relations {
     let f = move |g| groups::relations(g, block);

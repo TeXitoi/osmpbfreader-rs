@@ -5,7 +5,10 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
+//! Iterator for `OsmPbfReader`.
+
 use std::io;
+use std::iter::{self, FlatMap};
 use reader::PrimitiveBlocks;
 use osmformat::PrimitiveBlock;
 use blocks;
@@ -20,36 +23,36 @@ rental!{
     }
 }
 
+impl<'a> Iterator for rent::OsmObjs<'a> {
+    type Item = OsmObj;
+    fn next(&mut self) -> Option<Self::Item> {
+        self.rent_mut(|iter| iter.next())
+    }
+}
+
+fn result_block_into_iter(result: Result<PrimitiveBlock>) -> Box<Iterator<Item = Result<OsmObj>>> {
+    match result {
+        Ok(block) => Box::new(new_rent_osm_objs(block).map(Ok)),
+        Err(e) => Box::new(iter::once(Err(e))),
+    }
+}
+
 fn new_rent_osm_objs(block: PrimitiveBlock) -> rent::OsmObjs<'static> {
     rent::OsmObjs::new(Box::new(block), |b| blocks::iter(b))
 }
 
-pub struct Iter<'a, R: io::Read + 'a> {
-    blocks: PrimitiveBlocks<'a, R>,
-    objs: rent::OsmObjs<'static>,
+pub_iterator_type! {
+    #[doc="Iterator on the `OsmObj` of the pbf file."]
+    Iter['a, R] = FlatMap<
+        PrimitiveBlocks<'a, R>,
+        Box<iter::Iterator<Item=Result<OsmObj>>>,
+        fn(Result<PrimitiveBlock>) -> Box<iter::Iterator<Item=Result<OsmObj>>>>
+    where R: io::Read + 'a
 }
 
 impl<'a, R: io::Read + 'a> Iter<'a, R> {
+    /// Returns an iterator on the `OsmObj` of the pbf file.
     pub fn new(blocks: PrimitiveBlocks<'a, R>) -> Self {
-        Iter {
-            blocks: blocks,
-            objs: new_rent_osm_objs(PrimitiveBlock::new()),
-        }
-    }
-}
-
-impl<'a, R: io::Read + 'a> Iterator for Iter<'a, R> {
-    type Item = Result<OsmObj>;
-    fn next(&mut self) -> Option<Self::Item> {
-        loop {
-            if let Some(obj) = self.objs.rent_mut(|iter| iter.next()) {
-                return Some(Ok(obj));
-            }
-            match self.blocks.next() {
-                None => return None,
-                Some(Err(e)) => return Some(Err(e)),
-                Some(Ok(block)) => self.objs = new_rent_osm_objs(block),
-            }
-        }
+        Iter(blocks.flat_map(result_block_into_iter))
     }
 }
