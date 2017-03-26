@@ -46,7 +46,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     /// }
     /// ```
     pub fn iter(&mut self) -> ::iter::Iter<R> {
-        ::iter::Iter::new(self.primitive_blocks())
+        ::iter::Iter::new(self.blobs())
     }
 
     /// Returns a parallel iterator on the OsmObj of the pbf file.
@@ -64,7 +64,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     /// }
     /// ```
     pub fn par_iter(&mut self) -> ::par::Iter<R> {
-        ::par::Iter::new(self)
+        ::par::Iter::new(self.blobs())
     }
 
     /// Rewinds the pbf file to the begining.

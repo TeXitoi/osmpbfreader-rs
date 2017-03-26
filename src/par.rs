@@ -23,12 +23,12 @@ impl<'a, R> Iter<'a, R>
     where R: ::std::io::Read
 {
     /// Creates a parallel iterator.
-    pub fn new(reader: &mut ::reader::OsmPbfReader<R>) -> Iter<R> {
+    pub fn new(blobs: ::reader::Blobs<'a, R>) -> Iter<R> {
         let num_threads = ::num_cpus::get();
         let mut res = Iter {
             pool: CpuPool::new(num_threads),
             queue: VecDeque::new(),
-            blob_iter: reader.blobs(),
+            blob_iter: blobs,
             obj_iter: vec![].into_iter(),
         };
         for _ in 0..num_threads * 2 {
@@ -39,16 +39,8 @@ impl<'a, R> Iter<'a, R>
     fn push_block(&mut self) {
         let future = match self.blob_iter.next() {
             None => return,
-            Some(Err(e)) => self.pool.spawn_fn(move || Ok(vec![Err(e)])),
-            Some(Ok(blob)) => {
-                self.pool.spawn_fn(move || {
-                    let block = match ::reader::primitive_block_from_blob(&blob) {
-                        Ok(b) => b,
-                        Err(e) => return Ok(vec![Err(e)]),
-                    };
-                    let res = ::blocks::iter(&block).map(Ok).collect();
-                    Ok(res)
-                })
+            Some(blob) => {
+                self.pool.spawn_fn(move || Ok(::iter::result_blob_into_iter(blob).collect()))
             }
         };
         self.queue.push_back(future);

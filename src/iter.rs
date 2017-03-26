@@ -9,8 +9,9 @@
 
 use std::io;
 use std::iter::{self, FlatMap};
-use reader::PrimitiveBlocks;
+use reader::Blobs;
 use osmformat::PrimitiveBlock;
+use fileformat::Blob;
 use blocks;
 use Result;
 use objects::OsmObj;
@@ -30,8 +31,9 @@ impl<'a> Iterator for rent::OsmObjs<'a> {
     }
 }
 
-fn result_block_into_iter(result: Result<PrimitiveBlock>) -> Box<Iterator<Item = Result<OsmObj>>> {
-    match result {
+/// Transforms a `Result<blob>` into a `Iterator<Item = Result<OsmObj>>`.
+pub fn result_blob_into_iter(result: Result<Blob>) -> Box<Iterator<Item = Result<OsmObj>>> {
+    match result.and_then(|b| ::reader::primitive_block_from_blob(&b)) {
         Ok(block) => Box::new(new_rent_osm_objs(block).map(Ok)),
         Err(e) => Box::new(iter::once(Err(e))),
     }
@@ -44,15 +46,15 @@ fn new_rent_osm_objs(block: PrimitiveBlock) -> rent::OsmObjs<'static> {
 pub_iterator_type! {
     #[doc="Iterator on the `OsmObj` of the pbf file."]
     Iter['a, R] = FlatMap<
-        PrimitiveBlocks<'a, R>,
+        Blobs<'a, R>,
         Box<iter::Iterator<Item=Result<OsmObj>>>,
-        fn(Result<PrimitiveBlock>) -> Box<iter::Iterator<Item=Result<OsmObj>>>>
+        fn(Result<Blob>) -> Box<iter::Iterator<Item=Result<OsmObj>>>>
     where R: io::Read + 'a
 }
 
 impl<'a, R: io::Read + 'a> Iter<'a, R> {
     /// Returns an iterator on the `OsmObj` of the pbf file.
-    pub fn new(blocks: PrimitiveBlocks<'a, R>) -> Self {
-        Iter(blocks.flat_map(result_block_into_iter))
+    pub fn new(blobs: Blobs<'a, R>) -> Self {
+        Iter(blobs.flat_map(result_blob_into_iter))
     }
 }
