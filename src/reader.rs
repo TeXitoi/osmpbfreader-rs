@@ -63,8 +63,12 @@ impl<R: io::Read> OsmPbfReader<R> {
     ///     println!("{:?}", obj);
     /// }
     /// ```
-    pub fn par_iter(&mut self) -> ::par::Iter<R> {
-        ::par::Iter::new(self.blobs())
+    pub fn par_iter<'a>(&'a mut self)
+                        -> ::par::Iter<Blobs<'a, R>,
+                                         Box<Iterator<Item = Result<OsmObj>>>,
+                                         fn(Result<fileformat::Blob>)
+                                            -> Box<Iterator<Item = Result<OsmObj>>>> {
+        ::par::Iter::new(self.blobs(), ::iter::result_blob_into_iter)
     }
 
     /// Rewinds the pbf file to the begining.
