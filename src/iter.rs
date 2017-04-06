@@ -20,14 +20,18 @@ rental!{
     mod rent {
         use osmformat::PrimitiveBlock;
         use blocks;
-        pub rental mut OsmObjs<'rental>(Box<PrimitiveBlock>, blocks::OsmObjs<'rental>);
+        #[rental]
+        pub struct OsmObjs {
+            block: Box<PrimitiveBlock>,
+            objs: blocks::OsmObjs<'block>,
+        }
     }
 }
 
-impl<'a> Iterator for rent::OsmObjs<'a> {
+impl<'a> Iterator for rent::OsmObjs {
     type Item = OsmObj;
     fn next(&mut self) -> Option<Self::Item> {
-        self.rent_mut(|iter| iter.next())
+        self.rent_mut(|objs| objs.next())
     }
 }
 
@@ -39,7 +43,7 @@ pub fn result_blob_into_iter(result: Result<Blob>) -> Box<Iterator<Item = Result
     }
 }
 
-fn new_rent_osm_objs(block: PrimitiveBlock) -> rent::OsmObjs<'static> {
+fn new_rent_osm_objs(block: PrimitiveBlock) -> rent::OsmObjs {
     rent::OsmObjs::new(Box::new(block), |b| blocks::iter(b))
 }
 
