@@ -35,7 +35,7 @@ $ time ./target/release/examples/tutorial france-latest.osm.pbf
 
 real	4m24.784s
 user	4m18.476s
-sys		0m6.164s
+sys	0m6.164s
 $ time ./target/release/examples/count france-latest.osm.pbf admin_level 8
 counting objects with tags["admin_level"] = "8"...
 53 nodes, mean coord: 46.25862766415095, 2.9082348867924517.
@@ -44,7 +44,7 @@ counting objects with tags["admin_level"] = "8"...
 
 real	1m10.117s
 user	8m16.164s
-sys		0m23.120s
+sys	0m23.120s
 $ time ./target/release/examples/count_with_deps france-latest.osm.pbf admin_level 8
 counting objects with tags["admin_level"] = "8" and their depedencies...
 9497221 nodes, mean coord: 46.69071931974348, 2.2632424769587915.

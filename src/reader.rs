@@ -7,14 +7,16 @@
 
 //! Tools for reading a pbf file.
 
-use fileformat;
-use osmformat;
+use fileformat::{Blob, BlobHeader};
+use osmformat::PrimitiveBlock;
 use error::{Error, Result};
 use objects::{OsmId, OsmObj};
+use blobs::{self, result_blob_into_iter};
+use par_map::{self, ParMap};
 use protobuf;
 use std::convert::From;
 use std::io::{self, Read};
-use std::iter::Map;
+use std::iter;
 use std::collections::btree_map::BTreeMap;
 use std::collections::BTreeSet;
 
@@ -45,8 +47,8 @@ impl<R: io::Read> OsmPbfReader<R> {
     ///     println!("{:?}", obj);
     /// }
     /// ```
-    pub fn iter(&mut self) -> ::iter::Iter<R> {
-        ::iter::Iter::new(self.blobs())
+    pub fn iter(&mut self) -> Iter<R> {
+        Iter(self.blobs().flat_map(result_blob_into_iter))
     }
 
     /// Returns a parallel iterator on the OsmObj of the pbf file.
@@ -63,12 +65,8 @@ impl<R: io::Read> OsmPbfReader<R> {
     ///     println!("{:?}", obj);
     /// }
     /// ```
-    pub fn par_iter<'a>(&'a mut self)
-                        -> ::par::Iter<Blobs<'a, R>,
-                                         Box<Iterator<Item = Result<OsmObj>>>,
-                                         fn(Result<fileformat::Blob>)
-                                            -> Box<Iterator<Item = Result<OsmObj>>>> {
-        ::par::Iter::new(self.blobs(), ::iter::result_blob_into_iter)
+    pub fn par_iter<'a>(&'a mut self) -> ParIter<'a, R> {
+        ParIter(self.blobs().par_flat_map(result_blob_into_iter))
     }
 
     /// Rewinds the pbf file to the begining.
@@ -164,8 +162,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     }
     /// Returns an iterator on the blocks of the pbf file.
     pub fn primitive_blocks(&mut self) -> PrimitiveBlocks<R> {
-        fn and_then_primitive_block(blob_res: Result<fileformat::Blob>)
-                                    -> Result<osmformat::PrimitiveBlock> {
+        fn and_then_primitive_block(blob_res: Result<Blob>) -> Result<PrimitiveBlock> {
             blob_res.and_then(|b| primitive_block_from_blob(&b))
         }
         PrimitiveBlocks(self.blobs().map(and_then_primitive_block))
@@ -177,12 +174,12 @@ impl<R: io::Read> OsmPbfReader<R> {
         assert_eq!(sz, self.buf.len() as u64);
         Ok(())
     }
-    fn try_blob(&mut self, sz: u64) -> Result<Option<fileformat::Blob>> {
+    fn try_blob(&mut self, sz: u64) -> Result<Option<Blob>> {
         try!(self.push(sz));
-        let header: fileformat::BlobHeader = try!(protobuf::parse_from_bytes(&self.buf));
+        let header: BlobHeader = try!(protobuf::parse_from_bytes(&self.buf));
         let sz = header.get_datasize() as u64;
         try!(self.push(sz));
-        let blob: fileformat::Blob = try!(protobuf::parse_from_bytes(&self.buf));
+        let blob: Blob = try!(protobuf::parse_from_bytes(&self.buf));
         if header.get_field_type() == "OSMData" {
             Ok(Some(blob))
         } else if header.get_field_type() == "OSMHeader" {
@@ -192,7 +189,7 @@ impl<R: io::Read> OsmPbfReader<R> {
             Ok(None)
         }
     }
-    fn next_blob(&mut self) -> Option<Result<fileformat::Blob>> {
+    fn next_blob(&mut self) -> Option<Result<Blob>> {
         use byteorder::{BigEndian, ReadBytesExt};
         use std::io::ErrorKind;
         if self.finished {
@@ -226,7 +223,7 @@ pub struct Blobs<'a, R: 'a> {
     opr: &'a mut OsmPbfReader<R>,
 }
 impl<'a, R: io::Read> Iterator for Blobs<'a, R> {
-    type Item = Result<fileformat::Blob>;
+    type Item = Result<Blob>;
     fn next(&mut self) -> Option<Self::Item> {
         self.opr.next_blob()
     }
@@ -234,14 +231,12 @@ impl<'a, R: io::Read> Iterator for Blobs<'a, R> {
 
 pub_iterator_type! {
     #[doc="Iterator on the blocks of a file."]
-    PrimitiveBlocks['a, R] = Map<
-        Blobs<'a, R>,
-        fn(Result<fileformat::Blob>) -> Result<osmformat::PrimitiveBlock>>
+    PrimitiveBlocks['a, R] = iter::Map<Blobs<'a, R>, fn(Result<Blob>) -> Result<PrimitiveBlock>>
     where R: Read + 'a
 }
 
 /// Returns an iterator on the blocks of a blob.
-pub fn primitive_block_from_blob(blob: &fileformat::Blob) -> Result<osmformat::PrimitiveBlock> {
+pub fn primitive_block_from_blob(blob: &Blob) -> Result<PrimitiveBlock> {
     if blob.has_raw() {
         protobuf::parse_from_bytes(blob.get_raw()).map_err(From::from)
     } else if blob.has_zlib_data() {
@@ -252,4 +247,18 @@ pub fn primitive_block_from_blob(blob: &fileformat::Blob) -> Result<osmformat::P
     } else {
         Err(Error::UnsupportedData)
     }
+}
+
+pub_iterator_type! {
+    #[doc="Iterator on the `OsmObj` of the pbf file."]
+    Iter['a, R] = iter::FlatMap<Blobs<'a, R>, blobs::OsmObjs, fn(Result<Blob>) -> blobs::OsmObjs>
+    where R: io::Read + 'a
+}
+
+pub_iterator_type! {
+    #[doc="Parallel iterator on the `OsmObj` of the pbf file."]
+    ParIter['a, R] = par_map::FlatMap<Blobs<'a, R>,
+                                      blobs::OsmObjs,
+                                      fn(Result<Blob>) -> blobs::OsmObjs>
+    where R: io::Read + 'a
 }

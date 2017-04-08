@@ -97,11 +97,9 @@ extern crate protobuf;
 extern crate flate2;
 extern crate byteorder;
 extern crate flat_map;
-extern crate futures;
-extern crate futures_cpupool;
-extern crate num_cpus;
 #[macro_use]
 extern crate rental;
+extern crate par_map;
 
 pub use objects::*;
 pub use error::Error;
@@ -140,8 +138,7 @@ macro_rules! pub_iterator_type {
 
 pub mod reader;
 pub mod objects;
-pub mod par;
-pub mod iter;
+pub mod blobs;
 
 #[allow(missing_docs)]
 pub mod error;
