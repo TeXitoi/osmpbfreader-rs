@@ -7,13 +7,15 @@
 
 //! Tools for reading a pbf file.
 
-use fileformat::{Blob, BlobHeader};
-use osmformat::PrimitiveBlock;
+use fileformat::mod_OSMPBF::{Blob, BlobHeader};
+use osmformat::mod_OSMPBF::PrimitiveBlock;
 use error::{Error, Result};
 use objects::{OsmId, OsmObj};
 use blobs::{self, result_blob_into_iter};
 use par_map::{self, ParMap};
-use protobuf;
+use quick_protobuf::Reader;
+use quick_protobuf::BytesReader;
+use rent;
 use std::convert::From;
 use std::io::{self, Read};
 use std::iter;
@@ -162,7 +164,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     }
     /// Returns an iterator on the blocks of the pbf file.
     pub fn primitive_blocks(&mut self) -> PrimitiveBlocks<R> {
-        fn and_then_primitive_block(blob_res: Result<Blob>) -> Result<PrimitiveBlock> {
+        fn and_then_primitive_block(blob_res: Result<rent::Blob>) -> Result<rent::PrimitiveBlock> {
             blob_res.and_then(|b| primitive_block_from_blob(&b))
         }
         PrimitiveBlocks(self.blobs().map(and_then_primitive_block))
@@ -174,22 +176,22 @@ impl<R: io::Read> OsmPbfReader<R> {
         assert_eq!(sz, self.buf.len() as u64);
         Ok(())
     }
-    fn try_blob(&mut self, sz: u64) -> Result<Option<Blob>> {
-        try!(self.push(sz));
-        let header: BlobHeader = try!(protobuf::parse_from_bytes(&self.buf));
-        let sz = header.get_datasize() as u64;
-        try!(self.push(sz));
-        let blob: Blob = try!(protobuf::parse_from_bytes(&self.buf));
-        if header.get_field_type() == "OSMData" {
+    fn try_blob(&mut self, sz: u64) -> Result<Option<rent::Blob>> {
+        self.push(sz)?;
+        let header = BlobHeader::from_reader(&mut BytesReader::from_bytes(&*self.buf), &*self.buf)?;
+        let reader = Reader::from_reader(&mut self.r, header.datasize as usize)?;
+        let blob =
+            rent::Blob::try_new(Box::new(reader), |r| r.read(Blob::from_reader)).map_err(|e| e.0)?;
+        if header.type_pb == "OSMData" {
             Ok(Some(blob))
-        } else if header.get_field_type() == "OSMHeader" {
+        } else if header.type_pb == "OSMHeader" {
             Ok(None)
         } else {
-            println!("Unknown type: {}", header.get_field_type());
+            println!("Unknown type: {}", header.type_pb);
             Ok(None)
         }
     }
-    fn next_blob(&mut self) -> Option<Result<Blob>> {
+    fn next_blob(&mut self) -> Option<Result<rent::Blob>> {
         use byteorder::{BigEndian, ReadBytesExt};
         use std::io::ErrorKind;
         if self.finished {
@@ -223,7 +225,7 @@ pub struct Blobs<'a, R: 'a> {
     opr: &'a mut OsmPbfReader<R>,
 }
 impl<'a, R: io::Read> Iterator for Blobs<'a, R> {
-    type Item = Result<Blob>;
+    type Item = Result<rent::Blob>;
     fn next(&mut self) -> Option<Self::Item> {
         self.opr.next_blob()
     }
@@ -231,34 +233,44 @@ impl<'a, R: io::Read> Iterator for Blobs<'a, R> {
 
 pub_iterator_type! {
     #[doc="Iterator on the blocks of a file."]
-    PrimitiveBlocks['a, R] = iter::Map<Blobs<'a, R>, fn(Result<Blob>) -> Result<PrimitiveBlock>>
-    where R: Read + 'a
+    PrimitiveBlocks['a, R] =
+        iter::Map<Blobs<'a, R>, fn(Result<rent::Blob>) -> Result<rent::PrimitiveBlock>>
+        where R: Read + 'a
 }
 
 /// Returns an iterator on the blocks of a blob.
-pub fn primitive_block_from_blob(blob: &Blob) -> Result<PrimitiveBlock> {
-    if blob.has_raw() {
-        protobuf::parse_from_bytes(blob.get_raw()).map_err(From::from)
-    } else if blob.has_zlib_data() {
-        use flate2::read::ZlibDecoder;
-        let r = io::Cursor::new(blob.get_zlib_data());
-        let mut zr = ZlibDecoder::new(r);
-        protobuf::parse_from_reader(&mut zr).map_err(From::from)
-    } else {
-        Err(Error::UnsupportedData)
-    }
+pub fn primitive_block_from_blob(blob: &rent::Blob) -> Result<rent::PrimitiveBlock> {
+    blob.rent(|blob| {
+        let bytes = if let Some(ref raw) = blob.raw {
+            raw.to_vec()
+        } else if let Some(ref data) = blob.zlib_data {
+            use flate2::read::ZlibDecoder;
+            let r = io::Cursor::new(data.as_ref());
+            let mut zr = ZlibDecoder::new(r);
+            let mut bytes = vec![];
+            zr.read_to_end(&mut bytes)?;
+            bytes
+        } else {
+            return Err(Error::UnsupportedData);
+        };
+        rent::PrimitiveBlock::try_new(bytes, |r| {
+                PrimitiveBlock::from_reader(&mut BytesReader::from_bytes(&*r), &*r)
+            })
+            .map_err(|e| e.0.into())
+    })
 }
 
 pub_iterator_type! {
     #[doc="Iterator on the `OsmObj` of the pbf file."]
-    Iter['a, R] = iter::FlatMap<Blobs<'a, R>, blobs::OsmObjs, fn(Result<Blob>) -> blobs::OsmObjs>
-    where R: io::Read + 'a
+    Iter['a, R] =
+        iter::FlatMap<Blobs<'a, R>, blobs::OsmObjs, fn(Result<rent::Blob>) -> blobs::OsmObjs>
+        where R: io::Read + 'a
 }
 
 pub_iterator_type! {
     #[doc="Parallel iterator on the `OsmObj` of the pbf file."]
     ParIter['a, R] = par_map::FlatMap<Blobs<'a, R>,
                                       blobs::OsmObjs,
-                                      fn(Result<Blob>) -> blobs::OsmObjs>
+                                      fn(Result<rent::Blob>) -> blobs::OsmObjs>
     where R: io::Read + 'a
 }

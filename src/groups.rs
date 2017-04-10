@@ -5,8 +5,8 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-use osmformat;
-use osmformat::{PrimitiveGroup, PrimitiveBlock};
+use osmformat::mod_OSMPBF as osmformat;
+use osmformat::mod_OSMPBF::{PrimitiveGroup, PrimitiveBlock};
 use std::slice;
 use std::iter::Chain;
 use std::iter::Map;
@@ -39,24 +39,24 @@ pub fn nodes<'a>(g: &'a PrimitiveGroup, b: &'a PrimitiveBlock) -> Nodes<'a> {
 
 pub fn simple_nodes<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock) -> SimpleNodes<'a> {
     SimpleNodes {
-        iter: group.get_nodes().iter(),
+        iter: group.nodes.iter(),
         block: block,
     }
 }
 
 pub struct SimpleNodes<'a> {
     iter: slice::Iter<'a, osmformat::Node>,
-    block: &'a PrimitiveBlock,
+    block: &'a PrimitiveBlock<'a>,
 }
 impl<'a> Iterator for SimpleNodes<'a> {
     type Item = Node;
     fn next(&mut self) -> Option<Node> {
         self.iter.next().map(|n| {
             Node {
-                id: NodeId(n.get_id()),
-                decimicro_lat: make_lat(n.get_lat(), self.block),
-                decimicro_lon: make_lon(n.get_lon(), self.block),
-                tags: make_tags(n.get_keys(), n.get_vals(), self.block),
+                id: NodeId(n.id),
+                decimicro_lat: make_lat(n.lat, self.block),
+                decimicro_lon: make_lon(n.lon, self.block),
+                tags: make_tags(&n.keys, &n.vals, self.block),
             }
         })
     }
@@ -66,20 +66,35 @@ impl<'a> Iterator for SimpleNodes<'a> {
 }
 
 pub fn dense_nodes<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock) -> DenseNodes<'a> {
-    let dense = group.get_dense();
-    DenseNodes {
-        block: block,
-        dids: dense.get_id().iter(),
-        dlats: dense.get_lat().iter(),
-        dlons: dense.get_lon().iter(),
-        keys_vals: dense.get_keys_vals().iter(),
-        cur_id: 0,
-        cur_lat: 0,
-        cur_lon: 0,
+    match group.dense {
+        Some(ref dense) => {
+            DenseNodes {
+                block: block,
+                dids: dense.id.iter(),
+                dlats: dense.lat.iter(),
+                dlons: dense.lon.iter(),
+                keys_vals: dense.keys_vals.iter(),
+                cur_id: 0,
+                cur_lat: 0,
+                cur_lon: 0,
+            }
+        }
+        None => {
+            DenseNodes {
+                block: block,
+                dids: [].iter(),
+                dlats: [].iter(),
+                dlons: [].iter(),
+                keys_vals: [].iter(),
+                cur_id: 0,
+                cur_lat: 0,
+                cur_lon: 0,
+            }
+        }
     }
 }
 pub struct DenseNodes<'a> {
-    block: &'a PrimitiveBlock,
+    block: &'a PrimitiveBlock<'a>,
     dids: slice::Iter<'a, i64>,
     dlats: slice::Iter<'a, i64>,
     dlons: slice::Iter<'a, i64>,
@@ -123,20 +138,20 @@ impl<'a> Iterator for DenseNodes<'a> {
 
 pub fn ways<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock) -> Ways<'a> {
     Ways {
-        iter: group.get_ways().iter(),
+        iter: group.ways.iter(),
         block: block,
     }
 }
 pub struct Ways<'a> {
     iter: slice::Iter<'a, osmformat::Way>,
-    block: &'a PrimitiveBlock,
+    block: &'a PrimitiveBlock<'a>,
 }
 impl<'a> Iterator for Ways<'a> {
     type Item = Way;
     fn next(&mut self) -> Option<Way> {
         self.iter.next().map(|w| {
             let mut n = 0;
-            let nodes = w.get_refs()
+            let nodes = w.refs
                 .iter()
                 .map(|&dn| {
                     n += dn;
@@ -144,9 +159,9 @@ impl<'a> Iterator for Ways<'a> {
                 })
                 .collect();
             Way {
-                id: WayId(w.get_id()),
+                id: WayId(w.id),
                 nodes: nodes,
-                tags: make_tags(w.get_keys(), w.get_vals(), self.block),
+                tags: make_tags(&w.keys, &w.vals, self.block),
             }
         })
     }
@@ -157,24 +172,24 @@ impl<'a> Iterator for Ways<'a> {
 
 pub fn relations<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock) -> Relations<'a> {
     Relations {
-        iter: group.get_relations().iter(),
+        iter: group.relations.iter(),
         block: block,
     }
 }
 pub struct Relations<'a> {
     iter: slice::Iter<'a, osmformat::Relation>,
-    block: &'a PrimitiveBlock,
+    block: &'a PrimitiveBlock<'a>,
 }
 impl<'a> Iterator for Relations<'a> {
     type Item = Relation;
     fn next(&mut self) -> Option<Relation> {
-        use osmformat::Relation_MemberType::{NODE, WAY, RELATION};
+        use osmformat::mod_OSMPBF::mod_Relation::MemberType::{NODE, WAY, RELATION};
         self.iter.next().map(|rel| {
             let mut m = 0;
-            let refs = rel.get_memids()
+            let refs = rel.memids
                 .iter()
-                .zip(rel.get_types().iter())
-                .zip(rel.get_roles_sid().iter())
+                .zip(rel.types.iter())
+                .zip(rel.roles_sid.iter())
                 .map(|((&dm, &t), &role)| {
                     m += dm;
                     Ref {
@@ -188,9 +203,9 @@ impl<'a> Iterator for Relations<'a> {
                 })
                 .collect();
             Relation {
-                id: RelationId(rel.get_id()),
+                id: RelationId(rel.id),
                 refs: refs,
-                tags: make_tags(rel.get_keys(), rel.get_vals(), self.block),
+                tags: make_tags(&rel.keys, &rel.vals, self.block),
             }
         })
     }
@@ -200,15 +215,15 @@ impl<'a> Iterator for Relations<'a> {
 }
 
 fn make_string(k: usize, block: &osmformat::PrimitiveBlock) -> String {
-    String::from_utf8_lossy(&*block.get_stringtable().get_s()[k]).into_owned()
+    String::from_utf8_lossy(&*block.stringtable.s[k]).into_owned()
 }
 fn make_lat(c: i64, b: &osmformat::PrimitiveBlock) -> i32 {
-    let granularity = b.get_granularity() as i64;
-    ((b.get_lat_offset() + granularity * c) / 100) as i32
+    let granularity = b.granularity as i64;
+    ((b.lat_offset + granularity * c) / 100) as i32
 }
 fn make_lon(c: i64, b: &osmformat::PrimitiveBlock) -> i32 {
-    let granularity = b.get_granularity() as i64;
-    ((b.get_lon_offset() + granularity * c) / 100) as i32
+    let granularity = b.granularity as i64;
+    ((b.lon_offset + granularity * c) / 100) as i32
 }
 fn make_tags(keys: &[u32], vals: &[u32], b: &PrimitiveBlock) -> Tags {
     let mut tags: Tags = keys.iter()

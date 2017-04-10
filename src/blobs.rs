@@ -8,20 +8,17 @@
 //! Iterator and utilities for `fileformat::Blob`.
 
 use std::iter;
-use osmformat::PrimitiveBlock;
-use fileformat::Blob;
 use blocks;
 use Result;
 use objects::OsmObj;
 
 rental!{
     mod rent {
-        use osmformat::PrimitiveBlock;
-        use blocks;
         #[rental]
         pub struct OsmObjs {
-            block: Box<PrimitiveBlock>,
-            objs: blocks::OsmObjs<'block>,
+            #[subrental(arity = 2)]
+            block: Box<::rent::PrimitiveBlock>,
+            objs: ::blocks::OsmObjs<'block_1>,
         }
     }
 }
@@ -50,13 +47,13 @@ impl Iterator for OsmObjs {
 }
 
 /// Transforms a `Result<blob>` into a `Iterator<Item = Result<OsmObj>>`.
-pub fn result_blob_into_iter(result: Result<Blob>) -> OsmObjs {
+pub fn result_blob_into_iter(result: Result<::rent::Blob>) -> OsmObjs {
     match result.and_then(|b| ::reader::primitive_block_from_blob(&b)) {
         Ok(block) => OsmObjs(OsmObjsImpl::OkIter(new_rent_osm_objs(block).map(Ok))),
         Err(e) => OsmObjs(OsmObjsImpl::ErrIter(iter::once(Err(e)))),
     }
 }
 
-fn new_rent_osm_objs(block: PrimitiveBlock) -> rent::OsmObjs {
-    rent::OsmObjs::new(Box::new(block), blocks::iter)
+fn new_rent_osm_objs(block: ::rent::PrimitiveBlock) -> rent::OsmObjs {
+    rent::OsmObjs::new(Box::new(block), |b| blocks::iter(b.block))
 }

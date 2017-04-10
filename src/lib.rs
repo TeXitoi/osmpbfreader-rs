@@ -70,20 +70,22 @@
 //! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
 //! for block in pbf.blobs().map(|b| primitive_block_from_blob(&b.unwrap())) {
 //!     let block = block.unwrap();
-//!     for group in block.get_primitivegroup().iter() {
-//!         for node in groups::simple_nodes(&group, &block) {
-//!             println!("{:?}", node);
+//!     block.rent(|block| {
+//!         for group in block.primitivegroup.iter() {
+//!             for node in groups::simple_nodes(&group, &block) {
+//!                 println!("{:?}", node);
+//!             }
+//!             for node in groups::dense_nodes(&group, &block) {
+//!                 println!("{:?}", node);
+//!             }
+//!             for way in groups::ways(&group, &block) {
+//!                 println!("{:?}", way);
+//!             }
+//!             for relation in groups::relations(&group, &block) {
+//!                 println!("{:?}", relation);
+//!             }
 //!         }
-//!         for node in groups::dense_nodes(&group, &block) {
-//!             println!("{:?}", node);
-//!         }
-//!         for way in groups::ways(&group, &block) {
-//!             println!("{:?}", way);
-//!         }
-//!         for relation in groups::relations(&group, &block) {
-//!             println!("{:?}", relation);
-//!         }
-//!     }
+//!     });
 //! }
 //! ```
 //!
@@ -93,7 +95,7 @@
 
 #![deny(missing_docs)]
 
-extern crate protobuf;
+extern crate quick_protobuf;
 extern crate flate2;
 extern crate byteorder;
 extern crate flat_map;
@@ -154,3 +156,22 @@ pub mod fileformat;
 /// Generated from protobuf.
 #[allow(missing_docs)]
 pub mod osmformat;
+
+rental! {
+    #[allow(missing_docs)]
+    pub mod rent {
+        use quick_protobuf::Reader;
+        use fileformat;
+        use osmformat;
+        #[rental_mut]
+        pub struct Blob {
+            reader: Box<Reader>,
+            blob: fileformat::mod_OSMPBF::Blob<'reader>
+        }
+        #[rental_mut]
+        pub struct PrimitiveBlock {
+            bytes: Vec<u8>,
+            block: osmformat::mod_OSMPBF::PrimitiveBlock<'bytes>
+        }
+    }
+}

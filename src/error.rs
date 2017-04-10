@@ -7,14 +7,14 @@
 
 use std::{self, io, fmt};
 use std::convert::From;
-use protobuf;
+use quick_protobuf;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
     Io(io::Error),
-    Pbf(protobuf::ProtobufError),
+    Pbf(quick_protobuf::errors::Error),
     UnsupportedData,
     InvalidData,
 }
@@ -50,8 +50,8 @@ impl From<io::Error> for Error {
         Error::Io(err)
     }
 }
-impl From<protobuf::ProtobufError> for Error {
-    fn from(err: protobuf::ProtobufError) -> Error {
+impl From<quick_protobuf::errors::Error> for Error {
+    fn from(err: quick_protobuf::errors::Error) -> Error {
         Error::Pbf(err)
     }
 }
