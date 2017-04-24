@@ -7,7 +7,7 @@
 
 //! This module proposes objects to modelize OpenStreetMap objects.
 //!
-//! There is 3 types of object: nodes, ways and relations.
+//! There are 3 types of objects: nodes, ways and relations.
 
 use std::ops::{Deref, DerefMut};
 use std::iter::FromIterator;
@@ -18,7 +18,8 @@ use std::iter::FromIterator;
 /// information.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct Tags(TagsImpl);
-type TagsImpl = ::flat_map::FlatMap<String, String>;
+/// FlatMap representing the key-value pairs of the tags
+pub type TagsImpl = ::flat_map::FlatMap<String, String>;
 impl Tags {
     /// Creates a new, empty `Tags` object.
     pub fn new() -> Tags {
