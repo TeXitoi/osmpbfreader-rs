@@ -24,3 +24,4 @@ par-map = "0.1"
 
 [dev-dependencies]
 log = "0.3.6"
+env_logger = "0.3"

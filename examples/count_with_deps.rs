@@ -7,6 +7,7 @@
 
 #[macro_use]
 extern crate log;
+extern crate env_logger;
 extern crate osmpbfreader;
 
 fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &std::ffi::OsStr) {
@@ -51,6 +52,7 @@ fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &std::ffi::OsS
 }
 
 fn main() {
+    env_logger::init().unwrap();
     let args: Vec<_> = std::env::args_os().collect();
     match args.len() {
         3 => {
