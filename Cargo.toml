@@ -21,6 +21,7 @@ protobuf = "1.1"
 flat_map = "0.0.4"
 rental = "0.4"
 par-map = "0.1"
+pub-iterator-type = "0.1"
 
 [dev-dependencies]
 log = "0.3.6"

@@ -100,41 +100,13 @@ extern crate flat_map;
 #[macro_use]
 extern crate rental;
 extern crate par_map;
+#[macro_use]
+extern crate pub_iterator_type;
 
 pub use objects::*;
 pub use error::Error;
 pub use error::Result;
 pub use reader::{OsmPbfReader, primitive_block_from_blob};
-
-/// Abstract behind a tuple struct an iterator.
-macro_rules! pub_iterator_type {
-    ( #[$($attr:tt)*] $Name:ident [ $($NameParam:tt)* ] = $From:ty ) => {
-        #[$($attr)*]
-        pub struct $Name < $($NameParam)* > ( $From );
-        impl< $($NameParam)* > Iterator for $Name < $($NameParam)* > {
-            type Item = < $From as Iterator>::Item;
-            fn next(&mut self) -> Option<Self::Item> {
-                self.0.next()
-            }
-            fn size_hint(&self) -> (usize, Option<usize>) {
-                self.0.size_hint()
-            }
-        }
-    };
-    ( #[$($attr:tt)*] $Name:ident [ $($NameParam:tt)* ] = $From:ty where $($w:tt)* ) => {
-        #[$($attr)*]
-        pub struct $Name < $($NameParam)* > ( $From ) where $($w)* ;
-        impl< $($NameParam)* > Iterator for $Name < $($NameParam)* > where $($w)* {
-            type Item = <$From as Iterator>::Item;
-            fn next(&mut self) -> Option<Self::Item> {
-                self.0.next()
-            }
-            fn size_hint(&self) -> (usize, Option<usize>) {
-                self.0.size_hint()
-            }
-        }
-    }
-}
 
 pub mod reader;
 pub mod objects;
