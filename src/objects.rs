@@ -29,6 +29,10 @@ impl Tags {
     pub fn contains(&self, key: &str, value: &str) -> bool {
         self.0.get(key).map_or(false, |v| v.as_str() == value)
     }
+    /// Returns if contains any value for `key`.
+    pub fn contains_key(&self, key: &str) -> bool {
+        self.0.contains_key(key)
+    }
 }
 impl Deref for Tags {
     type Target = TagsImpl;
