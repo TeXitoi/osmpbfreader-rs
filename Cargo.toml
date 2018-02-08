@@ -18,7 +18,7 @@ appveyor = { repository = "TeXitoi/osmpbfreader-rs" }
 flate2 = "0.2.17"
 byteorder = "1.0"
 protobuf = "1.1"
-flat_map = "0.0.4"
+flat_map = "0.0.7"
 rental = "0.4"
 par-map = "0.1"
 pub-iterator-type = "0.1"
