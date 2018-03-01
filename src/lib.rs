@@ -102,6 +102,9 @@ extern crate rental;
 extern crate par_map;
 #[macro_use]
 extern crate pub_iterator_type;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 
 pub use objects::*;
 pub use error::Error;
