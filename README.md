@@ -64,9 +64,3 @@ as published by Sam Hocevar. See the COPYING file for more details.
 
 Note that `src/fileformat.proto` and `src/osmformat.proto` come from
 [OSM-binary](https://github.com/scrosby/OSM-binary) under the LGPLv3.
-
-## TODO
-
-TODO list:
- - document until `#![deny(missing_docs)]` can be added;
- - read pbf header to check that we support all needed features.
