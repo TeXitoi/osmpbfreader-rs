@@ -11,9 +11,7 @@ matrix:
   - rust: stable
     env: RUN=RUSTFMT
     before_script: rustup component add rustfmt-preview
-    script:
-    - cargo check
-    - cargo fmt -- --write-mode diff
+    script: cargo fmt -- --write-mode diff
 script:
 - cargo build --verbose
 - cargo test --verbose

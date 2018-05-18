@@ -9,11 +9,11 @@
 
 use blobs::{self, result_blob_into_iter};
 use error::{Error, Result};
-use fileformat::{Blob, BlobHeader};
 use objects::{OsmId, OsmObj};
-use osmformat::PrimitiveBlock;
+use osmpbf::PrimitiveBlock;
+use osmpbf::{Blob, BlobHeader};
 use par_map::{self, ParMap};
-use protobuf;
+use prost::Message;
 use std::collections::BTreeSet;
 use std::collections::btree_map::BTreeMap;
 use std::convert::From;
@@ -174,16 +174,16 @@ impl<R: io::Read> OsmPbfReader<R> {
     }
     fn try_blob(&mut self, sz: u64) -> Result<Option<Blob>> {
         try!(self.push(sz));
-        let header: BlobHeader = try!(protobuf::parse_from_bytes(&self.buf));
-        let sz = header.get_datasize() as u64;
+        let header = try!(BlobHeader::decode(&self.buf));
+        let sz = header.datasize as u64;
         try!(self.push(sz));
-        let blob: Blob = try!(protobuf::parse_from_bytes(&self.buf));
-        if header.get_field_type() == "OSMData" {
+        let blob = try!(Blob::decode(&self.buf));
+        if header.type_ == "OSMData" {
             Ok(Some(blob))
-        } else if header.get_field_type() == "OSMHeader" {
+        } else if header.type_ == "OSMHeader" {
             Ok(None)
         } else {
-            println!("Unknown type: {}", header.get_field_type());
+            println!("Unknown type: {}", header.type_);
             Ok(None)
         }
     }
@@ -235,13 +235,15 @@ pub_iterator_type! {
 
 /// Returns an iterator on the blocks of a blob.
 pub fn primitive_block_from_blob(blob: &Blob) -> Result<PrimitiveBlock> {
-    if blob.has_raw() {
-        protobuf::parse_from_bytes(blob.get_raw()).map_err(From::from)
-    } else if blob.has_zlib_data() {
+    if let Some(ref raw) = blob.raw {
+        PrimitiveBlock::decode(raw).map_err(From::from)
+    } else if let Some(ref zlib_data) = blob.zlib_data {
         use flate2::read::ZlibDecoder;
-        let r = io::Cursor::new(blob.get_zlib_data());
+        let r = io::Cursor::new(zlib_data);
         let mut zr = ZlibDecoder::new(r);
-        protobuf::parse_from_reader(&mut zr).map_err(From::from)
+        let mut buf = vec![];
+        zr.read_to_end(&mut buf)?;
+        PrimitiveBlock::decode(buf).map_err(From::from)
     } else {
         Err(Error::UnsupportedData)
     }

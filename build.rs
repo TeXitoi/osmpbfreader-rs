@@ -1,10 +1,8 @@
-extern crate protobuf_codegen_pure;
+extern crate prost_build;
 
 fn main() {
-    protobuf_codegen_pure::run(protobuf_codegen_pure::Args {
-        out_dir: "src",
-        input: &["protos/fileformat.proto", "protos/osmformat.proto"],
-        includes: &["protos"],
-        customize: Default::default(),
-    }).expect("protoc");
+    prost_build::compile_protos(
+        &["protos/fileformat.proto", "protos/osmformat.proto"],
+        &["protos/"],
+    ).unwrap();
 }

@@ -5,7 +5,7 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-use protobuf;
+use prost;
 use std::convert::From;
 use std::{self, fmt, io};
 
@@ -14,7 +14,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Debug)]
 pub enum Error {
     Io(io::Error),
-    Pbf(protobuf::ProtobufError),
+    Pbf(prost::DecodeError),
     UnsupportedData,
     InvalidData,
 }
@@ -50,8 +50,8 @@ impl From<io::Error> for Error {
         Error::Io(err)
     }
 }
-impl From<protobuf::ProtobufError> for Error {
-    fn from(err: protobuf::ProtobufError) -> Error {
+impl From<prost::DecodeError> for Error {
+    fn from(err: prost::DecodeError) -> Error {
         Error::Pbf(err)
     }
 }

@@ -70,7 +70,7 @@
 //! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
 //! for block in pbf.blobs().map(|b| primitive_block_from_blob(&b.unwrap())) {
 //!     let block = block.unwrap();
-//!     for group in block.get_primitivegroup().iter() {
+//!     for group in block.primitivegroup.iter() {
 //!         for node in groups::simple_nodes(&group, &block) {
 //!             println!("{:?}", node);
 //!         }
@@ -96,7 +96,9 @@
 extern crate byteorder;
 extern crate flat_map;
 extern crate flate2;
-extern crate protobuf;
+extern crate prost;
+#[macro_use]
+extern crate prost_derive;
 #[macro_use]
 extern crate rental;
 extern crate par_map;
@@ -124,8 +126,6 @@ pub mod groups;
 
 /// Generated from protobuf.
 #[allow(non_snake_case, missing_docs)]
-pub mod fileformat;
-
-/// Generated from protobuf.
-#[allow(missing_docs)]
-pub mod osmformat;
+pub mod osmpbf {
+    include!(concat!(env!("OUT_DIR"), "/osmpbf.rs"));
+}

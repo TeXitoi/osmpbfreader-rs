@@ -9,14 +9,14 @@
 
 use Result;
 use blocks;
-use fileformat::Blob;
 use objects::OsmObj;
-use osmformat::PrimitiveBlock;
+use osmpbf::Blob;
+use osmpbf::PrimitiveBlock;
 use std::iter;
 
 rental!{
     mod rent {
-        use osmformat::PrimitiveBlock;
+        use osmpbf::PrimitiveBlock;
         use blocks;
         #[rental]
         pub struct OsmObjs {
