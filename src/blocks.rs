@@ -7,9 +7,9 @@
 
 //! Iterators of OpenStreetMap objects from a block.
 
-use osmformat::PrimitiveBlock;
 use groups;
-use objects::{OsmObj, Node, Way, Relation};
+use objects::{Node, OsmObj, Relation, Way};
+use osmformat::PrimitiveBlock;
 
 pub_iterator_type! {
     #[doc="Iterator on the `OsmObj` of a `PrimitiveBlock`."]

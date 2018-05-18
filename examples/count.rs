@@ -41,16 +41,22 @@ fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &std::ffi::OsS
             }
         }
     }
-    println!("{} nodes, mean coord: {}, {}.",
-             nb_nodes,
-             sum_lat / nb_nodes as f64,
-             sum_lon / nb_nodes as f64);
-    println!("{} ways, mean |nodes|: {}",
-             nb_ways,
-             nb_way_nodes as f64 / nb_ways as f64);
-    println!("{} relations, mean |references|: {}",
-             nb_rels,
-             nb_rel_refs as f64 / nb_rels as f64);
+    println!(
+        "{} nodes, mean coord: {}, {}.",
+        nb_nodes,
+        sum_lat / nb_nodes as f64,
+        sum_lon / nb_nodes as f64
+    );
+    println!(
+        "{} ways, mean |nodes|: {}",
+        nb_ways,
+        nb_way_nodes as f64 / nb_ways as f64
+    );
+    println!(
+        "{} relations, mean |references|: {}",
+        nb_rels,
+        nb_rel_refs as f64 / nb_rels as f64
+    );
 }
 
 fn main() {
@@ -72,6 +78,6 @@ fn main() {
             println!("counting objects with tags[\"{}\"] = \"{}\"...", key, val);
             count(|tags| tags.contains(key, val), &args[1]);
         }
-        _ => println!("usage: count filename [key [value]]", ),
+        _ => println!("usage: count filename [key [value]]",),
     };
 }

@@ -93,10 +93,10 @@
 
 #![deny(missing_docs)]
 
-extern crate protobuf;
-extern crate flate2;
 extern crate byteorder;
 extern crate flat_map;
+extern crate flate2;
+extern crate protobuf;
 #[macro_use]
 extern crate rental;
 extern crate par_map;
@@ -106,19 +106,19 @@ extern crate serde;
 #[macro_use]
 extern crate serde_derive;
 
-pub use objects::*;
 pub use error::Error;
 pub use error::Result;
-pub use reader::{OsmPbfReader, primitive_block_from_blob};
+pub use objects::*;
+pub use reader::{primitive_block_from_blob, OsmPbfReader};
 
-pub mod reader;
-pub mod objects;
 pub mod blobs;
+pub mod objects;
+pub mod reader;
 
-#[allow(missing_docs)]
-pub mod error;
 #[allow(missing_docs)]
 pub mod blocks;
+#[allow(missing_docs)]
+pub mod error;
 #[allow(missing_docs)]
 pub mod groups;
 

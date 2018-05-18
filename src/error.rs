@@ -5,9 +5,9 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-use std::{self, io, fmt};
-use std::convert::From;
 use protobuf;
+use std::convert::From;
+use std::{self, fmt, io};
 
 pub type Result<T> = std::result::Result<T, Error>;
 

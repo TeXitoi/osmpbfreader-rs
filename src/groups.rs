@@ -5,13 +5,13 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
+use objects::*;
 use osmformat;
-use osmformat::{PrimitiveGroup, PrimitiveBlock};
-use std::slice;
+use osmformat::{PrimitiveBlock, PrimitiveGroup};
+use std::convert::From;
 use std::iter::Chain;
 use std::iter::Map;
-use std::convert::From;
-use objects::*;
+use std::slice;
 
 pub_iterator_type! {
     #[doc="Iterator on the `OsmObj` of a `PrimitiveGroup`."]
@@ -51,13 +51,11 @@ pub struct SimpleNodes<'a> {
 impl<'a> Iterator for SimpleNodes<'a> {
     type Item = Node;
     fn next(&mut self) -> Option<Node> {
-        self.iter.next().map(|n| {
-            Node {
-                id: NodeId(n.get_id()),
-                decimicro_lat: make_lat(n.get_lat(), self.block),
-                decimicro_lon: make_lon(n.get_lon(), self.block),
-                tags: make_tags(n.get_keys(), n.get_vals(), self.block),
-            }
+        self.iter.next().map(|n| Node {
+            id: NodeId(n.get_id()),
+            decimicro_lat: make_lat(n.get_lat(), self.block),
+            decimicro_lon: make_lon(n.get_lon(), self.block),
+            tags: make_tags(n.get_keys(), n.get_vals(), self.block),
         })
     }
     fn size_hint(&self) -> (usize, Option<usize>) {
@@ -168,7 +166,7 @@ pub struct Relations<'a> {
 impl<'a> Iterator for Relations<'a> {
     type Item = Relation;
     fn next(&mut self) -> Option<Relation> {
-        use osmformat::Relation_MemberType::{NODE, WAY, RELATION};
+        use osmformat::Relation_MemberType::{NODE, RELATION, WAY};
         self.iter.next().map(|rel| {
             let mut m = 0;
             let refs = rel.get_memids()

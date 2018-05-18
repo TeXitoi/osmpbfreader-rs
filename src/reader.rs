@@ -7,18 +7,18 @@
 
 //! Tools for reading a pbf file.
 
-use fileformat::{Blob, BlobHeader};
-use osmformat::PrimitiveBlock;
-use error::{Error, Result};
-use objects::{OsmId, OsmObj};
 use blobs::{self, result_blob_into_iter};
+use error::{Error, Result};
+use fileformat::{Blob, BlobHeader};
+use objects::{OsmId, OsmObj};
+use osmformat::PrimitiveBlock;
 use par_map::{self, ParMap};
 use protobuf;
+use std::collections::BTreeSet;
+use std::collections::btree_map::BTreeMap;
 use std::convert::From;
 use std::io::{self, Read};
 use std::iter;
-use std::collections::btree_map::BTreeMap;
-use std::collections::BTreeSet;
 
 /// The object to manage a pbf file.
 pub struct OsmPbfReader<R> {
@@ -84,7 +84,8 @@ impl<R: io::Read> OsmPbfReader<R> {
     /// assert_eq!(pbf.into_inner().position(), 0);
     /// ```
     pub fn rewind(&mut self) -> Result<()>
-        where R: io::Seek
+    where
+        R: io::Seek,
     {
         try!(self.r.seek(io::SeekFrom::Start(0)));
         self.finished = false;
@@ -113,8 +114,9 @@ impl<R: io::Read> OsmPbfReader<R> {
     /// }
     /// ```
     pub fn get_objs_and_deps<F>(&mut self, mut pred: F) -> Result<BTreeMap<OsmId, OsmObj>>
-        where R: io::Seek,
-              F: FnMut(&OsmObj) -> bool
+    where
+        R: io::Seek,
+        F: FnMut(&OsmObj) -> bool,
     {
         let mut finished = false;
         let mut deps = BTreeSet::new();
@@ -129,18 +131,14 @@ impl<R: io::Read> OsmPbfReader<R> {
                     continue;
                 }
                 finished = match obj {
-                    OsmObj::Relation(ref rel) => {
-                        rel.refs
-                            .iter()
-                            .filter(|r| !objects.contains_key(&r.member))
-                            .fold(finished, |accu, r| !deps.insert(r.member) && accu)
-                    }
-                    OsmObj::Way(ref way) => {
-                        way.nodes
-                            .iter()
-                            .filter(|n| !objects.contains_key(&(**n).into()))
-                            .fold(finished, |accu, n| !deps.insert((*n).into()) && accu)
-                    }
+                    OsmObj::Relation(ref rel) => rel.refs
+                        .iter()
+                        .filter(|r| !objects.contains_key(&r.member))
+                        .fold(finished, |accu, r| !deps.insert(r.member) && accu),
+                    OsmObj::Way(ref way) => way.nodes
+                        .iter()
+                        .filter(|n| !objects.contains_key(&(**n).into()))
+                        .fold(finished, |accu, n| !deps.insert((*n).into()) && accu),
                     OsmObj::Node(_) => finished,
                 };
                 deps.remove(&obj.id());

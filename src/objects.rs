@@ -9,8 +9,8 @@
 //!
 //! There are 3 types of objects: nodes, ways and relations.
 
-use std::ops::{Deref, DerefMut};
 use std::iter::FromIterator;
+use std::ops::{Deref, DerefMut};
 
 /// Tags represents the features of the objects.  See the
 /// [OpenStreetMap wiki page about

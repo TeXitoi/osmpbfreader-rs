@@ -3,32 +3,20 @@ sudo: false
 cache: cargo
 addons:
   apt:
-    packages:
-    - protobuf-compiler
-before_script:
-- cargo install -f --vers=0.7.1 rustfmt
-- export PATH=$PATH:$HOME/.cargo/bin
+    packages: protobuf-compiler
+env: RUN=TEST
 rust:
 - nightly
 - beta
 - stable
 matrix:
-  allow_failures:
-  - rust: nightly
+  include:
+  - rust: stable
+    env: RUN=RUSTFMT
+    before_script: rustup component add rustfmt-preview
+    script:
+    - cargo check
+    - cargo fmt -- --write-mode diff
 script:
-- cargo fmt -- --write-mode=diff
 - cargo build --verbose
 - cargo test --verbose
-after_success: |
-  [ $TRAVIS_RUST_VERSION = stable ] &&
-  [ $TRAVIS_BRANCH = master ] &&
-  [ $TRAVIS_PULL_REQUEST = false ] &&
-  cargo doc &&
-  echo "<meta http-equiv=refresh content=0;url=osmpbfreader/index.html>" > target/doc/index.html &&
-  pip install --user ghp-import &&
-  export PATH="$PATH:$HOME/.local/bin" &&
-  ghp-import -n target/doc &&
-  git push -fq https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git gh-pages
-env:
-  global:
-  - secure: JXoz6+cFipM3y6/Q8Zz6driMUM8aePLvIVGm39NEk9Y1GOqzeNElYzY5I8FLNnTNmMIqL8PwC4J8krlb/ZMB690MGJEDkpg31pyhVWr2VyQGrz2maw0AuVCe7naNdA8K6I7ftYAOPmzwqzmp6lB1M9rYbBtbmayoOP4sNqBtpVc=

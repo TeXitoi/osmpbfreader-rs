@@ -17,8 +17,10 @@ fn main() {
     let r = std::fs::File::open(&path).unwrap();
     let mut pbf = osmpbfreader::OsmPbfReader::new(r);
     let objects = pbf.get_objs_and_deps(wanted).unwrap();
-    println!("The relation Paris is composed of {:?} items",
-             objects.len());
+    println!(
+        "The relation Paris is composed of {:?} items",
+        objects.len()
+    );
     for (id, _) in objects {
         println!("{:?}", id);
     }
