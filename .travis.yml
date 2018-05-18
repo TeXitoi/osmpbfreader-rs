@@ -1,9 +1,6 @@
 language: rust
 sudo: false
 cache: cargo
-addons:
-  apt:
-    packages: protobuf-compiler
 env: RUN=TEST
 rust:
 - nightly

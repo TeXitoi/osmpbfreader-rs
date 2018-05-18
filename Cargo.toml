@@ -1,6 +1,6 @@
 [package]
 name = "osmpbfreader"
-version = "0.11.3"
+version = "0.12.0"
 authors = ["Guillaume Pinot <texitoi@texitoi.eu>"]
 description = "Read OpenStreetMap PBF files in rust."
 documentation = "https://docs.rs/osmpbfreader"
@@ -17,7 +17,7 @@ appveyor = { repository = "TeXitoi/osmpbfreader-rs" }
 [dependencies]
 flate2 = "0.2.17"
 byteorder = "1.0"
-protobuf = "1.1"
+protobuf = "2"
 flat_map = { version = "0.0.7", features = ["serde1"] }
 rental = "0.4"
 par-map = "0.1"
@@ -30,4 +30,4 @@ log = "0.3.6"
 env_logger = "0.3"
 
 [build-dependencies]
-protoc-rust = "1.5"
+protobuf-codegen-pure = "2"

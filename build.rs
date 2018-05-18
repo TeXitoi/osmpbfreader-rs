@@ -1,9 +1,10 @@
-extern crate protoc_rust;
+extern crate protobuf_codegen_pure;
 
 fn main() {
-    protoc_rust::run(protoc_rust::Args {
+    protobuf_codegen_pure::run(protobuf_codegen_pure::Args {
         out_dir: "src",
         input: &["protos/fileformat.proto", "protos/osmformat.proto"],
         includes: &["protos"],
+        customize: Default::default(),
     }).expect("protoc");
 }
