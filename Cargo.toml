@@ -1,6 +1,6 @@
 [package]
 name = "osmpbfreader"
-version = "0.11.2"
+version = "0.11.3"
 authors = ["Guillaume Pinot <texitoi@texitoi.eu>"]
 description = "Read OpenStreetMap PBF files in rust."
 documentation = "https://docs.rs/osmpbfreader"
@@ -28,3 +28,6 @@ serde_derive = "1.0"
 [dev-dependencies]
 log = "0.3.6"
 env_logger = "0.3"
+
+[build-dependencies]
+protoc-rust = "1.5"

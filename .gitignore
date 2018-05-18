@@ -1,3 +1,5 @@
 /target
 /Cargo.lock
 *~
+/src/fileformat.rs
+/src/osmformat.rs

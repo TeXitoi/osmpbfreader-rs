@@ -1,6 +1,10 @@
 language: rust
 sudo: false
 cache: cargo
+addons:
+  apt:
+    packages:
+    - protobuf-compiler
 before_script:
 - cargo install -f --vers=0.7.1 rustfmt
 - export PATH=$PATH:$HOME/.cargo/bin
