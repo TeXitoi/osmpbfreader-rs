@@ -87,7 +87,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     where
         R: io::Seek,
     {
-        try!(self.r.seek(io::SeekFrom::Start(0)));
+        self.r.seek(io::SeekFrom::Start(0))?;
         self.finished = false;
         Ok(())
     }
@@ -123,10 +123,10 @@ impl<R: io::Read> OsmPbfReader<R> {
         let mut objects = BTreeMap::new();
         let mut first_pass = true;
         while !finished {
-            try!(self.rewind());
+            self.rewind()?;
             finished = true;
             for obj in self.par_iter() {
-                let obj = try!(obj);
+                let obj = obj?;
                 if (!first_pass || !pred(&obj)) && !deps.contains(&obj.id()) {
                     continue;
                 }
@@ -168,16 +168,16 @@ impl<R: io::Read> OsmPbfReader<R> {
 
     fn push(&mut self, sz: u64) -> Result<()> {
         self.buf.clear();
-        try!(self.r.by_ref().take(sz).read_to_end(&mut self.buf));
+        self.r.by_ref().take(sz).read_to_end(&mut self.buf)?;
         assert_eq!(sz, self.buf.len() as u64);
         Ok(())
     }
     fn try_blob(&mut self, sz: u64) -> Result<Option<Blob>> {
-        try!(self.push(sz));
-        let header: BlobHeader = try!(protobuf::parse_from_bytes(&self.buf));
+        self.push(sz)?;
+        let header: BlobHeader = protobuf::parse_from_bytes(&self.buf)?;
         let sz = header.get_datasize() as u64;
-        try!(self.push(sz));
-        let blob: Blob = try!(protobuf::parse_from_bytes(&self.buf));
+        self.push(sz)?;
+        let blob: Blob = protobuf::parse_from_bytes(&self.buf)?;
         if header.get_field_type() == "OSMData" {
             Ok(Some(blob))
         } else if header.get_field_type() == "OSMHeader" {
