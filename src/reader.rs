@@ -66,7 +66,13 @@ impl<R: io::Read> OsmPbfReader<R> {
     /// }
     /// ```
     pub fn par_iter<'a>(&'a mut self) -> ParIter<'a, R> {
-        ParIter(self.blobs().par_flat_map(result_blob_into_iter))
+        use std::env;
+
+        let blobs = self.blobs();
+        ParIter(match env::var("PBF_ITER_THREADS").ok().and_then(|v| v.parse().ok()) {
+            Some(nb) => blobs.with_nb_threads(nb).par_flat_map(result_blob_into_iter),
+            None => blobs.par_flat_map(result_blob_into_iter),
+        })
     }
 
     /// Rewinds the pbf file to the begining.
