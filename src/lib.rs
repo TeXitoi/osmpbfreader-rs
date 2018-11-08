@@ -48,6 +48,8 @@
 //! decoded in parallel.
 //!
 //! ```rust
+//! # #[cfg(feature="par-map")]
+//! # {
 //! use std::process::exit;
 //! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
 //! for obj in pbf.par_iter() {
@@ -56,6 +58,7 @@
 //!
 //!     println!("{:?}", obj);
 //! }
+//! # }
 //! ```
 //!
 //! # Into the details
@@ -99,12 +102,15 @@ extern crate flate2;
 extern crate protobuf;
 #[macro_use]
 extern crate rental;
-extern crate par_map;
 #[macro_use]
 extern crate pub_iterator_type;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+#[cfg(feature="par-map")]
+extern crate par_map;
+#[cfg(feature="rayon")]
+extern crate rayon;
 
 pub use error::Error;
 pub use error::Result;

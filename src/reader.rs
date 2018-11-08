@@ -12,13 +12,18 @@ use error::{Error, Result};
 use fileformat::{Blob, BlobHeader};
 use objects::{OsmId, OsmObj};
 use osmformat::PrimitiveBlock;
-use par_map::{self, ParMap};
 use protobuf;
 use std::collections::BTreeSet;
 use std::collections::btree_map::BTreeMap;
 use std::convert::From;
 use std::io::{self, Read};
 use std::iter;
+
+#[cfg(feature="par-map")]
+use par_map::{self, ParMap};
+
+#[cfg(feature="rayon")]
+use rayon::prelude::*;
 
 /// The object to manage a pbf file.
 pub struct OsmPbfReader<R> {
@@ -51,12 +56,7 @@ impl<R: io::Read> OsmPbfReader<R> {
         Iter(self.blobs().flat_map(result_blob_into_iter))
     }
 
-    /// Returns a parallel iterator on the OsmObj of the pbf file, using the
-    /// specified number of threads. See `par_iter`.
-    pub fn par_iter_with_nb_threads<'a>(&'a mut self, nb: usize) -> ParIter<'a, R> {
-        ParIter(self.blobs().with_nb_threads(nb).par_flat_map(result_blob_into_iter))
-    }
-
+    #[cfg(feature="par-map")]
     /// Returns a parallel iterator on the OsmObj of the pbf file.
     ///
     /// Several threads decode in parallel the file.  The memory and
@@ -73,6 +73,28 @@ impl<R: io::Read> OsmPbfReader<R> {
     /// ```
     pub fn par_iter<'a>(&'a mut self) -> ParIter<'a, R> {
        ParIter(self.blobs().par_flat_map(result_blob_into_iter))
+    }
+
+    #[cfg(feature="par-map")]
+    /// Returns a parallel iterator on the OsmObj of the pbf file, using the
+    /// specified number of threads. See `par_iter`.
+    pub fn par_iter_with_nb_threads<'a>(&'a mut self, nb: usize) -> ParIter<'a, R> {
+        ParIter(self.blobs().with_nb_threads(nb).par_flat_map(result_blob_into_iter))
+    }
+
+    #[cfg(feature="rayon")]
+    /// Returns a rayon parallel iterator on the OsmObj of the pbf file.
+    ///
+    /// #Example
+    ///
+    /// ```
+    /// # extern crate rayon;
+    /// # use rayon::prelude::*;
+    /// let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
+    /// println!("{}", pbf.rayon_iter().count());
+    /// ```
+    pub fn rayon_iter(&mut self) -> impl ParallelIterator<Item=Result<OsmObj>> + '_ where R: Send {
+        self.blobs().par_bridge().flat_map(|blob| result_blob_into_iter(blob).par_bridge())
     }
 
     /// Rewinds the pbf file to the begining.
@@ -131,7 +153,14 @@ impl<R: io::Read> OsmPbfReader<R> {
         while !finished {
             self.rewind()?;
             finished = true;
-            for obj in self.par_iter() {
+
+            let iter;
+            #[cfg(feature="par-map")]
+            { iter = self.par_iter() }
+            #[cfg(not(feature="par-map"))]
+            { iter = self.iter() } // IMPROVEMENT: use rayon if available
+
+            for obj in iter {
                 let obj = obj?;
                 if (!first_pass || !pred(&obj)) && !deps.contains(&obj.id()) {
                     continue;
@@ -259,6 +288,7 @@ pub_iterator_type! {
     where R: io::Read + 'a
 }
 
+#[cfg(feature="par-map")]
 pub_iterator_type! {
     #[doc="Parallel iterator on the `OsmObj` of the pbf file."]
     ParIter['a, R] = par_map::FlatMap<Blobs<'a, R>,

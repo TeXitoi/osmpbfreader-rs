@@ -17,3 +17,5 @@ matrix:
 script:
 - cargo build --verbose
 - cargo test --verbose
+- cargo test --verbose --no-default-features
+- cargo test --verbose --no-default-features --features="rayon"
