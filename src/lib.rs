@@ -28,7 +28,7 @@
 //! }
 //! ```
 //!
-//! # Readding
+//! # Reading
 //!
 //! The easiest way to read a PBF file is to directly iterate on the
 //! `OsmObj`.
