@@ -134,13 +134,13 @@ impl<'a> Iterator for Ways<'a> {
     fn next(&mut self) -> Option<Way> {
         self.iter.next().map(|w| {
             let mut n = 0;
-            let nodes = w.get_refs()
+            let nodes = w
+                .get_refs()
                 .iter()
                 .map(|&dn| {
                     n += dn;
                     NodeId(n)
-                })
-                .collect();
+                }).collect();
             Way {
                 id: WayId(w.get_id()),
                 nodes: nodes,
@@ -169,7 +169,8 @@ impl<'a> Iterator for Relations<'a> {
         use osmformat::Relation_MemberType::{NODE, RELATION, WAY};
         self.iter.next().map(|rel| {
             let mut m = 0;
-            let refs = rel.get_memids()
+            let refs = rel
+                .get_memids()
                 .iter()
                 .zip(rel.get_types().iter())
                 .zip(rel.get_roles_sid().iter())
@@ -183,8 +184,7 @@ impl<'a> Iterator for Relations<'a> {
                         },
                         role: make_string(role as usize, self.block),
                     }
-                })
-                .collect();
+                }).collect();
             Relation {
                 id: RelationId(rel.get_id()),
                 refs: refs,
@@ -209,7 +209,8 @@ fn make_lon(c: i64, b: &osmformat::PrimitiveBlock) -> i32 {
     ((b.get_lon_offset() + granularity * c) / 100) as i32
 }
 fn make_tags(keys: &[u32], vals: &[u32], b: &PrimitiveBlock) -> Tags {
-    let mut tags: Tags = keys.iter()
+    let mut tags: Tags = keys
+        .iter()
         .zip(vals.iter())
         .map(|(&k, &v)| (make_string(k as usize, b), make_string(v as usize, b)))
         .collect();

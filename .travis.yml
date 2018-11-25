@@ -13,7 +13,7 @@ matrix:
     before_script: rustup component add rustfmt-preview
     script:
     - cargo check
-    - cargo fmt -- --write-mode diff
+    - cargo fmt --all -- --check
 script:
 - cargo build --verbose
 - cargo test --verbose

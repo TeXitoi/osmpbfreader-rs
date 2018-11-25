@@ -7,12 +7,12 @@
 
 //! Iterator and utilities for `fileformat::Blob`.
 
-use Result;
 use blocks;
 use fileformat::Blob;
 use objects::OsmObj;
 use osmformat::PrimitiveBlock;
 use std::iter;
+use Result;
 
 rental!{
     mod rent {

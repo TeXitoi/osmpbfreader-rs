@@ -14,8 +14,8 @@ use objects::{OsmId, OsmObj};
 use osmformat::PrimitiveBlock;
 use par_map::{self, ParMap};
 use protobuf;
-use std::collections::BTreeSet;
 use std::collections::btree_map::BTreeMap;
+use std::collections::BTreeSet;
 use std::convert::From;
 use std::io::{self, Read};
 use std::iter;
@@ -131,11 +131,13 @@ impl<R: io::Read> OsmPbfReader<R> {
                     continue;
                 }
                 finished = match obj {
-                    OsmObj::Relation(ref rel) => rel.refs
+                    OsmObj::Relation(ref rel) => rel
+                        .refs
                         .iter()
                         .filter(|r| !objects.contains_key(&r.member))
                         .fold(finished, |accu, r| !deps.insert(r.member) && accu),
-                    OsmObj::Way(ref way) => way.nodes
+                    OsmObj::Way(ref way) => way
+                        .nodes
                         .iter()
                         .filter(|n| !objects.contains_key(&(**n).into()))
                         .fold(finished, |accu, n| !deps.insert((*n).into()) && accu),
