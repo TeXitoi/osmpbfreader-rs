@@ -6,5 +6,6 @@ fn main() {
         input: &["protos/fileformat.proto", "protos/osmformat.proto"],
         includes: &["protos"],
         customize: Default::default(),
-    }).expect("protoc");
+    })
+    .expect("protoc");
 }

@@ -140,7 +140,8 @@ impl<'a> Iterator for Ways<'a> {
                 .map(|&dn| {
                     n += dn;
                     NodeId(n)
-                }).collect();
+                })
+                .collect();
             Way {
                 id: WayId(w.get_id()),
                 nodes: nodes,
@@ -184,7 +185,8 @@ impl<'a> Iterator for Relations<'a> {
                         },
                         role: make_string(role as usize, self.block),
                     }
-                }).collect();
+                })
+                .collect();
             Relation {
                 id: RelationId(rel.get_id()),
                 refs: refs,

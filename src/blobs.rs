@@ -14,7 +14,7 @@ use osmformat::PrimitiveBlock;
 use std::iter;
 use Result;
 
-rental!{
+rental! {
     mod rent {
         use osmformat::PrimitiveBlock;
         use blocks;
