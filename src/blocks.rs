@@ -13,7 +13,7 @@ use osmformat::PrimitiveBlock;
 
 pub_iterator_type! {
     #[doc="Iterator on the `OsmObj` of a `PrimitiveBlock`."]
-    OsmObjs['a] = Box<Iterator<Item = OsmObj> + 'a>
+    OsmObjs['a] = Box<Iterator<Item = OsmObj> + Send + 'a>
 }
 
 pub fn iter(block: &PrimitiveBlock) -> OsmObjs {
@@ -23,7 +23,7 @@ pub fn iter(block: &PrimitiveBlock) -> OsmObjs {
 
 pub_iterator_type! {
     #[doc="Iterator on the `Node` of a `PrimitiveBlock`."]
-    Nodes['a] = Box<Iterator<Item = Node> + 'a>
+    Nodes['a] = Box<Iterator<Item = Node> + Send + 'a>
 }
 
 pub fn nodes(block: &PrimitiveBlock) -> Nodes {
@@ -43,7 +43,7 @@ pub fn ways(block: &PrimitiveBlock) -> Ways {
 
 pub_iterator_type! {
     #[doc="Iterator on the `Relation` of a `PrimitiveBlock`."]
-    Relations['a] = Box<Iterator<Item = Relation> + 'a>
+    Relations['a] = Box<Iterator<Item = Relation> + Send + 'a>
 }
 
 pub fn relations(block: &PrimitiveBlock) -> Relations {

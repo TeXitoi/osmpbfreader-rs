@@ -20,7 +20,14 @@ fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &std::ffi::OsS
     let mut nb_way_nodes = 0;
     let mut nb_rels = 0;
     let mut nb_rel_refs = 0;
-    for obj in pbf.par_iter().map(Result::unwrap) {
+
+    let iter;
+    #[cfg(feature="par-map")]
+    { iter = pbf.par_iter() }
+    #[cfg(not(feature="par-map"))]
+    { iter = pbf.iter() }
+
+    for obj in iter.map(Result::unwrap) {
         if !filter(obj.tags()) {
             continue;
         }
