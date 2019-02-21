@@ -16,7 +16,7 @@ use std::ops::{Deref, DerefMut};
 /// [OpenStreetMap wiki page about
 /// tags](http://wiki.openstreetmap.org/wiki/Tags) for more
 /// information.
-#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct Tags(TagsImpl);
 /// FlatMap representing the key-value pairs of the tags
 pub type TagsImpl = ::flat_map::FlatMap<String, String>;
