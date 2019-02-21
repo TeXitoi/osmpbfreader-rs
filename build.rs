@@ -4,11 +4,9 @@ use std::io::Write;
 
 static MOD_RS: &[u8] = b"
 /// Generated from protobuf.
-#[allow(non_snake_case, missing_docs)]
 pub mod fileformat;
 
 /// Generated from protobuf.
-#[allow(missing_docs)]
 pub mod osmformat;
 ";
 
@@ -21,8 +19,7 @@ fn main() -> Result<(), Box<std::error::Error>> {
         customize: Default::default(),
     })?;
 
-    let mut file = std::fs::File::create(out_dir + "/mod.rs")?;
-    file.write_all(MOD_RS)?;
+    std::fs::File::create(out_dir + "/mod.rs")?.write_all(MOD_RS)?;
 
     Ok(())
 }
