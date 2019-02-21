@@ -122,6 +122,13 @@ pub mod error;
 #[allow(missing_docs)]
 pub mod groups;
 
+mod pbf {
+    include!(concat!(env!("OUT_DIR"), "/mod.rs"));
+}
+
+pub use pbf::{fileformat, osmformat};
+
+/*
 /// Generated from protobuf.
 #[allow(non_snake_case, missing_docs)]
 pub mod fileformat;
@@ -129,3 +136,4 @@ pub mod fileformat;
 /// Generated from protobuf.
 #[allow(missing_docs)]
 pub mod osmformat;
+*/

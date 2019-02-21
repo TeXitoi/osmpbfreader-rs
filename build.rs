@@ -1,11 +1,28 @@
 extern crate protobuf_codegen_pure;
 
-fn main() {
+use std::io::Write;
+
+static MOD_RS: &[u8] = b"
+/// Generated from protobuf.
+#[allow(non_snake_case, missing_docs)]
+pub mod fileformat;
+
+/// Generated from protobuf.
+#[allow(missing_docs)]
+pub mod osmformat;
+";
+
+fn main() -> Result<(), Box<std::error::Error>> {
+    let out_dir = std::env::var("OUT_DIR")?;
     protobuf_codegen_pure::run(protobuf_codegen_pure::Args {
-        out_dir: "src",
+        out_dir: &out_dir,
         input: &["protos/fileformat.proto", "protos/osmformat.proto"],
         includes: &["protos"],
         customize: Default::default(),
-    })
-    .expect("protoc");
+    })?;
+
+    let mut file = std::fs::File::create(out_dir + "/mod.rs")?;
+    file.write_all(MOD_RS)?;
+
+    Ok(())
 }
