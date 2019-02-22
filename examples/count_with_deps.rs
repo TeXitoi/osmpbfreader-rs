@@ -58,7 +58,7 @@ fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &std::ffi::OsS
 }
 
 fn main() {
-    env_logger::init().unwrap();
+    env_logger::init();
     let args: Vec<_> = std::env::args_os().collect();
     match args.len() {
         3 => {
