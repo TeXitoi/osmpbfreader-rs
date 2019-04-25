@@ -12,14 +12,27 @@
 use std::iter::FromIterator;
 use std::ops::{Deref, DerefMut};
 
+macro_rules! impl_as_ref {
+    ($x:ident) => {
+        impl AsRef<$x> for $x {
+            fn as_ref(&self) -> &$x {
+                self
+            }
+        }
+    };
+}
+
+/// FlatMap representing the key-value pairs of the tags
+pub type TagsImpl = ::flat_map::FlatMap<String, String>;
+
 /// Tags represents the features of the objects.  See the
 /// [OpenStreetMap wiki page about
 /// tags](http://wiki.openstreetmap.org/wiki/Tags) for more
 /// information.
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct Tags(TagsImpl);
-/// FlatMap representing the key-value pairs of the tags
-pub type TagsImpl = ::flat_map::FlatMap<String, String>;
+impl_as_ref!(Tags);
+
 impl Tags {
     /// Creates a new, empty `Tags` object.
     pub fn new() -> Tags {
@@ -30,17 +43,20 @@ impl Tags {
         self.0.get(key).map_or(false, |v| v.as_str() == value)
     }
 }
+
 impl Deref for Tags {
     type Target = TagsImpl;
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
+
 impl DerefMut for Tags {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
     }
 }
+
 impl FromIterator<(String, String)> for Tags {
     fn from_iter<T: IntoIterator<Item = (String, String)>>(iter: T) -> Self {
         Tags(iter.into_iter().collect())
@@ -69,6 +85,7 @@ pub enum OsmId {
     /// The identifier of a relation
     Relation(RelationId),
 }
+
 impl OsmId {
     /// Returns `true` if the id is a node id.
     pub fn is_node(&self) -> bool {
@@ -115,6 +132,8 @@ pub enum OsmObj {
     /// A relation
     Relation(Relation),
 }
+impl_as_ref!(OsmObj);
+
 impl OsmObj {
     /// Returns the tags of the object.
     pub fn tags(&self) -> &Tags {
@@ -181,6 +200,8 @@ pub struct Node {
     /// The longitude in decimicro degrees (10⁻⁷ degrees).
     pub decimicro_lon: i32,
 }
+impl_as_ref!(Node);
+
 impl Node {
     /// Returns the latitude of the node in degrees.
     pub fn lat(&self) -> f64 {
@@ -204,6 +225,8 @@ pub struct Way {
     /// The ordered list of nodes as id.
     pub nodes: Vec<NodeId>,
 }
+impl_as_ref!(Way);
+
 impl Way {
     /// Returns true if the way is
     /// [open](http://wiki.openstreetmap.org/wiki/Way#Open_way).
@@ -225,6 +248,7 @@ pub struct Ref {
     /// Role of the member.
     pub role: String,
 }
+impl_as_ref!(Ref);
 
 /// An OpenStreetMap relation.  See the [OpenStreetMap wiki page about
 /// relation](http://wiki.openstreetmap.org/wiki/Relation) for more
@@ -238,6 +262,7 @@ pub struct Relation {
     /// Members of the relation.
     pub refs: Vec<Ref>,
 }
+impl_as_ref!(Relation);
 
 impl ::std::convert::From<NodeId> for OsmId {
     fn from(n: NodeId) -> Self {
@@ -268,4 +293,21 @@ impl ::std::convert::From<Relation> for OsmObj {
     fn from(r: Relation) -> Self {
         OsmObj::Relation(r)
     }
+}
+
+#[test]
+fn as_ref_check() {
+    fn foo<T: AsRef<Tags>>(f: &[T]) {
+        assert_eq!(f[0].as_ref().contains("foo", "foo"), false);
+    }
+    fn foo2<T: AsRef<Tags>>(f: T) {
+        assert_eq!(f.as_ref().contains("foo", "foo"), false);
+    }
+    let tag = Tags::new();
+    foo(&vec![&tag]);
+    foo(&vec![tag]);
+
+    let tag = Tags::new();
+    foo2(&tag);
+    foo2(tag);
 }
