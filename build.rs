@@ -10,7 +10,7 @@ pub mod fileformat;
 pub mod osmformat;
 ";
 
-fn main() -> Result<(), Box<std::error::Error>> {
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     let out_dir = std::env::var("OUT_DIR")?;
     protobuf_codegen_pure::run(protobuf_codegen_pure::Args {
         out_dir: &out_dir,

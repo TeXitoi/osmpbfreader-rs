@@ -37,7 +37,7 @@ impl std::error::Error for Error {
             Error::InvalidData => "Invalid data",
         }
     }
-    fn cause(&self) -> Option<&std::error::Error> {
+    fn cause(&self) -> Option<&dyn std::error::Error> {
         match *self {
             Error::Io(ref e) => Some(e),
             Error::Pbf(ref e) => Some(e),
