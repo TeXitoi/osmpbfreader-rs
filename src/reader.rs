@@ -20,6 +20,21 @@ use std::convert::From;
 use std::io::{self, Read};
 use std::iter;
 
+pub trait StoreObjs {
+    fn insert(&mut self, key: OsmId, value: OsmObj);
+    fn contains_key(&self, key: &OsmId) -> bool;
+}
+
+impl StoreObjs for BTreeMap<OsmId, OsmObj> {
+    fn insert(&mut self, key: OsmId, value: OsmObj) {
+        self.insert(key, value);
+    }
+
+    fn contains_key(&self, key: &OsmId) -> bool {
+        self.contains_key(key)
+    }
+}
+
 /// The object to manage a pbf file.
 pub struct OsmPbfReader<R> {
     buf: Vec<u8>,
@@ -113,14 +128,14 @@ impl<R: io::Read> OsmPbfReader<R> {
     ///     println!("{:?}: {:?}", id, obj);
     /// }
     /// ```
-    pub fn get_objs_and_deps<F>(&mut self, mut pred: F) -> Result<BTreeMap<OsmId, OsmObj>>
+    pub fn get_objs_and_deps_store<F, T>(&mut self, mut pred: F, objects: &mut T) -> Result<()>
     where
         R: io::Seek,
         F: FnMut(&OsmObj) -> bool,
+        T: StoreObjs,
     {
         let mut finished = false;
         let mut deps = BTreeSet::new();
-        let mut objects = BTreeMap::new();
         let mut first_pass = true;
         while !finished {
             self.rewind()?;
@@ -148,7 +163,19 @@ impl<R: io::Read> OsmPbfReader<R> {
             }
             first_pass = false;
         }
-        Ok(objects)
+        Ok(())
+    }
+
+    pub fn get_objs_and_deps<F>(&mut self, mut pred: F) -> Result<BTreeMap<OsmId, OsmObj>>
+    where
+        R: io::Seek,
+        F: FnMut(&OsmObj) -> bool,
+    {
+        let mut objects = BTreeMap::new();
+        match self.get_objs_and_deps_store(pred, &mut objects) {
+            Ok(_) => Ok(objects),
+            Err(e) => Err(e),
+        }
     }
     /// Extract the Read object.
     ///
