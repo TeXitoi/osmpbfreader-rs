@@ -104,7 +104,7 @@ impl OsmId {
         }
     }
     /// Returns the inner id.
-    pub fn as_i64(&self) -> i64 {
+    pub fn inner_id(&self) -> i64 {
         match *self {
             OsmId::Node(n) => n.0,
             OsmId::Way(n) => n.0,
