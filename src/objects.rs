@@ -103,6 +103,14 @@ impl OsmId {
             _ => None,
         }
     }
+    /// Returns the inner id.
+    pub fn inner_id(&self) -> i64 {
+        match *self {
+            OsmId::Node(n) => n.0,
+            OsmId::Way(n) => n.0,
+            OsmId::Relation(n) => n.0,
+        }
+    }
 }
 
 /// An OpenStreetMap object.

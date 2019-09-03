@@ -109,7 +109,7 @@ extern crate serde_derive;
 pub use error::Error;
 pub use error::Result;
 pub use objects::*;
-pub use reader::{primitive_block_from_blob, OsmPbfReader};
+pub use reader::{primitive_block_from_blob, OsmPbfReader, StoreObjs};
 
 pub mod blobs;
 pub mod objects;

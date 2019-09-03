@@ -20,6 +20,24 @@ use std::convert::From;
 use std::io::{self, Read};
 use std::iter;
 
+/// Trait to allow generic objects (not just BTreeMap) in some methods.
+pub trait StoreObjs {
+    /// Insert given object at given key index.
+    fn insert(&mut self, key: OsmId, value: OsmObj);
+    /// Check if object contains the given key.
+    fn contains_key(&self, key: &OsmId) -> bool;
+}
+
+impl StoreObjs for BTreeMap<OsmId, OsmObj> {
+    fn insert(&mut self, key: OsmId, value: OsmObj) {
+        self.insert(key, value);
+    }
+
+    fn contains_key(&self, key: &OsmId) -> bool {
+        self.contains_key(key)
+    }
+}
+
 /// The object to manage a pbf file.
 pub struct OsmPbfReader<R> {
     buf: Vec<u8>,
@@ -92,35 +110,15 @@ impl<R: io::Read> OsmPbfReader<R> {
         Ok(())
     }
 
-    /// This function give you the ability to find all the objects
-    /// validating a predicate and all there dependencies.  The file
-    /// will be decoded in parallel.
-    ///
-    /// # Example
-    ///
-    /// If you want to extract all the administrative boundaries
-    /// and all there dependencies you can do something like that:
-    ///
-    /// ```
-    /// fn is_admin(obj: &osmpbfreader::OsmObj) -> bool {
-    ///     // get relations with tags[boundary] == administrative
-    ///     obj.is_relation() && obj.tags().contains("boundary", "administrative")
-    /// }
-    ///
-    /// let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::Cursor::new([]));
-    /// let objs = pbf.get_objs_and_deps(is_admin).unwrap();
-    /// for (id, obj) in &objs {
-    ///     println!("{:?}: {:?}", id, obj);
-    /// }
-    /// ```
-    pub fn get_objs_and_deps<F>(&mut self, mut pred: F) -> Result<BTreeMap<OsmId, OsmObj>>
+    /// Same as `get_objs_and_deps` but generic.
+    pub fn get_objs_and_deps_store<'a, F, T>(&mut self, mut pred: F, objects: &mut T) -> Result<()>
     where
         R: io::Seek,
         F: FnMut(&OsmObj) -> bool,
+        T: StoreObjs,
     {
         let mut finished = false;
         let mut deps = BTreeSet::new();
-        let mut objects = BTreeMap::new();
         let mut first_pass = true;
         while !finished {
             self.rewind()?;
@@ -148,7 +146,40 @@ impl<R: io::Read> OsmPbfReader<R> {
             }
             first_pass = false;
         }
-        Ok(objects)
+        Ok(())
+    }
+
+    /// This function give you the ability to find all the objects
+    /// validating a predicate and all there dependencies.  The file
+    /// will be decoded in parallel.
+    ///
+    /// # Example
+    ///
+    /// If you want to extract all the administrative boundaries
+    /// and all there dependencies you can do something like that:
+    ///
+    /// ```
+    /// fn is_admin(obj: &osmpbfreader::OsmObj) -> bool {
+    ///     // get relations with tags[boundary] == administrative
+    ///     obj.is_relation() && obj.tags().contains("boundary", "administrative")
+    /// }
+    ///
+    /// let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::Cursor::new([]));
+    /// let objs = pbf.get_objs_and_deps(is_admin).unwrap();
+    /// for (id, obj) in &objs {
+    ///     println!("{:?}: {:?}", id, obj);
+    /// }
+    /// ```
+    pub fn get_objs_and_deps<F>(&mut self, pred: F) -> Result<BTreeMap<OsmId, OsmObj>>
+    where
+        R: io::Seek,
+        F: FnMut(&OsmObj) -> bool,
+    {
+        let mut objects = BTreeMap::new();
+        match self.get_objs_and_deps_store(pred, &mut objects) {
+            Ok(_) => Ok(objects),
+            Err(e) => Err(e),
+        }
     }
     /// Extract the Read object.
     ///
