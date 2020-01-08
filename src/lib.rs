@@ -17,12 +17,12 @@
 //! the nodes of this way).  For that, an easy to use function is
 //! availlable.
 //!
-//! ```
+//! ```rust
 //! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::Cursor::new([]));
 //! let objs = pbf.get_objs_and_deps(|obj| {
-//!         obj.is_way() && obj.tags().contains_key("highway")
-//!     })
-//!     .unwrap();
+//!     obj.is_way() && obj.tags().contains_key("highway")
+//! })
+//! .unwrap();
 //! for (id, obj) in &objs {
 //!     println!("{:?}: {:?}", id, obj);
 //! }

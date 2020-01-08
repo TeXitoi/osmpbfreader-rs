@@ -28,6 +28,7 @@ rental! {
 
 impl<'a> Iterator for rent::OsmObjs {
     type Item = OsmObj;
+
     fn next(&mut self) -> Option<Self::Item> {
         self.rent_mut(|objs| objs.next())
     }
@@ -35,10 +36,12 @@ impl<'a> Iterator for rent::OsmObjs {
 
 /// An iterator on `Result<OsmObj>`.
 pub struct OsmObjs(OsmObjsImpl);
+
 enum OsmObjsImpl {
     OkIter(iter::Map<rent::OsmObjs, fn(OsmObj) -> Result<OsmObj>>),
     ErrIter(iter::Once<Result<OsmObj>>),
 }
+
 impl Iterator for OsmObjs {
     type Item = Result<OsmObj>;
     fn next(&mut self) -> Option<Self::Item> {

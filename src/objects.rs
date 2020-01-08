@@ -18,6 +18,7 @@ use std::ops::{Deref, DerefMut};
 /// information.
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct Tags(TagsImpl);
+
 /// FlatMap representing the key-value pairs of the tags
 pub type TagsImpl = ::flat_map::FlatMap<String, String>;
 impl Tags {
@@ -30,17 +31,21 @@ impl Tags {
         self.0.get(key).map_or(false, |v| v.as_str() == value)
     }
 }
+
 impl Deref for Tags {
     type Target = TagsImpl;
+
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
+
 impl DerefMut for Tags {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
     }
 }
+
 impl FromIterator<(String, String)> for Tags {
     fn from_iter<T: IntoIterator<Item = (String, String)>>(iter: T) -> Self {
         Tags(iter.into_iter().collect())
@@ -69,6 +74,7 @@ pub enum OsmId {
     /// The identifier of a relation
     Relation(RelationId),
 }
+
 impl OsmId {
     /// Returns `true` if the id is a node id.
     pub fn is_node(&self) -> bool {
@@ -82,21 +88,21 @@ impl OsmId {
     pub fn is_relation(&self) -> bool {
         self.relation().is_some()
     }
-    /// Returns the `NodeId` wrapped in an `Option`.
+    /// Returns the `NodeId` if it is a node, otherwise returns `None`.
     pub fn node(&self) -> Option<NodeId> {
         match *self {
             OsmId::Node(id) => Some(id),
             _ => None,
         }
     }
-    /// Returns the `WayId` wrapped in an `Option`.
+    /// Returns the `WayId` if it is a way, otherwise returns `None`.
     pub fn way(&self) -> Option<WayId> {
         match *self {
             OsmId::Way(id) => Some(id),
             _ => None,
         }
     }
-    /// Returns the `RelationId` wrapped in an `Option`.
+    /// Returns the `RelationId` if it is a relation, otherwise returns `None`.
     pub fn relation(&self) -> Option<RelationId> {
         match *self {
             OsmId::Relation(id) => Some(id),
@@ -123,6 +129,7 @@ pub enum OsmObj {
     /// A relation
     Relation(Relation),
 }
+
 impl OsmObj {
     /// Returns the tags of the object.
     pub fn tags(&self) -> &Tags {
@@ -152,21 +159,21 @@ impl OsmObj {
     pub fn is_relation(&self) -> bool {
         self.relation().is_some()
     }
-    /// Gets a reference to the node in an `Option`.
+    /// Returns a reference to the `Node` if `self` is a node, otherwise returns `None`.
     pub fn node(&self) -> Option<&Node> {
         match *self {
             OsmObj::Node(ref n) => Some(n),
             _ => None,
         }
     }
-    /// Gets a reference to the way in an `Option`.
+    /// Returns a reference to the `Way` if `self` is a way, otherwise returns `None`.
     pub fn way(&self) -> Option<&Way> {
         match *self {
             OsmObj::Way(ref w) => Some(w),
             _ => None,
         }
     }
-    /// Gets a reference to the relation in an `Option`.
+    /// Returns a reference to the `Relation` if `self` is a relation, otherwise returns `None`.
     pub fn relation(&self) -> Option<&Relation> {
         match *self {
             OsmObj::Relation(ref r) => Some(r),
@@ -189,6 +196,7 @@ pub struct Node {
     /// The longitude in decimicro degrees (10⁻⁷ degrees).
     pub decimicro_lon: i32,
 }
+
 impl Node {
     /// Returns the latitude of the node in degrees.
     pub fn lat(&self) -> f64 {
@@ -212,6 +220,7 @@ pub struct Way {
     /// The ordered list of nodes as id.
     pub nodes: Vec<NodeId>,
 }
+
 impl Way {
     /// Returns true if the way is
     /// [open](http://wiki.openstreetmap.org/wiki/Way#Open_way).
@@ -252,26 +261,31 @@ impl ::std::convert::From<NodeId> for OsmId {
         OsmId::Node(n)
     }
 }
+
 impl ::std::convert::From<WayId> for OsmId {
     fn from(w: WayId) -> Self {
         OsmId::Way(w)
     }
 }
+
 impl ::std::convert::From<RelationId> for OsmId {
     fn from(r: RelationId) -> Self {
         OsmId::Relation(r)
     }
 }
+
 impl ::std::convert::From<Node> for OsmObj {
     fn from(n: Node) -> Self {
         OsmObj::Node(n)
     }
 }
+
 impl ::std::convert::From<Way> for OsmObj {
     fn from(w: Way) -> Self {
         OsmObj::Way(w)
     }
 }
+
 impl ::std::convert::From<Relation> for OsmObj {
     fn from(r: Relation) -> Self {
         OsmObj::Relation(r)
