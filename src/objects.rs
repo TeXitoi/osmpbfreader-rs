@@ -17,23 +17,21 @@ use std::ops::{Deref, DerefMut};
 /// tags](http://wiki.openstreetmap.org/wiki/Tags) for more
 /// information.
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
-pub struct Tags(TagsImpl);
+pub struct Tags(::flat_map::FlatMap<String, String>);
 
-/// FlatMap representing the key-value pairs of the tags
-pub type TagsImpl = ::flat_map::FlatMap<String, String>;
 impl Tags {
     /// Creates a new, empty `Tags` object.
     pub fn new() -> Tags {
-        Tags(TagsImpl::new())
+        Tags(::flat_map::FlatMap::new())
     }
-    /// Returns if contains the tag `(key, value)`.
+    /// Returns if it contains the a tag with the given `key` and `value`.
     pub fn contains(&self, key: &str, value: &str) -> bool {
         self.0.get(key).map_or(false, |v| v.as_str() == value)
     }
 }
 
 impl Deref for Tags {
-    type Target = TagsImpl;
+    type Target = ::flat_map::FlatMap<String, String>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
