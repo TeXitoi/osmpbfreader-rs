@@ -57,7 +57,7 @@ impl<R: io::Read> OsmPbfReader<R> {
 
     /// Returns an iterator on the OsmObj of the pbf file.
     ///
-    /// #Example
+    /// # Example
     ///
     /// ```
     /// let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
@@ -75,7 +75,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     /// CPU usage are guaranteed to be bounded even if the caller stop
     /// consuming items.
     ///
-    /// #Example
+    /// # Example
     ///
     /// ```
     /// let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());

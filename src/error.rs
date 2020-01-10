@@ -18,6 +18,7 @@ pub enum Error {
     UnsupportedData,
     InvalidData,
 }
+
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
@@ -28,6 +29,7 @@ impl fmt::Display for Error {
         }
     }
 }
+
 impl std::error::Error for Error {
     fn description(&self) -> &str {
         match *self {
@@ -45,11 +47,13 @@ impl std::error::Error for Error {
         }
     }
 }
+
 impl From<io::Error> for Error {
     fn from(err: io::Error) -> Error {
         Error::Io(err)
     }
 }
+
 impl From<protobuf::ProtobufError> for Error {
     fn from(err: protobuf::ProtobufError) -> Error {
         Error::Pbf(err)
