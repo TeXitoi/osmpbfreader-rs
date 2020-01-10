@@ -27,7 +27,7 @@ serde_derive = "1.0"
 
 [dev-dependencies]
 log = "0.4"
-env_logger = "0.6"
+env_logger = "0.7"
 
 [build-dependencies]
 protobuf-codegen-pure = "2.8"
