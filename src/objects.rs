@@ -50,6 +50,12 @@ impl FromIterator<(String, String)> for Tags {
     }
 }
 
+impl<T: Iterator<Item = (String, String)>> From<T> for Tags {
+    fn from(f: T) -> Self {
+        FromIterator::from_iter(f)
+    }
+}
+
 /// A node identifier
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Copy, Serialize, Deserialize)]
 pub struct NodeId(pub i64);
