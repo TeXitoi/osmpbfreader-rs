@@ -16,13 +16,13 @@ use std::ops::{Deref, DerefMut};
 /// [OpenStreetMap wiki page about
 /// tags](http://wiki.openstreetmap.org/wiki/Tags) for more
 /// information.
-#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
-pub struct Tags(::flat_map::FlatMap<String, String>);
+#[derive(Debug, Default, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Tags(::map_vec::Map<String, String>);
 
 impl Tags {
     /// Creates a new, empty `Tags` object.
     pub fn new() -> Tags {
-        Tags(::flat_map::FlatMap::new())
+        Tags(::map_vec::Map::new())
     }
     /// Returns if it contains the a tag with the given `key` and `value`.
     pub fn contains(&self, key: &str, value: &str) -> bool {
@@ -31,7 +31,7 @@ impl Tags {
 }
 
 impl Deref for Tags {
-    type Target = ::flat_map::FlatMap<String, String>;
+    type Target = ::map_vec::Map<String, String>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
@@ -118,7 +118,7 @@ impl OsmId {
 }
 
 /// An OpenStreetMap object.
-#[derive(Debug, PartialEq, PartialOrd, Clone, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub enum OsmObj {
     /// A node
     Node(Node),
@@ -183,7 +183,7 @@ impl OsmObj {
 /// An OpenStreetMap node.  See the [OpenStreetMap wiki page about
 /// node](http://wiki.openstreetmap.org/wiki/Node) for more
 /// information.
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct Node {
     /// The id of the node.
     pub id: NodeId,
@@ -209,7 +209,7 @@ impl Node {
 /// An OpenStreetMap way.  See the [OpenStreetMap wiki page about
 /// way](http://wiki.openstreetmap.org/wiki/Way) for more
 /// information.
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct Way {
     /// The id of the way.
     pub id: WayId,
@@ -244,7 +244,7 @@ pub struct Ref {
 /// An OpenStreetMap relation.  See the [OpenStreetMap wiki page about
 /// relation](http://wiki.openstreetmap.org/wiki/Relation) for more
 /// information.
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct Relation {
     /// The id of the relation.
     pub id: RelationId,

@@ -94,8 +94,8 @@
 #![deny(missing_docs)]
 
 extern crate byteorder;
-extern crate flat_map;
 extern crate flate2;
+extern crate map_vec;
 extern crate protobuf;
 #[macro_use]
 extern crate rental;
