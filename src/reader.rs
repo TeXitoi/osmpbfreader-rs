@@ -150,13 +150,13 @@ impl<R: io::Read> OsmPbfReader<R> {
     }
 
     /// This function give you the ability to find all the objects
-    /// validating a predicate and all there dependencies.  The file
+    /// validating a predicate and all their dependencies. The file
     /// will be decoded in parallel.
     ///
     /// # Example
     ///
     /// If you want to extract all the administrative boundaries
-    /// and all there dependencies you can do something like that:
+    /// and all their dependencies you can do something like that:
     ///
     /// ```
     /// fn is_admin(obj: &osmpbfreader::OsmObj) -> bool {
