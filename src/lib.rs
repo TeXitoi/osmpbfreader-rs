@@ -58,6 +58,10 @@
 //! }
 //! ```
 //!
+//! # Smart Strings
+//!
+//! By enabling the `smartstrings` feature, the type `std::str::String` for OSM tags is replaced by `smartstring::alias::String`. [smartstring](https://crates.io/crates/smartstring) is a crate which avoids heap allocation for small-ish strings (23 bytes on 64 bit architectures), but otherwise behaves like a normal `String` type. Most of OSM tags fit match this criteria, so this can yield substantial improvements for performance and memory usage.
+//!
 //! # Into the details
 //!
 //! This crate is build around basic iterators on different parts of
@@ -105,6 +109,8 @@ extern crate pub_iterator_type;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+#[cfg(feature = "smartstrings")]
+extern crate smartstring;
 
 pub use error::Error;
 pub use error::Result;
