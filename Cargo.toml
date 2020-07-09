@@ -24,6 +24,7 @@ par-map = "0.1"
 pub-iterator-type = "0.1"
 serde = "1.0"
 serde_derive = "1.0"
+smartstring = { version = "0.2", features = ["serde"] }
 
 [dev-dependencies]
 log = "0.4"

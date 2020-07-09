@@ -8,6 +8,8 @@
 use objects::*;
 use osmformat;
 use osmformat::{PrimitiveBlock, PrimitiveGroup};
+use smartstring::alias::String;
+use std::borrow::Cow;
 use std::convert::From;
 use std::iter::Chain;
 use std::iter::Map;
@@ -206,7 +208,11 @@ impl<'a> Iterator for Relations<'a> {
 }
 
 fn make_string(k: usize, block: &osmformat::PrimitiveBlock) -> String {
-    String::from_utf8_lossy(&*block.get_stringtable().get_s()[k]).into_owned()
+    let cow = std::string::String::from_utf8_lossy(&*block.get_stringtable().get_s()[k]);
+    match cow {
+        Cow::Borrowed(s) => String::from(s),
+        Cow::Owned(s) => String::from(s),
+    }
 }
 
 fn make_lat(c: i64, b: &osmformat::PrimitiveBlock) -> i32 {

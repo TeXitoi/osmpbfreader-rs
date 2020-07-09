@@ -9,6 +9,7 @@
 //!
 //! There are 3 types of objects: nodes, ways and relations.
 
+use smartstring::alias::String;
 use std::iter::FromIterator;
 use std::ops::{Deref, DerefMut};
 
