@@ -58,10 +58,6 @@
 //! }
 //! ```
 //!
-//! # Smart Strings
-//!
-//! By enabling the `smartstrings` feature, the type `std::str::String` for OSM tags is replaced by `smartstring::alias::String`. [smartstring](https://crates.io/crates/smartstring) is a crate which avoids heap allocation for small-ish strings (23 bytes on 64 bit architectures), but otherwise behaves like a normal `String` type. Most of OSM tags fit match this criteria, so this can yield substantial improvements for performance and memory usage.
-//!
 //! # Into the details
 //!
 //! This crate is build around basic iterators on different parts of
@@ -94,6 +90,8 @@
 //! Notice that `primitive_block_from_blob` can be costy as it
 //! uncompress the blob.  Using some kind of parallel map can then
 //! improve the reading speed of the PBF file.
+//!
+//! OSM tags are stored as key/value maps of type `smartstring::alias::String`. [smartstring](https://crates.io/crates/smartstring) is a crate which re-implements the `std::str::String` API, while avoiding heap allocation for short strings (up to 23 bytes on 64 bit architectures). Longer strings are allocated transparently. Most OSM tags keys & values are rather short, so using this type can yield substantial improvements for performance and memory usage.
 
 #![deny(missing_docs)]
 
@@ -109,7 +107,6 @@ extern crate pub_iterator_type;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
-#[cfg(feature = "smartstrings")]
 extern crate smartstring;
 
 pub use error::Error;

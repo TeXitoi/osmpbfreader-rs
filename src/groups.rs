@@ -8,7 +8,6 @@
 use objects::*;
 use osmformat;
 use osmformat::{PrimitiveBlock, PrimitiveGroup};
-#[cfg(feature = "smartstring")]
 use smartstring::alias::String;
 use std::borrow::Cow;
 use std::convert::From;
