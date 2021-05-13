@@ -7,42 +7,41 @@
 
 //! Iterator and utilities for `fileformat::Blob`.
 
-use blocks;
-use fileformat::Blob;
-use objects::OsmObj;
-use osmformat::PrimitiveBlock;
 use std::iter;
-use Result;
 
-rental! {
-    mod rent {
-        use osmformat::PrimitiveBlock;
-        use blocks;
-        #[rental]
-        pub struct OsmObjs {
-            block: Box<PrimitiveBlock>,
-            objs: blocks::OsmObjs<'block>,
-        }
+use crate::blocks::OsmObjs as OsmBlockObjs;
+use crate::fileformat::Blob;
+use crate::objects::OsmObj;
+use crate::osmformat::PrimitiveBlock;
+use crate::Result;
+
+self_cell!(
+    struct OsmBlobObjs {
+        #[from_fn]
+        owner: PrimitiveBlock,
+
+        #[covariant]
+        dependent: OsmBlockObjs,
     }
-}
+);
 
-impl<'a> Iterator for rent::OsmObjs {
+impl<'a> Iterator for OsmBlobObjs {
     type Item = OsmObj;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.rent_mut(|objs| objs.next())
+        self.with_dependent_mut(|_, objs| objs.next())
     }
 }
 
 /// An iterator on `Result<OsmObj>`.
-pub struct OsmObjs(OsmObjsImpl);
+pub struct OsmObjsIter(OsmObjsImpl);
 
 enum OsmObjsImpl {
-    OkIter(iter::Map<rent::OsmObjs, fn(OsmObj) -> Result<OsmObj>>),
+    OkIter(iter::Map<OsmBlobObjs, fn(OsmObj) -> Result<OsmObj>>),
     ErrIter(iter::Once<Result<OsmObj>>),
 }
 
-impl Iterator for OsmObjs {
+impl Iterator for OsmObjsIter {
     type Item = Result<OsmObj>;
     fn next(&mut self) -> Option<Self::Item> {
         match self.0 {
@@ -53,13 +52,14 @@ impl Iterator for OsmObjs {
 }
 
 /// Transforms a `Result<blob>` into a `Iterator<Item = Result<OsmObj>>`.
-pub fn result_blob_into_iter(result: Result<Blob>) -> OsmObjs {
+pub fn result_blob_into_iter(result: Result<Blob>) -> OsmObjsIter {
     match result.and_then(|b| ::reader::primitive_block_from_blob(&b)) {
-        Ok(block) => OsmObjs(OsmObjsImpl::OkIter(new_rent_osm_objs(block).map(Ok))),
-        Err(e) => OsmObjs(OsmObjsImpl::ErrIter(iter::once(Err(e)))),
+        Ok(block) => OsmObjsIter(OsmObjsImpl::OkIter(new_rent_osm_objs(block).map(Ok))),
+        Err(e) => OsmObjsIter(OsmObjsImpl::ErrIter(iter::once(Err(e)))),
     }
 }
 
-fn new_rent_osm_objs(block: PrimitiveBlock) -> rent::OsmObjs {
-    rent::OsmObjs::new(Box::new(block), blocks::iter)
+fn new_rent_osm_objs(block: PrimitiveBlock) -> OsmBlobObjs {
+    // blocks::iter
+    OsmBlobObjs::from_fn(block, |block| panic!())
 }
