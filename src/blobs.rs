@@ -9,6 +9,7 @@
 
 use std::iter;
 
+use crate::blocks;
 use crate::blocks::OsmObjs as OsmBlockObjs;
 use crate::fileformat::Blob;
 use crate::objects::OsmObj;
@@ -60,6 +61,5 @@ pub fn result_blob_into_iter(result: Result<Blob>) -> OsmObjs {
 }
 
 fn new_rent_osm_objs(block: PrimitiveBlock) -> OsmBlobObjs {
-    // blocks::iter
-    OsmBlobObjs::from_fn(block, |block| panic!())
+    OsmBlobObjs::from_fn(block, |block| blocks::iter(block))
 }
