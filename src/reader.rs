@@ -282,14 +282,14 @@ pub fn primitive_block_from_blob(blob: &Blob) -> Result<PrimitiveBlock> {
 
 pub_iterator_type! {
     #[doc="Iterator on the `OsmObj` of the pbf file."]
-    Iter['a, R] = iter::FlatMap<Blobs<'a, R>, blobs::OsmObjsIter, fn(Result<Blob>) -> blobs::OsmObjsIter>
+    Iter['a, R] = iter::FlatMap<Blobs<'a, R>, blobs::OsmObjs, fn(Result<Blob>) -> blobs::OsmObjs>
     where R: io::Read + 'a
 }
 
 pub_iterator_type! {
     #[doc="Parallel iterator on the `OsmObj` of the pbf file."]
     ParIter['a, R] = par_map::FlatMap<Blobs<'a, R>,
-                                      blobs::OsmObjsIter,
-                                      fn(Result<Blob>) -> blobs::OsmObjsIter>
+                                      blobs::OsmObjs,
+                                      fn(Result<Blob>) -> blobs::OsmObjs>
     where R: io::Read + 'a
 }

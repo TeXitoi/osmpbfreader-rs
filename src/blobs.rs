@@ -34,14 +34,14 @@ impl<'a> Iterator for OsmBlobObjs {
 }
 
 /// An iterator on `Result<OsmObj>`.
-pub struct OsmObjsIter(OsmObjsImpl);
+pub struct OsmObjs(OsmObjsImpl);
 
 enum OsmObjsImpl {
     OkIter(iter::Map<OsmBlobObjs, fn(OsmObj) -> Result<OsmObj>>),
     ErrIter(iter::Once<Result<OsmObj>>),
 }
 
-impl Iterator for OsmObjsIter {
+impl Iterator for OsmObjs {
     type Item = Result<OsmObj>;
     fn next(&mut self) -> Option<Self::Item> {
         match self.0 {
@@ -52,10 +52,10 @@ impl Iterator for OsmObjsIter {
 }
 
 /// Transforms a `Result<blob>` into a `Iterator<Item = Result<OsmObj>>`.
-pub fn result_blob_into_iter(result: Result<Blob>) -> OsmObjsIter {
+pub fn result_blob_into_iter(result: Result<Blob>) -> OsmObjs {
     match result.and_then(|b| ::reader::primitive_block_from_blob(&b)) {
-        Ok(block) => OsmObjsIter(OsmObjsImpl::OkIter(new_rent_osm_objs(block).map(Ok))),
-        Err(e) => OsmObjsIter(OsmObjsImpl::ErrIter(iter::once(Err(e)))),
+        Ok(block) => OsmObjs(OsmObjsImpl::OkIter(new_rent_osm_objs(block).map(Ok))),
+        Err(e) => OsmObjs(OsmObjsImpl::ErrIter(iter::once(Err(e)))),
     }
 }
 
