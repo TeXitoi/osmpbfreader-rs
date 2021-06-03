@@ -98,12 +98,12 @@
 extern crate byteorder;
 extern crate flat_map;
 extern crate flate2;
+extern crate par_map;
 extern crate protobuf;
 #[macro_use]
-extern crate rental;
-extern crate par_map;
-#[macro_use]
 extern crate pub_iterator_type;
+#[macro_use]
+extern crate self_cell;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;

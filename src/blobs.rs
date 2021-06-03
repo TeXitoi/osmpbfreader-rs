@@ -7,30 +7,30 @@
 
 //! Iterator and utilities for `fileformat::Blob`.
 
-use blocks;
-use fileformat::Blob;
-use objects::OsmObj;
-use osmformat::PrimitiveBlock;
 use std::iter;
-use Result;
 
-rental! {
-    mod rent {
-        use osmformat::PrimitiveBlock;
-        use blocks;
-        #[rental]
-        pub struct OsmObjs {
-            block: Box<PrimitiveBlock>,
-            objs: blocks::OsmObjs<'block>,
-        }
+use crate::blocks;
+use crate::blocks::OsmObjs as OsmBlockObjs;
+use crate::fileformat::Blob;
+use crate::objects::OsmObj;
+use crate::osmformat::PrimitiveBlock;
+use crate::Result;
+
+self_cell!(
+    struct OsmBlobObjs {
+        #[from_fn]
+        owner: PrimitiveBlock,
+
+        #[covariant]
+        dependent: OsmBlockObjs,
     }
-}
+);
 
-impl<'a> Iterator for rent::OsmObjs {
+impl<'a> Iterator for OsmBlobObjs {
     type Item = OsmObj;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.rent_mut(|objs| objs.next())
+        self.with_dependent_mut(|_, objs| objs.next())
     }
 }
 
@@ -38,7 +38,7 @@ impl<'a> Iterator for rent::OsmObjs {
 pub struct OsmObjs(OsmObjsImpl);
 
 enum OsmObjsImpl {
-    OkIter(iter::Map<rent::OsmObjs, fn(OsmObj) -> Result<OsmObj>>),
+    OkIter(iter::Map<OsmBlobObjs, fn(OsmObj) -> Result<OsmObj>>),
     ErrIter(iter::Once<Result<OsmObj>>),
 }
 
@@ -60,6 +60,6 @@ pub fn result_blob_into_iter(result: Result<Blob>) -> OsmObjs {
     }
 }
 
-fn new_rent_osm_objs(block: PrimitiveBlock) -> rent::OsmObjs {
-    rent::OsmObjs::new(Box::new(block), blocks::iter)
+fn new_rent_osm_objs(block: PrimitiveBlock) -> OsmBlobObjs {
+    OsmBlobObjs::from_fn(block, |block| blocks::iter(block))
 }
