@@ -31,14 +31,6 @@ impl fmt::Display for Error {
 }
 
 impl std::error::Error for Error {
-    fn description(&self) -> &str {
-        match *self {
-            Error::Io(ref e) => e.description(),
-            Error::Pbf(ref e) => e.description(),
-            Error::UnsupportedData => "Unsupported data",
-            Error::InvalidData => "Invalid data",
-        }
-    }
     fn cause(&self) -> Option<&dyn std::error::Error> {
         match *self {
             Error::Io(ref e) => Some(e),
