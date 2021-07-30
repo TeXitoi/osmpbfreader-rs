@@ -10,7 +10,7 @@ matrix:
   include:
   - rust: stable
     env: RUN=RUSTFMT
-    before_script: rustup component add rustfmt-preview
+    before_script: rustup component add rustfmt
     script:
     - cargo check
     - cargo fmt --all -- --check

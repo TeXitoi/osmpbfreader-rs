@@ -15,7 +15,7 @@ use crate::fileformat::Blob;
 use crate::objects::OsmObj;
 use crate::osmformat::PrimitiveBlock;
 
-self_cell!(
+self_cell::self_cell!(
     struct OsmBlobObjs {
         owner: PrimitiveBlock,
 
@@ -52,7 +52,7 @@ impl Iterator for OsmObjs {
 
 /// Transforms a `Result<blob>` into a `Iterator<Item = Result<OsmObj>>`.
 pub fn result_blob_into_iter(result: crate::Result<Blob>) -> OsmObjs {
-    match result.and_then(|b| ::reader::primitive_block_from_blob(&b)) {
+    match result.and_then(|b| crate::reader::primitive_block_from_blob(&b)) {
         Ok(block) => OsmObjs(OsmObjsImpl::OkIter(new_rent_osm_objs(block).map(Ok))),
         Err(e) => OsmObjs(OsmObjsImpl::ErrIter(iter::once(Err(e)))),
     }

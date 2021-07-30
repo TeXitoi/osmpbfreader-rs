@@ -95,20 +95,6 @@
 
 #![deny(missing_docs)]
 
-extern crate byteorder;
-extern crate flat_map;
-extern crate flate2;
-extern crate par_map;
-extern crate protobuf;
-#[macro_use]
-extern crate pub_iterator_type;
-#[macro_use]
-extern crate self_cell;
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
-extern crate smartstring;
-
 pub use error::Error;
 pub use error::Result;
 pub use objects::*;

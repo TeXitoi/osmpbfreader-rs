@@ -7,13 +7,14 @@
 
 //! Tools for reading a pbf file.
 
-use blobs::{self, result_blob_into_iter};
-use error::{Error, Result};
-use fileformat::{Blob, BlobHeader};
-use objects::{OsmId, OsmObj};
-use osmformat::PrimitiveBlock;
+use crate::blobs::{self, result_blob_into_iter};
+use crate::error::{Error, Result};
+use crate::fileformat::{Blob, BlobHeader};
+use crate::objects::{OsmId, OsmObj};
+use crate::osmformat::PrimitiveBlock;
 use par_map::{self, ParMap};
 use protobuf::Message;
+use pub_iterator_type::pub_iterator_type;
 use std::collections::btree_map::BTreeMap;
 use std::collections::BTreeSet;
 use std::convert::From;
@@ -50,7 +51,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     pub fn new(r: R) -> OsmPbfReader<R> {
         OsmPbfReader {
             buf: vec![],
-            r: r,
+            r,
             finished: false,
         }
     }
@@ -83,7 +84,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     ///     println!("{:?}", obj);
     /// }
     /// ```
-    pub fn par_iter<'a>(&'a mut self) -> ParIter<'a, R> {
+    pub fn par_iter(&mut self) -> ParIter<'_, R> {
         ParIter(self.blobs().par_flat_map(result_blob_into_iter))
     }
 
@@ -111,7 +112,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     }
 
     /// Same as `get_objs_and_deps` but generic.
-    pub fn get_objs_and_deps_store<'a, F, T>(&mut self, mut pred: F, objects: &mut T) -> Result<()>
+    pub fn get_objs_and_deps_store<F, T>(&mut self, mut pred: F, objects: &mut T) -> Result<()>
     where
         R: io::Seek,
         F: FnMut(&OsmObj) -> bool,

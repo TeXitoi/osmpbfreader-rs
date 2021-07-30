@@ -5,9 +5,10 @@
 // Version 2, as published by Sam Hocevar. See the COPYING file for
 // more details.
 
-use objects::*;
-use osmformat;
-use osmformat::{PrimitiveBlock, PrimitiveGroup};
+use crate::objects::*;
+use crate::osmformat;
+use crate::osmformat::{PrimitiveBlock, PrimitiveGroup};
+use pub_iterator_type::pub_iterator_type;
 use smartstring::alias::String;
 use std::borrow::Cow;
 use std::convert::From;
@@ -42,7 +43,7 @@ pub fn nodes<'a>(g: &'a PrimitiveGroup, b: &'a PrimitiveBlock) -> Nodes<'a> {
 pub fn simple_nodes<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock) -> SimpleNodes<'a> {
     SimpleNodes {
         iter: group.get_nodes().iter(),
-        block: block,
+        block,
     }
 }
 
@@ -69,7 +70,7 @@ impl<'a> Iterator for SimpleNodes<'a> {
 pub fn dense_nodes<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock) -> DenseNodes<'a> {
     let dense = group.get_dense();
     DenseNodes {
-        block: block,
+        block,
         dids: dense.get_id().iter(),
         dlats: dense.get_lat().iter(),
         dlons: dense.get_lon().iter(),
@@ -119,7 +120,7 @@ impl<'a> Iterator for DenseNodes<'a> {
             id: NodeId(self.cur_id),
             decimicro_lat: make_lat(self.cur_lat, self.block),
             decimicro_lon: make_lon(self.cur_lon, self.block),
-            tags: tags,
+            tags,
         })
     }
 }
@@ -127,7 +128,7 @@ impl<'a> Iterator for DenseNodes<'a> {
 pub fn ways<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock) -> Ways<'a> {
     Ways {
         iter: group.get_ways().iter(),
-        block: block,
+        block,
     }
 }
 
@@ -151,7 +152,7 @@ impl<'a> Iterator for Ways<'a> {
                 .collect();
             Way {
                 id: WayId(w.get_id()),
-                nodes: nodes,
+                nodes,
                 tags: make_tags(w.get_keys(), w.get_vals(), self.block),
             }
         })
@@ -164,7 +165,7 @@ impl<'a> Iterator for Ways<'a> {
 pub fn relations<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock) -> Relations<'a> {
     Relations {
         iter: group.get_relations().iter(),
-        block: block,
+        block,
     }
 }
 pub struct Relations<'a> {
@@ -197,7 +198,7 @@ impl<'a> Iterator for Relations<'a> {
                 .collect();
             Relation {
                 id: RelationId(rel.get_id()),
-                refs: refs,
+                refs,
                 tags: make_tags(rel.get_keys(), rel.get_vals(), self.block),
             }
         })
