@@ -16,19 +16,19 @@ appveyor = { repository = "TeXitoi/osmpbfreader-rs" }
 
 [dependencies]
 byteorder = "1.3"
-flat_map = { version = "0.0.9", features = ["serde1"] }
+flat_map = { version = "0.0.10", features = ["serde1"] }
 flate2 = "1.0"
 par-map = "0.1"
 protobuf = "2"
 pub-iterator-type = "0.1"
-self_cell = "0.8.0"
+self_cell = "0.9.0" 
 serde = "1.0"
 serde_derive = "1.0"
 smartstring = { version = "0.2", features = ["serde"] }
 
 [dev-dependencies]
 log = "0.4"
-env_logger = "0.7"
+env_logger = "0.9.0"
 
 [build-dependencies]
 protobuf-codegen-pure = "2.8"

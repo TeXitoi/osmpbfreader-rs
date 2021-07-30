@@ -13,7 +13,7 @@ use fileformat::{Blob, BlobHeader};
 use objects::{OsmId, OsmObj};
 use osmformat::PrimitiveBlock;
 use par_map::{self, ParMap};
-use protobuf;
+use protobuf::Message;
 use std::collections::btree_map::BTreeMap;
 use std::collections::BTreeSet;
 use std::convert::From;
@@ -207,10 +207,10 @@ impl<R: io::Read> OsmPbfReader<R> {
     }
     fn try_blob(&mut self, sz: u64) -> Result<Option<Blob>> {
         self.push(sz)?;
-        let header: BlobHeader = protobuf::parse_from_bytes(&self.buf)?;
+        let header: BlobHeader = Message::parse_from_bytes(&self.buf)?;
         let sz = header.get_datasize() as u64;
         self.push(sz)?;
-        let blob: Blob = protobuf::parse_from_bytes(&self.buf)?;
+        let blob: Blob = Message::parse_from_bytes(&self.buf)?;
         if header.get_field_type() == "OSMData" {
             Ok(Some(blob))
         } else if header.get_field_type() == "OSMHeader" {
@@ -269,12 +269,12 @@ pub_iterator_type! {
 /// Returns an iterator on the blocks of a blob.
 pub fn primitive_block_from_blob(blob: &Blob) -> Result<PrimitiveBlock> {
     if blob.has_raw() {
-        protobuf::parse_from_bytes(blob.get_raw()).map_err(From::from)
+        Message::parse_from_bytes(blob.get_raw()).map_err(From::from)
     } else if blob.has_zlib_data() {
         use flate2::read::ZlibDecoder;
         let r = io::Cursor::new(blob.get_zlib_data());
         let mut zr = ZlibDecoder::new(r);
-        protobuf::parse_from_reader(&mut zr).map_err(From::from)
+        Message::parse_from_reader(&mut zr).map_err(From::from)
     } else {
         Err(Error::UnsupportedData)
     }

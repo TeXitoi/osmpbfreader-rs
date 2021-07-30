@@ -14,11 +14,9 @@ use crate::blocks::OsmObjs as OsmBlockObjs;
 use crate::fileformat::Blob;
 use crate::objects::OsmObj;
 use crate::osmformat::PrimitiveBlock;
-use crate::Result;
 
 self_cell!(
     struct OsmBlobObjs {
-        #[from_fn]
         owner: PrimitiveBlock,
 
         #[covariant]
@@ -38,12 +36,12 @@ impl<'a> Iterator for OsmBlobObjs {
 pub struct OsmObjs(OsmObjsImpl);
 
 enum OsmObjsImpl {
-    OkIter(iter::Map<OsmBlobObjs, fn(OsmObj) -> Result<OsmObj>>),
-    ErrIter(iter::Once<Result<OsmObj>>),
+    OkIter(iter::Map<OsmBlobObjs, fn(OsmObj) -> crate::Result<OsmObj>>),
+    ErrIter(iter::Once<crate::Result<OsmObj>>),
 }
 
 impl Iterator for OsmObjs {
-    type Item = Result<OsmObj>;
+    type Item = crate::Result<OsmObj>;
     fn next(&mut self) -> Option<Self::Item> {
         match self.0 {
             OsmObjsImpl::OkIter(ref mut iter) => iter.next(),
@@ -53,7 +51,7 @@ impl Iterator for OsmObjs {
 }
 
 /// Transforms a `Result<blob>` into a `Iterator<Item = Result<OsmObj>>`.
-pub fn result_blob_into_iter(result: Result<Blob>) -> OsmObjs {
+pub fn result_blob_into_iter(result: crate::Result<Blob>) -> OsmObjs {
     match result.and_then(|b| ::reader::primitive_block_from_blob(&b)) {
         Ok(block) => OsmObjs(OsmObjsImpl::OkIter(new_rent_osm_objs(block).map(Ok))),
         Err(e) => OsmObjs(OsmObjsImpl::ErrIter(iter::once(Err(e)))),
@@ -61,5 +59,5 @@ pub fn result_blob_into_iter(result: Result<Blob>) -> OsmObjs {
 }
 
 fn new_rent_osm_objs(block: PrimitiveBlock) -> OsmBlobObjs {
-    OsmBlobObjs::from_fn(block, |block| blocks::iter(block))
+    OsmBlobObjs::new(block, |block| blocks::iter(block))
 }
