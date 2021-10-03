@@ -59,5 +59,5 @@ pub fn result_blob_into_iter(result: crate::Result<Blob>) -> OsmObjs {
 }
 
 fn new_rent_osm_objs(block: PrimitiveBlock) -> OsmBlobObjs {
-    OsmBlobObjs::new(block, |block| blocks::iter(block))
+    OsmBlobObjs::new(block, blocks::iter)
 }
