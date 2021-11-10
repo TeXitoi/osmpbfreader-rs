@@ -195,6 +195,8 @@ pub struct Node {
     pub decimicro_lat: i32,
     /// The longitude in decimicro degrees (10⁻⁷ degrees).
     pub decimicro_lon: i32,
+    /// The info of the node.
+    pub info: Option<Info>,
 }
 
 impl Node {
@@ -219,6 +221,8 @@ pub struct Way {
     pub tags: Tags,
     /// The ordered list of nodes as id.
     pub nodes: Vec<NodeId>,
+    /// The info of the way.
+    pub info: Option<Info>,
 }
 
 impl Way {
@@ -254,6 +258,18 @@ pub struct Relation {
     pub tags: Tags,
     /// Members of the relation.
     pub refs: Vec<Ref>,
+    /// The info of the relation.
+    pub info: Option<Info>,
+}
+
+/// An Info object for storing metadate about a Node, Way or Relation.
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Serialize, Deserialize)]
+pub struct Info {
+    /// The timestamp when the object was introduced.
+    pub timestamp: Option<i64>,
+    /// Wether the object should be considered a currently valid object. Being false hints to it
+    /// being a historic version that is not uptodate anymore. Defaults to true.
+    pub visible: bool,
 }
 
 impl ::std::convert::From<NodeId> for OsmId {
