@@ -26,9 +26,15 @@ impl Tags {
     pub fn new() -> Tags {
         Tags(::flat_map::FlatMap::new())
     }
+
     /// Returns if it contains a tag with the given `key` and `value`.
     pub fn contains(&self, key: &str, value: &str) -> bool {
         self.0.get(key).map_or(false, |v| v.as_str() == value)
+    }
+
+    /// Consume tags into inner FlatMap representation
+    pub fn into_inner(self) -> ::flat_map::FlatMap<String, String> {
+        self.0
     }
 }
 
