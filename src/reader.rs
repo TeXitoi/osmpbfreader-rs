@@ -20,6 +20,7 @@ use std::collections::BTreeSet;
 use std::convert::From;
 use std::io::{self, Read};
 use std::iter;
+use std::rc::Rc;
 
 /// Trait to allow generic objects (not just BTreeMap) in some methods.
 pub trait StoreObjs {
@@ -36,6 +37,23 @@ impl StoreObjs for BTreeMap<OsmId, OsmObj> {
 
     fn contains_key(&self, key: &OsmId) -> bool {
         self.contains_key(key)
+    }
+}
+
+/// Pack an objects with its dependencies (ie. nodes if it is a way and
+/// members if it is a relation).
+#[derive(Debug, Clone, PartialEq, PartialOrd)]
+pub struct ObjAndDeps {
+    /// The object itself
+    pub inner: OsmObj,
+    /// The dependencies of the object
+    pub deps: Vec<Rc<ObjAndDeps>>,
+}
+
+impl ObjAndDeps {
+    /// Get id of inner object
+    pub fn id(&self) -> OsmId {
+        self.inner.id()
     }
 }
 
@@ -182,6 +200,202 @@ impl<R: io::Read> OsmPbfReader<R> {
             Err(e) => Err(e),
         }
     }
+
+    /// Similarly to `get_objs_and_deps`, this function will give you all objects validating a
+    /// predicate packed with their dependencies.
+    ///
+    /// The main difference with `get_objs_and_deps` is that objects are outputted via the input
+    /// callback function `handle_obj` as soon as the object and its dependencies have been fetched
+    /// from the PBF file. This makes this function less memory intensive as objects can be
+    /// processed on the fly and freed while parsing the file, for example nodes satisfying the
+    /// predicate will be immediately outputted.
+    ///
+    /// The parameter `max_loaded_objects` can be used to tweak the max number of incomplete
+    /// objects that can be loaded into memory at once, a bigger values means more memory usage but
+    /// potentially less sequential reads of input PBF file.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// fn is_admin(obj: &osmpbfreader::OsmObj) -> bool {
+    ///     // get relations with tags[boundary] == administrative
+    ///     obj.is_relation() && obj.tags().contains("boundary", "administrative")
+    /// }
+    ///
+    /// fn handle_obj(obj: osmpbfreader::reader::ObjAndDeps) {
+    ///     println!(
+    ///         "{:?} -> {:?}",
+    ///         obj.id(),
+    ///         obj.deps.into_iter().map(|child| child.inner.id()).collect::<Vec<_>>(),
+    ///     )
+    /// }
+    ///
+    /// let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::Cursor::new([]));
+    /// pbf.get_objs_and_deps_on_the_fly(is_admin, handle_obj, 1_000_000);
+    /// ```
+    pub fn get_objs_and_deps_on_the_fly<F, H>(
+        &mut self,
+        mut pred: F,
+        mut handle_obj: H,
+        max_loaded_objects: usize,
+    ) where
+        R: io::Seek,
+        F: FnMut(&OsmObj) -> bool,
+        H: FnMut(ObjAndDeps),
+    {
+        /// Same as ObjAndDeps, but `deps_fetched` can be partially filled and unordered.
+        struct PendingObj {
+            obj: OsmObj,
+            deps_fetched: Vec<Rc<ObjAndDeps>>,
+        }
+
+        impl PendingObj {
+            fn id(&self) -> OsmId {
+                self.obj.id()
+            }
+
+            /// Return an iterator over all id's of this object's children
+            fn deps_expected(&self) -> impl Iterator<Item = OsmId> + '_ {
+                let way_children = (self.obj.way())
+                    .into_iter()
+                    .flat_map(|way| way.nodes.iter().copied().map(Into::into));
+
+                let rel_children = (self.obj.relation())
+                    .into_iter()
+                    .flat_map(|way| way.refs.iter().map(|r| r.member));
+
+                way_children.chain(rel_children)
+            }
+
+            /// Check if all the children for this node have been extracted from OSM file
+            fn is_complete(&self) -> bool {
+                match &self.obj {
+                    OsmObj::Node(_) => true,
+                    OsmObj::Way(w) => w.nodes.len() == self.deps_fetched.len(),
+                    OsmObj::Relation(r) => r.refs.len() == self.deps_fetched.len(),
+                }
+            }
+
+            /// Reorder dependencies and convert to return type `ObjAndDeps`
+            fn finish(self) -> ObjAndDeps {
+                // Execute some kind of radix sort: first we order objects by id
+                let mut as_map: BTreeMap<OsmId, Vec<Rc<ObjAndDeps>>> = BTreeMap::default();
+
+                for obj in &self.deps_fetched {
+                    as_map.entry(obj.id()).or_default().push(obj.clone());
+                }
+
+                // Then we fetch objects in order based on their ID
+                let deps: Vec<_> = self
+                    .deps_expected()
+                    .filter_map(move |id| as_map.get_mut(&id)?.pop())
+                    .collect();
+
+                ObjAndDeps {
+                    inner: self.obj,
+                    deps,
+                }
+            }
+        }
+
+        // Store objects that have not finished being built yet
+        let mut pending: BTreeMap<OsmId, PendingObj> = BTreeMap::default();
+
+        // Store dependency of one object to another and its depth
+        let mut deps_graph: BTreeMap<OsmId, Vec<OsmId>> = BTreeMap::default();
+
+        // ID of the last explicitly imported object (excludes objects that are picked as a dependancy)
+        let mut last_imported_object = None;
+
+        // When this is true, we import addresses that validate the filter, this is set to false when
+        // the graph may take too much RAM
+        let mut import_first_layer = true;
+
+        // Check if current iteration made progress
+        let mut made_progress = true;
+
+        while made_progress {
+            made_progress = false;
+            self.rewind().expect("could not rewind PBF reader");
+
+            'read_pbf: for obj in self.par_iter() {
+                let obj = obj.expect("could not read pbf");
+
+                // The first layer only consists of filtered objects. Next layers include objects that
+                // are required by dependency and not yet pending
+                let feasible = (import_first_layer && pred(&obj))
+                    || (deps_graph.contains_key(&obj.id()) && !pending.contains_key(&obj.id()));
+
+                // Keep track of the last explicitly imported object while import_first_layer is true.
+                // Then, it is set to true when the run reaches a section of the file that is not
+                // imported yet.
+                if import_first_layer {
+                    last_imported_object = Some(obj.id());
+                } else if last_imported_object == Some(obj.id()) {
+                    import_first_layer = true;
+                }
+
+                if !feasible {
+                    continue;
+                }
+
+                // Convert into internal object format
+                let obj = PendingObj {
+                    obj,
+                    deps_fetched: Vec::new(),
+                };
+
+                made_progress = true;
+
+                for child in obj.deps_expected() {
+                    deps_graph.entry(child).or_default().push(obj.id());
+                }
+
+                // Start a graph search from current node, which propagate on completed objects
+                let mut todo = vec![obj];
+
+                while let Some(obj) = todo.pop() {
+                    if obj.is_complete() {
+                        let obj = obj.finish();
+
+                        if let Some(parents_id) = deps_graph.remove(&obj.id()) {
+                            let obj = Rc::new(obj);
+
+                            // Insert the object in its parents
+                            for parent_id in parents_id {
+                                // Fetch parent from pending objects. Occasionally it is dependency of
+                                // two objects and will already be in the `todo` heap.
+                                let parent_obj = {
+                                    if let Some(parent_obj) = pending.remove(&parent_id) {
+                                        todo.push(parent_obj);
+                                        todo.last_mut().unwrap()
+                                    } else {
+                                        todo.iter_mut().find(|x| x.id() == parent_id).unwrap()
+                                    }
+                                };
+
+                                parent_obj.deps_fetched.push(obj.clone());
+                            }
+                        } else {
+                            // If this object has no parents it means that it was selected by input
+                            // filter and must be handled
+                            handle_obj(obj);
+                        }
+                    } else {
+                        pending.insert(obj.id(), obj);
+                    }
+                }
+
+                // Reset run if too many items are in dependencies
+                if import_first_layer && pending.len() >= max_loaded_objects {
+                    break 'read_pbf;
+                }
+            }
+
+            import_first_layer = false;
+        }
+    }
+
     /// Extract the Read object.
     ///
     /// Consumes the object.
