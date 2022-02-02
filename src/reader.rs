@@ -392,6 +392,13 @@ impl<R: io::Read> OsmPbfReader<R> {
                 }
             }
 
+            // If there are no more objects that are pending, then we don't need reading the file
+            // anymore. THis will typically only happen with the full planet dataset because
+            // geofabrik export ofen cut ways and relations at the border.
+            if pending.is_empty() {
+                break;
+            }
+
             import_first_layer = false;
         }
     }
