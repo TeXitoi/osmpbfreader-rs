@@ -62,5 +62,5 @@ This work is free. You can redistribute it and/or modify it under the
 terms of the Do What The Fuck You Want To Public License, Version 2,
 as published by Sam Hocevar. See the COPYING file for more details.
 
-Note that `src/fileformat.proto` and `src/osmformat.proto` come from
+Note that `protos/fileformat.proto` and `protos/osmformat.proto` come from
 [OSM-binary](https://github.com/scrosby/OSM-binary) under the MIT.
