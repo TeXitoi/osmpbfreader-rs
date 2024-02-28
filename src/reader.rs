@@ -21,6 +21,9 @@ use std::convert::From;
 use std::io::{self, Read};
 use std::iter;
 
+mod get_objs_and_deps_callback;
+pub use get_objs_and_deps_callback::GetObjsContinue;
+
 /// Trait to allow generic objects (not just BTreeMap) in some methods.
 pub trait StoreObjs {
     /// Insert given object at given key index.
