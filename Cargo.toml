@@ -9,7 +9,7 @@ keywords = ["openstreetmap", "osm", "pbf"]
 categories = ["encoding", "science"]
 license = "WTFPL"
 readme = "README.md"
-edition = "2018"
+edition = "2021"
 
 [badges]
 travis-ci = { repository = "TeXitoi/osmpbfreader-rs" }
