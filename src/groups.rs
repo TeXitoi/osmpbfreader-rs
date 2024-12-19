@@ -52,7 +52,7 @@ pub struct SimpleNodes<'a> {
     block: &'a PrimitiveBlock,
 }
 
-impl<'a> Iterator for SimpleNodes<'a> {
+impl Iterator for SimpleNodes<'_> {
     type Item = Node;
     fn next(&mut self) -> Option<Node> {
         self.iter.next().map(|n| Node {
@@ -92,7 +92,7 @@ pub struct DenseNodes<'a> {
     cur_lon: i64,
 }
 
-impl<'a> Iterator for DenseNodes<'a> {
+impl Iterator for DenseNodes<'_> {
     type Item = Node;
     fn next(&mut self) -> Option<Node> {
         match (self.dids.next(), self.dlats.next(), self.dlons.next()) {
@@ -137,7 +137,7 @@ pub struct Ways<'a> {
     block: &'a PrimitiveBlock,
 }
 
-impl<'a> Iterator for Ways<'a> {
+impl Iterator for Ways<'_> {
     type Item = Way;
     fn next(&mut self) -> Option<Way> {
         self.iter.next().map(|w| {
@@ -173,7 +173,7 @@ pub struct Relations<'a> {
     block: &'a PrimitiveBlock,
 }
 
-impl<'a> Iterator for Relations<'a> {
+impl Iterator for Relations<'_> {
     type Item = Relation;
     fn next(&mut self) -> Option<Relation> {
         use osmformat::relation::MemberType::{NODE, RELATION, WAY};
@@ -209,7 +209,7 @@ impl<'a> Iterator for Relations<'a> {
 }
 
 fn make_string(k: usize, block: &osmformat::PrimitiveBlock) -> String {
-    let cow = std::string::String::from_utf8_lossy(&*block.stringtable.s[k]);
+    let cow = std::string::String::from_utf8_lossy(&block.stringtable.s[k]);
     match cow {
         Cow::Borrowed(s) => String::from(s),
         Cow::Owned(s) => String::from(s),

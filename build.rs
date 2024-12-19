@@ -16,7 +16,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     protobuf_codegen::Codegen::new()
         .pure()
         .out_dir(&out_dir)
-        .inputs(&["protos/fileformat.proto", "protos/osmformat.proto"])
+        .inputs(["protos/fileformat.proto", "protos/osmformat.proto"])
         .include("protos")
         .run()
         .expect("Codegen failed.");

@@ -254,7 +254,7 @@ impl<R: io::Read> OsmPbfReader<R> {
 pub struct Blobs<'a, R: 'a> {
     opr: &'a mut OsmPbfReader<R>,
 }
-impl<'a, R: io::Read> Iterator for Blobs<'a, R> {
+impl<R: io::Read> Iterator for Blobs<'_, R> {
     type Item = Result<Blob>;
     fn next(&mut self) -> Option<Self::Item> {
         self.opr.next_blob()
