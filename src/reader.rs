@@ -209,15 +209,15 @@ impl<R: io::Read> OsmPbfReader<R> {
     fn try_blob(&mut self, sz: u64) -> Result<Option<Blob>> {
         self.push(sz)?;
         let header: BlobHeader = Message::parse_from_bytes(&self.buf)?;
-        let sz = header.get_datasize() as u64;
+        let sz = header.datasize() as u64;
         self.push(sz)?;
         let blob: Blob = Message::parse_from_bytes(&self.buf)?;
-        if header.get_field_type() == "OSMData" {
+        if header.type_() == "OSMData" {
             Ok(Some(blob))
-        } else if header.get_field_type() == "OSMHeader" {
+        } else if header.type_() == "OSMHeader" {
             Ok(None)
         } else {
-            println!("Unknown type: {}", header.get_field_type());
+            println!("Unknown type: {}", header.type_());
             Ok(None)
         }
     }
@@ -270,10 +270,10 @@ pub_iterator_type! {
 /// Returns an iterator on the blocks of a blob.
 pub fn primitive_block_from_blob(blob: &Blob) -> Result<PrimitiveBlock> {
     if blob.has_raw() {
-        Message::parse_from_bytes(blob.get_raw()).map_err(From::from)
+        Message::parse_from_bytes(blob.raw()).map_err(From::from)
     } else if blob.has_zlib_data() {
         use flate2::read::ZlibDecoder;
-        let r = io::Cursor::new(blob.get_zlib_data());
+        let r = io::Cursor::new(blob.zlib_data());
         let mut zr = ZlibDecoder::new(r);
         Message::parse_from_reader(&mut zr).map_err(From::from)
     } else {

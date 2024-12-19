@@ -1,4 +1,4 @@
-extern crate protobuf_codegen_pure;
+extern crate protobuf_codegen;
 
 use std::io::Write;
 
@@ -13,7 +13,8 @@ pub mod osmformat;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let out_dir = std::env::var("OUT_DIR")?;
 
-    protobuf_codegen_pure::Codegen::new()
+    protobuf_codegen::Codegen::new()
+        .pure()
         .out_dir(&out_dir)
         .inputs(&["protos/fileformat.proto", "protos/osmformat.proto"])
         .include("protos")

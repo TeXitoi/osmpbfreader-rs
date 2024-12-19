@@ -19,7 +19,7 @@ pub_iterator_type! {
 
 pub fn iter(block: &PrimitiveBlock) -> OsmObjs {
     let f = move |g| groups::iter(g, block);
-    OsmObjs(Box::new(block.get_primitivegroup().iter().flat_map(f)))
+    OsmObjs(Box::new(block.primitivegroup.iter().flat_map(f)))
 }
 
 pub_iterator_type! {
@@ -29,7 +29,7 @@ pub_iterator_type! {
 
 pub fn nodes(block: &PrimitiveBlock) -> Nodes {
     let f = move |g| groups::nodes(g, block);
-    Nodes(Box::new(block.get_primitivegroup().iter().flat_map(f)))
+    Nodes(Box::new(block.primitivegroup.iter().flat_map(f)))
 }
 
 pub_iterator_type! {
@@ -39,7 +39,7 @@ pub_iterator_type! {
 
 pub fn ways(block: &PrimitiveBlock) -> Ways {
     let f = move |g| groups::ways(g, block);
-    Ways(Box::new(block.get_primitivegroup().iter().flat_map(f)))
+    Ways(Box::new(block.primitivegroup.iter().flat_map(f)))
 }
 
 pub_iterator_type! {
@@ -49,5 +49,5 @@ pub_iterator_type! {
 
 pub fn relations(block: &PrimitiveBlock) -> Relations {
     let f = move |g| groups::relations(g, block);
-    Relations(Box::new(block.get_primitivegroup().iter().flat_map(f)))
+    Relations(Box::new(block.primitivegroup.iter().flat_map(f)))
 }
