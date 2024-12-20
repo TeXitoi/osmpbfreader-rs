@@ -24,7 +24,7 @@ self_cell::self_cell!(
     }
 );
 
-impl<'a> Iterator for OsmBlobObjs {
+impl Iterator for OsmBlobObjs {
     type Item = OsmObj;
 
     fn next(&mut self) -> Option<Self::Item> {

@@ -14,7 +14,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Debug)]
 pub enum Error {
     Io(io::Error),
-    Pbf(protobuf::ProtobufError),
+    Pbf(protobuf::Error),
     UnsupportedData,
     InvalidData,
 }
@@ -46,8 +46,8 @@ impl From<io::Error> for Error {
     }
 }
 
-impl From<protobuf::ProtobufError> for Error {
-    fn from(err: protobuf::ProtobufError) -> Error {
+impl From<protobuf::Error> for Error {
+    fn from(err: protobuf::Error) -> Error {
         Error::Pbf(err)
     }
 }
