@@ -127,10 +127,11 @@ impl<R: io::Read> OsmPbfReader<R> {
     /// CPU usage are guaranteed to be bounded even if the caller stop
     /// consuming items.
     pub fn par_iter_relations(&mut self) -> RelationParIter<'_, R> {
-        RelationParIter(self.blobs().par_flat_map(blobs::result_blob_into_relation_iter))
+        RelationParIter(
+            self.blobs()
+                .par_flat_map(blobs::result_blob_into_relation_iter),
+        )
     }
-
-
 
     /// Rewinds the pbf file to the begining.
     ///
@@ -366,7 +367,6 @@ pub_iterator_type! {
                                       fn(Result<Blob>) -> blobs::OsmObjs<blobs::OsmBlobWays>>
     where R: io::Read + 'a
 }
-
 
 pub_iterator_type! {
     #[doc="Iterator on the `OsmObj` of the pbf file."]
