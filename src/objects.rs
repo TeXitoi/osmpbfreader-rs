@@ -29,7 +29,7 @@ impl Tags {
 
     /// Returns if it contains a tag with the given `key` and `value`.
     pub fn contains(&self, key: &str, value: &str) -> bool {
-        self.0.get(key).map_or(false, |v| v.as_str() == value)
+        self.0.get(key).is_some_and(|v| v.as_str() == value)
     }
 
     /// Consume tags into inner FlatMap representation

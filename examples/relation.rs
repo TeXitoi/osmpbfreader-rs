@@ -14,7 +14,7 @@ fn wanted(obj: &osmpbfreader::OsmObj) -> bool {
 fn main() {
     let filename = std::env::args_os().nth(1).unwrap();
     let path = std::path::Path::new(&filename);
-    let r = std::fs::File::open(&path).unwrap();
+    let r = std::fs::File::open(path).unwrap();
     let mut pbf = osmpbfreader::OsmPbfReader::new(r);
     let objects = pbf.get_objs_and_deps(wanted).unwrap();
     println!(

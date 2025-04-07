@@ -47,6 +47,7 @@ wrap!(OsmBlobNodes, BlockNodes => super::Node);
 /// An iterator on `Result<OsmObj>`.
 pub struct OsmObjs<T: Iterator>(OsmObjsImpl<T>);
 
+#[allow(clippy::type_complexity)]
 enum OsmObjsImpl<T: Iterator> {
     OkIter(iter::Map<T, fn(<T as Iterator>::Item) -> crate::Result<<T as Iterator>::Item>>),
     ErrIter(iter::Once<crate::Result<<T as Iterator>::Item>>),

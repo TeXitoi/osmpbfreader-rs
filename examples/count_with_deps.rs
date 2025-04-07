@@ -11,7 +11,7 @@ extern crate env_logger;
 extern crate osmpbfreader;
 
 fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &std::ffi::OsStr) {
-    let r = std::fs::File::open(&std::path::Path::new(filename)).unwrap();
+    let r = std::fs::File::open(std::path::Path::new(filename)).unwrap();
     let mut pbf = osmpbfreader::OsmPbfReader::new(r);
     let objs = pbf.get_objs_and_deps(|obj| filter(obj.tags())).unwrap();
     let mut nb_nodes = 0;
