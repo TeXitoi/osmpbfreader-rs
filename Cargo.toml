@@ -11,10 +11,6 @@ license = "WTFPL"
 readme = "README.md"
 edition = "2021"
 
-[badges]
-travis-ci = { repository = "TeXitoi/osmpbfreader-rs" }
-appveyor = { repository = "TeXitoi/osmpbfreader-rs" }
-
 [dependencies]
 byteorder = "1.3"
 flat_map = { version = "0.0.10", features = ["serde1"] }
