@@ -1,4 +1,4 @@
-# osmpbfreader-rs [![Build status](https://travis-ci.com/TeXitoi/osmpbfreader-rs.svg?branch=master)](https://travis-ci.com/TeXitoi/osmpbfreader-rs) [![](https://ci.appveyor.com/api/projects/status/0po5osv2wjb6v07m/branch/master?svg=true)](https://ci.appveyor.com/project/TeXitoi/osmpbfreader-rs/branch/master) [![](https://img.shields.io/crates/v/osmpbfreader.svg)](https://crates.io/crates/osmpbfreader) [![](https://docs.rs/osmpbfreader/badge.svg)](https://docs.rs/osmpbfreader)
+# osmpbfreader-rs [![](https://img.shields.io/crates/v/osmpbfreader.svg)](https://crates.io/crates/osmpbfreader) [![](https://docs.rs/osmpbfreader/badge.svg)](https://docs.rs/osmpbfreader)
 
 Read [OpenStreetMap PBF
 files](http://wiki.openstreetmap.org/wiki/PBF_Format) with
