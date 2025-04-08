@@ -9,31 +9,33 @@
 
 use std::iter;
 
-use crate::blocks::{self, OsmObjs as OsmBlockObjs, Relations as BlockRelations, Ways as BlockWays, Nodes as BlockNodes};
+use crate::blocks::{
+    self, Nodes as BlockNodes, OsmObjs as OsmBlockObjs, Relations as BlockRelations,
+    Ways as BlockWays,
+};
 use crate::fileformat::Blob;
 use crate::objects::OsmObj;
 use crate::osmformat::PrimitiveBlock;
 
 macro_rules! wrap {
     ($name: ident, $wrap_type: ident => $inner_type: path) => {
-self_cell::self_cell!(
-    #[allow(missing_docs)]
-    pub struct $name {
-        owner: PrimitiveBlock,
+        self_cell::self_cell!(
+            #[allow(missing_docs)]
+            pub struct $name {
+                owner: PrimitiveBlock,
 
-        #[covariant]
-        dependent: $wrap_type,
-    }
-);
+                #[covariant]
+                dependent: $wrap_type,
+            }
+        );
 
-impl Iterator for $name {
-    type Item = $inner_type;
+        impl Iterator for $name {
+            type Item = $inner_type;
 
-    fn next(&mut self) -> Option<Self::Item> {
-        self.with_dependent_mut(|_, objs| objs.next())
-    }
-}
-
+            fn next(&mut self) -> Option<Self::Item> {
+                self.with_dependent_mut(|_, objs| objs.next())
+            }
+        }
     };
 }
 
@@ -45,6 +47,7 @@ wrap!(OsmBlobNodes, BlockNodes => super::Node);
 /// An iterator on `Result<OsmObj>`.
 pub struct OsmObjs<T: Iterator>(OsmObjsImpl<T>);
 
+#[allow(clippy::type_complexity)]
 enum OsmObjsImpl<T: Iterator> {
     OkIter(iter::Map<T, fn(<T as Iterator>::Item) -> crate::Result<<T as Iterator>::Item>>),
     ErrIter(iter::Once<crate::Result<<T as Iterator>::Item>>),
@@ -63,7 +66,9 @@ impl<T: Iterator> Iterator for OsmObjs<T> {
 /// Transforms a `Result<blob>` into a `Iterator<Item = Result<OsmObj>>`.
 pub fn result_blob_into_iter(result: crate::Result<Blob>) -> OsmObjs<OsmBlobObjs> {
     match result.and_then(|b| crate::reader::primitive_block_from_blob(&b)) {
-        Ok(block) => OsmObjs(OsmObjsImpl::OkIter(OsmBlobObjs::new(block, blocks::iter).map(Ok))),
+        Ok(block) => OsmObjs(OsmObjsImpl::OkIter(
+            OsmBlobObjs::new(block, blocks::iter).map(Ok),
+        )),
         Err(e) => OsmObjs(OsmObjsImpl::ErrIter(iter::once(Err(e)))),
     }
 }
@@ -71,7 +76,9 @@ pub fn result_blob_into_iter(result: crate::Result<Blob>) -> OsmObjs<OsmBlobObjs
 /// Transforms a `Result<blob>` into a `Iterator<Item = Result<Node>>`.
 pub fn result_blob_into_node_iter(result: crate::Result<Blob>) -> OsmObjs<OsmBlobNodes> {
     match result.and_then(|b| crate::reader::primitive_block_from_blob(&b)) {
-        Ok(block) => OsmObjs(OsmObjsImpl::OkIter(OsmBlobNodes::new(block, blocks::nodes).map(Ok))),
+        Ok(block) => OsmObjs(OsmObjsImpl::OkIter(
+            OsmBlobNodes::new(block, blocks::nodes).map(Ok),
+        )),
         Err(e) => OsmObjs(OsmObjsImpl::ErrIter(iter::once(Err(e)))),
     }
 }
@@ -79,7 +86,9 @@ pub fn result_blob_into_node_iter(result: crate::Result<Blob>) -> OsmObjs<OsmBlo
 /// Transforms a `Result<blob>` into a `Iterator<Item = Result<Way>>`.
 pub fn result_blob_into_way_iter(result: crate::Result<Blob>) -> OsmObjs<OsmBlobWays> {
     match result.and_then(|b| crate::reader::primitive_block_from_blob(&b)) {
-        Ok(block) => OsmObjs(OsmObjsImpl::OkIter(OsmBlobWays::new(block, blocks::ways).map(Ok))),
+        Ok(block) => OsmObjs(OsmObjsImpl::OkIter(
+            OsmBlobWays::new(block, blocks::ways).map(Ok),
+        )),
         Err(e) => OsmObjs(OsmObjsImpl::ErrIter(iter::once(Err(e)))),
     }
 }
@@ -87,7 +96,9 @@ pub fn result_blob_into_way_iter(result: crate::Result<Blob>) -> OsmObjs<OsmBlob
 /// Transforms a `Result<blob>` into a `Iterator<Item = Result<Relation>>`.
 pub fn result_blob_into_relation_iter(result: crate::Result<Blob>) -> OsmObjs<OsmBlobRelations> {
     match result.and_then(|b| crate::reader::primitive_block_from_blob(&b)) {
-        Ok(block) => OsmObjs(OsmObjsImpl::OkIter(OsmBlobRelations::new(block, blocks::relations).map(Ok))),
+        Ok(block) => OsmObjs(OsmObjsImpl::OkIter(
+            OsmBlobRelations::new(block, blocks::relations).map(Ok),
+        )),
         Err(e) => OsmObjs(OsmObjsImpl::ErrIter(iter::once(Err(e)))),
     }
 }
