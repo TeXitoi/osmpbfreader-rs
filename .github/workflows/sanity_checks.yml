@@ -24,3 +24,6 @@ jobs:
 
       - name: Run tests
         run: cargo test
+
+      - name: Run tests with optional features
+        run: cargo test --all-features

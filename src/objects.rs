@@ -9,6 +9,7 @@
 //!
 //! There are 3 types of objects: nodes, ways and relations.
 
+#[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use smartstring::alias::String;
 use std::iter::FromIterator;
@@ -18,7 +19,8 @@ use std::ops::{Deref, DerefMut};
 /// [OpenStreetMap wiki page about
 /// tags](http://wiki.openstreetmap.org/wiki/Tags) for more
 /// information.
-#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Tags(::flat_map::FlatMap<String, String>);
 
 impl Tags {
@@ -59,19 +61,23 @@ impl FromIterator<(String, String)> for Tags {
 }
 
 /// A node identifier
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Copy, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Copy)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct NodeId(pub i64);
 
 /// A way identifier
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Copy, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Copy)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct WayId(pub i64);
 
 /// A relation identifier
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Copy, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Copy)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct RelationId(pub i64);
 
 /// An OpenStreetMap object identifier
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Copy, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Copy)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum OsmId {
     /// The identifier of a node
     Node(NodeId),
@@ -126,7 +132,8 @@ impl OsmId {
 }
 
 /// An OpenStreetMap object.
-#[derive(Debug, PartialEq, PartialOrd, Clone, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, PartialOrd, Clone)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub enum OsmObj {
     /// A node
     Node(Node),
@@ -191,7 +198,8 @@ impl OsmObj {
 /// An OpenStreetMap node.  See the [OpenStreetMap wiki page about
 /// node](http://wiki.openstreetmap.org/wiki/Node) for more
 /// information.
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Node {
     /// The id of the node.
     pub id: NodeId,
@@ -217,7 +225,8 @@ impl Node {
 /// An OpenStreetMap way.  See the [OpenStreetMap wiki page about
 /// way](http://wiki.openstreetmap.org/wiki/Way) for more
 /// information.
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Way {
     /// The id of the way.
     pub id: WayId,
@@ -241,7 +250,8 @@ impl Way {
 }
 
 /// A reference to an object with a role.  Used in the relation object.
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Ref {
     /// Id of the member.
     pub member: OsmId,
@@ -252,7 +262,8 @@ pub struct Ref {
 /// An OpenStreetMap relation.  See the [OpenStreetMap wiki page about
 /// relation](http://wiki.openstreetmap.org/wiki/Relation) for more
 /// information.
-#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 pub struct Relation {
     /// The id of the relation.
     pub id: RelationId,
