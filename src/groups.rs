@@ -60,6 +60,8 @@ impl Iterator for SimpleNodes<'_> {
             decimicro_lat: make_lat(n.lat(), self.block),
             decimicro_lon: make_lon(n.lon(), self.block),
             tags: make_tags(&n.keys, &n.vals, self.block),
+            #[cfg(feature = "full-metadata")]
+            info: make_info(&n.info, self.block),
         })
     }
     fn size_hint(&self) -> (usize, Option<usize>) {
@@ -78,6 +80,20 @@ pub fn dense_nodes<'a>(group: &'a PrimitiveGroup, block: &'a PrimitiveBlock) -> 
         cur_id: 0,
         cur_lat: 0,
         cur_lon: 0,
+        #[cfg(feature = "full-metadata")]
+        denseinfo: DenseInfo {
+            block,
+            version: dense.denseinfo.version.iter(),
+            dtimestamp: dense.denseinfo.timestamp.iter(),
+            dchangeset: dense.denseinfo.changeset.iter(),
+            duid: dense.denseinfo.uid.iter(),
+            duser_sid: dense.denseinfo.user_sid.iter(),
+            visible: dense.denseinfo.visible.iter(),
+            cur_timestamp: 0,
+            cur_changeset: 0,
+            cur_uid: 0,
+            cur_user_sid: 0,
+        },
     }
 }
 
@@ -90,6 +106,24 @@ pub struct DenseNodes<'a> {
     cur_id: i64,
     cur_lat: i64,
     cur_lon: i64,
+    #[cfg(feature = "full-metadata")]
+    denseinfo: DenseInfo<'a>,
+}
+
+#[cfg(feature = "full-metadata")]
+pub struct DenseInfo<'a> {
+    block: &'a PrimitiveBlock,
+    version: slice::Iter<'a, i32>,
+    dtimestamp: slice::Iter<'a, i64>,
+    dchangeset: slice::Iter<'a, i64>,
+    duid: slice::Iter<'a, i32>,
+    duser_sid: slice::Iter<'a, i32>,
+    visible: slice::Iter<'a, bool>,
+    // Note that version and visible are not delta-coded
+    cur_timestamp: i64,
+    cur_changeset: i64,
+    cur_uid: i32,
+    cur_user_sid: i32,
 }
 
 impl Iterator for DenseNodes<'_> {
@@ -116,11 +150,55 @@ impl Iterator for DenseNodes<'_> {
             tags.insert(k, v);
         }
         tags.shrink_to_fit();
+
+        #[cfg(feature = "full-metadata")]
+        let info = {
+            match (
+                self.denseinfo.version.next(),
+                self.denseinfo.dtimestamp.next(),
+                self.denseinfo.dchangeset.next(),
+                self.denseinfo.duid.next(),
+                self.denseinfo.duser_sid.next(),
+                self.denseinfo.visible.next(),
+            ) {
+                (
+                    Some(&version),
+                    Some(&dtimestamp),
+                    Some(&dchangeset),
+                    Some(&duid),
+                    Some(&duser_sid),
+                    visible,
+                ) => {
+                    self.denseinfo.cur_timestamp += dtimestamp;
+                    self.denseinfo.cur_changeset += dchangeset;
+                    self.denseinfo.cur_uid += duid;
+                    self.denseinfo.cur_user_sid += duser_sid;
+
+                    let user = Some(make_string(
+                        self.denseinfo.cur_user_sid as usize,
+                        self.denseinfo.block,
+                    ));
+
+                    Some(Info {
+                        version: Some(version),
+                        timestamp: Some(self.denseinfo.cur_timestamp),
+                        changeset: Some(self.denseinfo.cur_changeset),
+                        uid: Some(self.denseinfo.cur_uid),
+                        user,
+                        visible: *visible.unwrap_or(&true),
+                    })
+                }
+                _ => None,
+            }
+        };
+
         Some(Node {
             id: NodeId(self.cur_id),
             decimicro_lat: make_lat(self.cur_lat, self.block),
             decimicro_lon: make_lon(self.cur_lon, self.block),
             tags,
+            #[cfg(feature = "full-metadata")]
+            info: info,
         })
     }
 }
@@ -154,6 +232,8 @@ impl Iterator for Ways<'_> {
                 id: WayId(w.id()),
                 nodes,
                 tags: make_tags(&w.keys, &w.vals, self.block),
+                #[cfg(feature = "full-metadata")]
+                info: make_info(&w.info, self.block),
             }
         })
     }
@@ -200,6 +280,8 @@ impl Iterator for Relations<'_> {
                 id: RelationId(rel.id()),
                 refs,
                 tags: make_tags(&rel.keys, &rel.vals, self.block),
+                #[cfg(feature = "full-metadata")]
+                info: make_info(&rel.info, self.block),
             }
         })
     }
@@ -234,4 +316,28 @@ fn make_tags(keys: &[u32], vals: &[u32], b: &PrimitiveBlock) -> Tags {
         .collect();
     tags.shrink_to_fit();
     tags
+}
+
+#[cfg(feature = "full-metadata")]
+use protobuf::MessageField;
+
+#[cfg(feature = "full-metadata")]
+fn make_info(info: &MessageField<osmformat::Info>, b: &PrimitiveBlock) -> Option<Info> {
+    if info.has_timestamp() {
+        let user = if let Some(user_sid) = info.user_sid {
+            Some(make_string(user_sid as usize, b))
+        } else {
+            None
+        };
+        Some(Info {
+            version: info.version,
+            timestamp: info.timestamp,
+            changeset: info.changeset,
+            uid: info.uid,
+            user,
+            visible: info.visible.unwrap_or(true),
+        })
+    } else {
+        None
+    }
 }

@@ -209,6 +209,9 @@ pub struct Node {
     pub decimicro_lat: i32,
     /// The longitude in decimicro degrees (10⁻⁷ degrees).
     pub decimicro_lon: i32,
+    #[cfg(feature = "full-metadata")]
+    /// Additional metadata
+    pub info: Option<Info>,
 }
 
 impl Node {
@@ -234,6 +237,9 @@ pub struct Way {
     pub tags: Tags,
     /// The ordered list of nodes as id.
     pub nodes: Vec<NodeId>,
+    #[cfg(feature = "full-metadata")]
+    /// Additional metadata
+    pub info: Option<Info>,
 }
 
 impl Way {
@@ -271,6 +277,28 @@ pub struct Relation {
     pub tags: Tags,
     /// Members of the relation.
     pub refs: Vec<Ref>,
+    #[cfg(feature = "full-metadata")]
+    /// Additional metadata
+    pub info: Option<Info>,
+}
+
+/// Additional metadata about a Node, Way or Relation.
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+pub struct Info {
+    /// The version of the object.
+    pub version: Option<i32>,
+    /// The timestamp when the object was last modified.
+    pub timestamp: Option<i64>,
+    /// The changeset id of the last modification.
+    pub changeset: Option<i64>,
+    /// The user id of the last user who modified this object.
+    pub uid: Option<i32>,
+    /// The user name of the last user who modified this object.
+    pub user: Option<String>,
+    /// Wether the object should be considered a currently valid object. Being false hints to it
+    /// being a historic version that is not uptodate anymore. Defaults to true.
+    pub visible: bool,
 }
 
 impl ::std::convert::From<NodeId> for OsmId {
