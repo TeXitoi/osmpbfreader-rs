@@ -114,3 +114,99 @@ fn read_pbf_highway() {
         + PBF_STATS_HIGHWAY.sum_relations_ids;
     assert_eq!(sum_ids, exp_sum_ids);
 }
+
+#[cfg(feature = "full-metadata")]
+#[test]
+fn read_pbf_full_metadata() {
+    let file = File::open(PBF).unwrap();
+    let mut pbf = osmpbfreader::OsmPbfReader::new(file);
+    let mut stats = Stats::default();
+    let mut node_found = false;
+    let mut way_found = false;
+    let mut relation_found = false;
+
+    for obj in pbf.iter_with_info() {
+        let obj = obj.unwrap();
+        match obj.obj {
+            osmpbfreader::OsmObj::Node(n) => {
+                stats.num_nodes += 1;
+                stats.sum_nodes_ids += n.id.0;
+
+                let info = obj.info.unwrap();
+                assert_ne!(info.version, Some(0));
+                if n.id.0 == 1724610081 {
+                    node_found = true;
+                    // Note that the tested pbf file has incomplete information, which is why we
+                    // uid/user/changeset are compared to 0.
+                    assert_eq!(info.version, Some(1));
+                    assert_eq!(info.timestamp, Some(1334956915));
+                    assert_eq!(info.uid, Some(0));
+                    assert_eq!(info.user.unwrap(), "");
+                    assert_eq!(info.changeset, Some(0));
+                }
+            }
+            osmpbfreader::OsmObj::Way(w) => {
+                stats.num_ways += 1;
+                stats.sum_ways_ids += w.id.0;
+
+                let info = obj.info.unwrap();
+                assert_ne!(info.version, Some(0));
+                if w.id.0 == 160415456 {
+                    way_found = true;
+                    assert_eq!(info.version, Some(46));
+                    assert_eq!(info.timestamp, Some(1743278237));
+                    assert_eq!(info.uid, Some(0));
+                    assert_eq!(info.user.unwrap(), "");
+                    assert_eq!(info.changeset, Some(0));
+                }
+            }
+            osmpbfreader::OsmObj::Relation(r) => {
+                stats.num_relations += 1;
+                stats.sum_relations_ids += r.id.0;
+
+                let info = obj.info.unwrap();
+                assert_ne!(info.version, Some(0));
+                if r.id.0 == 957715 {
+                    relation_found = true;
+                    assert_eq!(info.version, Some(7));
+                    assert_eq!(info.timestamp, Some(1485088421));
+                    assert_eq!(info.uid, Some(0));
+                    assert_eq!(info.user.unwrap(), "");
+                    assert_eq!(info.changeset, Some(0));
+                }
+            }
+        }
+    }
+    assert_eq!(stats, PBF_STATS_ALL);
+
+    assert_eq!(node_found, true);
+    assert_eq!(way_found, true);
+    assert_eq!(relation_found, true);
+}
+
+#[cfg(feature = "full-metadata")]
+#[test]
+fn read_pbf_par_full_metadata() {
+    let file = File::open(PBF).unwrap();
+    let mut pbf = osmpbfreader::OsmPbfReader::new(file);
+    let mut stats = Stats::default();
+
+    for obj in pbf.par_iter_with_info() {
+        let obj = obj.unwrap();
+        match obj.obj {
+            osmpbfreader::OsmObj::Node(n) => {
+                stats.num_nodes += 1;
+                stats.sum_nodes_ids += n.id.0;
+            }
+            osmpbfreader::OsmObj::Way(w) => {
+                stats.num_ways += 1;
+                stats.sum_ways_ids += w.id.0;
+            }
+            osmpbfreader::OsmObj::Relation(r) => {
+                stats.num_relations += 1;
+                stats.sum_relations_ids += r.id.0;
+            }
+        }
+    }
+    assert_eq!(stats, PBF_STATS_ALL);
+}
