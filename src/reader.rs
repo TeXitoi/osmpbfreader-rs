@@ -70,6 +70,15 @@ impl<R: io::Read> OsmPbfReader<R> {
         Iter(self.blobs().flat_map(blobs::result_blob_into_iter))
     }
 
+    /// Returns an iterator on the OsmObjInfo of the pbf file.
+    #[cfg(feature = "full-metadata")]
+    pub fn iter_with_metadata(&mut self) -> IterWithMetadata<R> {
+        IterWithMetadata(
+            self.blobs()
+                .flat_map(blobs::result_blob_into_iter_with_metadata),
+        )
+    }
+
     /// Returns a parallel iterator on the OsmObj of the pbf file.
     ///
     /// Several threads decode in parallel the file.  The memory and
@@ -86,6 +95,15 @@ impl<R: io::Read> OsmPbfReader<R> {
     /// ```
     pub fn par_iter(&mut self) -> ParIter<'_, R> {
         ParIter(self.blobs().par_flat_map(blobs::result_blob_into_iter))
+    }
+
+    /// Returns a parallel iterator on the OsmObjInfo of the pbf file.
+    #[cfg(feature = "full-metadata")]
+    pub fn par_iter_with_metadata(&mut self) -> ParIterWithMetadata<'_, R> {
+        ParIterWithMetadata(
+            self.blobs()
+                .par_flat_map(blobs::result_blob_into_iter_with_metadata),
+        )
     }
 
     /// Returns an iterator on the Node of the pbf file.
@@ -332,11 +350,27 @@ pub_iterator_type! {
     where R: io::Read + 'a
 }
 
+#[cfg(feature = "full-metadata")]
+pub_iterator_type! {
+    #[doc="Iterator on the `OsmObjInfo` of the pbf file."]
+    IterWithMetadata['a, R] = iter::FlatMap<Blobs<'a, R>, blobs::OsmObjInfos<blobs::OsmBlobObjInfos>, fn(Result<Blob>) -> blobs::OsmObjInfos<blobs::OsmBlobObjInfos>>
+    where R: io::Read + 'a
+}
+
 pub_iterator_type! {
     #[doc="Parallel iterator on the `OsmObj` of the pbf file."]
     ParIter['a, R] = par_map::FlatMap<Blobs<'a, R>,
                                       blobs::OsmObjs<blobs::OsmBlobObjs>,
                                       fn(Result<Blob>) -> blobs::OsmObjs<blobs::OsmBlobObjs>>
+    where R: io::Read + 'a
+}
+
+#[cfg(feature = "full-metadata")]
+pub_iterator_type! {
+    #[doc="Parallel iterator on the `OsmObjInfo` of the pbf file."]
+    ParIterWithMetadata['a, R] = par_map::FlatMap<Blobs<'a, R>,
+                                      blobs::OsmObjInfos<blobs::OsmBlobObjInfos>,
+                                      fn(Result<Blob>) -> blobs::OsmObjInfos<blobs::OsmBlobObjInfos>>
     where R: io::Read + 'a
 }
 

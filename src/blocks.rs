@@ -8,6 +8,8 @@
 //! Iterators of OpenStreetMap objects from a block.
 
 use crate::groups;
+#[cfg(feature = "full-metadata")]
+use crate::objects::OsmObjInfo;
 use crate::objects::{Node, OsmObj, Relation, Way};
 use crate::osmformat::PrimitiveBlock;
 use pub_iterator_type::pub_iterator_type;
@@ -20,6 +22,18 @@ pub_iterator_type! {
 pub fn iter(block: &PrimitiveBlock) -> OsmObjs {
     let f = move |g| groups::iter(g, block);
     OsmObjs(Box::new(block.primitivegroup.iter().flat_map(f)))
+}
+
+#[cfg(feature = "full-metadata")]
+pub_iterator_type! {
+    #[doc="Iterator on the `OsmObjInfo` of a `PrimitiveBlock`."]
+    OsmObjInfos['a] = Box<dyn Iterator<Item = OsmObjInfo> + 'a>
+}
+
+#[cfg(feature = "full-metadata")]
+pub fn iter_with_metadata(block: &PrimitiveBlock) -> OsmObjInfos {
+    let f = move |g| groups::iter_with_metadata(g, block);
+    OsmObjInfos(Box::new(block.primitivegroup.iter().flat_map(f)))
 }
 
 pub_iterator_type! {

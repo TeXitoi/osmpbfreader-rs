@@ -210,9 +210,6 @@ pub struct Node {
     pub decimicro_lat: i32,
     /// The longitude in decimicro degrees (10⁻⁷ degrees).
     pub decimicro_lon: i32,
-    #[cfg(feature = "full-metadata")]
-    /// Additional metadata
-    pub info: Option<Info>,
 }
 
 impl Node {
@@ -238,9 +235,6 @@ pub struct Way {
     pub tags: Tags,
     /// The ordered list of nodes as id.
     pub nodes: Vec<NodeId>,
-    #[cfg(feature = "full-metadata")]
-    /// Additional metadata
-    pub info: Option<Info>,
 }
 
 impl Way {
@@ -278,9 +272,6 @@ pub struct Relation {
     pub tags: Tags,
     /// Members of the relation.
     pub refs: Vec<Ref>,
-    #[cfg(feature = "full-metadata")]
-    /// Additional metadata
-    pub info: Option<Info>,
 }
 
 /// Additional metadata about a Node, Way or Relation.
@@ -300,6 +291,61 @@ pub struct Info {
     /// Wether the object should be considered a currently valid object. Being false hints to it
     /// being a historic version that is not uptodate anymore. Defaults to true.
     pub visible: bool,
+}
+
+#[derive(Debug, PartialEq, PartialOrd, Clone)]
+#[cfg(feature = "full-metadata")]
+/// Node with Additional metadata
+pub struct NodeInfo {
+    /// Node
+    pub node: Node,
+    /// Additional metadata
+    pub info: Option<Info>,
+}
+
+#[derive(Debug, PartialEq, PartialOrd, Clone)]
+#[cfg(feature = "full-metadata")]
+/// Way with Additional metadata
+pub struct WayInfo {
+    /// Way
+    pub way: Way,
+    /// Additional metadata
+    pub info: Option<Info>,
+}
+
+#[derive(Debug, PartialEq, PartialOrd, Clone)]
+#[cfg(feature = "full-metadata")]
+/// Relation with Additional metadata
+pub struct RelationInfo {
+    /// Relation
+    pub relation: Relation,
+    /// Additional metadata
+    pub info: Option<Info>,
+}
+
+/// An OpenStreetMap object with metadata
+#[derive(Debug, PartialEq, PartialOrd, Clone)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg(feature = "full-metadata")]
+pub enum OsmObjInfo {
+    /// A node
+    Node(NodeInfo),
+    /// A way
+    Way(WayInfo),
+    /// A relation
+    Relation(RelationInfo),
+}
+
+#[cfg(feature = "full-metadata")]
+impl OsmObjInfo {
+    /// Returns the tags of the object.
+    pub fn tags(&self) -> &Tags {
+        match *self {
+            OsmObjInfo::Node(ref node) => &node.node.tags,
+            OsmObjInfo::Way(ref way) => &way.way.tags,
+            OsmObjInfo::Relation(ref rel) => &rel.relation.tags,
+        }
+    }
 }
 
 impl ::std::convert::From<NodeId> for OsmId {
@@ -335,5 +381,26 @@ impl ::std::convert::From<Way> for OsmObj {
 impl ::std::convert::From<Relation> for OsmObj {
     fn from(r: Relation) -> Self {
         OsmObj::Relation(r)
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+impl ::std::convert::From<NodeInfo> for OsmObjInfo {
+    fn from(n: NodeInfo) -> Self {
+        OsmObjInfo::Node(n)
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+impl ::std::convert::From<WayInfo> for OsmObjInfo {
+    fn from(w: WayInfo) -> Self {
+        OsmObjInfo::Way(w)
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+impl ::std::convert::From<RelationInfo> for OsmObjInfo {
+    fn from(r: RelationInfo) -> Self {
+        OsmObjInfo::Relation(r)
     }
 }
