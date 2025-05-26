@@ -14,7 +14,7 @@ use pub_iterator_type::pub_iterator_type;
 
 pub_iterator_type! {
     #[doc="Iterator on the `OsmObj` of a `PrimitiveBlock`."]
-    OsmObjs['a] = Box<dyn Iterator<Item = OsmObj> + 'a>
+    OsmObjs['a] = Box<dyn Iterator<Item = OsmObj> + 'a + Send>
 }
 
 pub fn iter(block: &PrimitiveBlock) -> OsmObjs {
@@ -24,7 +24,7 @@ pub fn iter(block: &PrimitiveBlock) -> OsmObjs {
 
 pub_iterator_type! {
     #[doc="Iterator on the `Node` of a `PrimitiveBlock`."]
-    Nodes['a] = Box<dyn Iterator<Item = Node> + 'a>
+    Nodes['a] = Box<dyn Iterator<Item = Node> + 'a + Send>
 }
 
 pub fn nodes(block: &PrimitiveBlock) -> Nodes {
@@ -34,7 +34,7 @@ pub fn nodes(block: &PrimitiveBlock) -> Nodes {
 
 pub_iterator_type! {
     #[doc="Iterator on the `Way` of a `PrimitiveBlock`."]
-    Ways['a] = Box<dyn Iterator<Item = Way> + 'a>
+    Ways['a] = Box<dyn Iterator<Item = Way> + 'a + Send>
 }
 
 pub fn ways(block: &PrimitiveBlock) -> Ways {
@@ -44,7 +44,7 @@ pub fn ways(block: &PrimitiveBlock) -> Ways {
 
 pub_iterator_type! {
     #[doc="Iterator on the `Relation` of a `PrimitiveBlock`."]
-    Relations['a] = Box<dyn Iterator<Item = Relation> + 'a>
+    Relations['a] = Box<dyn Iterator<Item = Relation> + 'a + Send>
 }
 
 pub fn relations(block: &PrimitiveBlock) -> Relations {
