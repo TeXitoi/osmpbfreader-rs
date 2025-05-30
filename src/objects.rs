@@ -13,6 +13,7 @@
 use serde::{Deserialize, Serialize};
 use smartstring::alias::String;
 use std::iter::FromIterator;
+use std::num::NonZero;
 use std::ops::{Deref, DerefMut};
 
 /// Tags represents the features of the objects.  See the
@@ -273,6 +274,80 @@ pub struct Relation {
     pub refs: Vec<Ref>,
 }
 
+/// Additional metadata about a Node, Way or Relation.
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+pub struct Info {
+    /// The version of the object.
+    pub version: Option<NonZero<i32>>,
+    /// The timestamp when the object was last modified.
+    pub timestamp: Option<NonZero<i64>>,
+    /// The changeset id of the last modification.
+    pub changeset: Option<NonZero<i64>>,
+    /// The user id of the last user who modified this object.
+    pub uid: Option<NonZero<i32>>,
+    /// The user name of the last user who modified this object.
+    pub user: Option<String>,
+    /// Wether the object should be considered a currently valid object. Being false hints to it
+    /// being a historic version that is not uptodate anymore. Defaults to true.
+    pub visible: bool,
+}
+
+#[derive(Debug, PartialEq, PartialOrd, Clone)]
+#[cfg(feature = "full-metadata")]
+/// Node with Additional metadata
+pub struct NodeInfo {
+    /// Node
+    pub node: Node,
+    /// Additional metadata
+    pub info: Option<Info>,
+}
+
+#[derive(Debug, PartialEq, PartialOrd, Clone)]
+#[cfg(feature = "full-metadata")]
+/// Way with Additional metadata
+pub struct WayInfo {
+    /// Way
+    pub way: Way,
+    /// Additional metadata
+    pub info: Option<Info>,
+}
+
+#[derive(Debug, PartialEq, PartialOrd, Clone)]
+#[cfg(feature = "full-metadata")]
+/// Relation with Additional metadata
+pub struct RelationInfo {
+    /// Relation
+    pub relation: Relation,
+    /// Additional metadata
+    pub info: Option<Info>,
+}
+
+/// An OpenStreetMap object with metadata
+#[derive(Debug, PartialEq, PartialOrd, Clone)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg(feature = "full-metadata")]
+pub enum OsmObjInfo {
+    /// A node
+    Node(NodeInfo),
+    /// A way
+    Way(WayInfo),
+    /// A relation
+    Relation(RelationInfo),
+}
+
+#[cfg(feature = "full-metadata")]
+impl OsmObjInfo {
+    /// Returns the tags of the object.
+    pub fn tags(&self) -> &Tags {
+        match *self {
+            OsmObjInfo::Node(ref node) => &node.node.tags,
+            OsmObjInfo::Way(ref way) => &way.way.tags,
+            OsmObjInfo::Relation(ref rel) => &rel.relation.tags,
+        }
+    }
+}
+
 impl ::std::convert::From<NodeId> for OsmId {
     fn from(n: NodeId) -> Self {
         OsmId::Node(n)
@@ -306,5 +381,26 @@ impl ::std::convert::From<Way> for OsmObj {
 impl ::std::convert::From<Relation> for OsmObj {
     fn from(r: Relation) -> Self {
         OsmObj::Relation(r)
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+impl ::std::convert::From<NodeInfo> for OsmObjInfo {
+    fn from(n: NodeInfo) -> Self {
+        OsmObjInfo::Node(n)
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+impl ::std::convert::From<WayInfo> for OsmObjInfo {
+    fn from(w: WayInfo) -> Self {
+        OsmObjInfo::Way(w)
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+impl ::std::convert::From<RelationInfo> for OsmObjInfo {
+    fn from(r: RelationInfo) -> Self {
+        OsmObjInfo::Relation(r)
     }
 }

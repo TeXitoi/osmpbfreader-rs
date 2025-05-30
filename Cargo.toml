@@ -14,6 +14,8 @@ edition = "2021"
 [features]
 # Enables serde serialization/deserialization for all OpenStreetMap data structures
 serde = ["dep:serde", "flat_map/serde1", "smartstring/serde"]
+# Enables dumping of full metadata from pbf file
+full-metadata = []
 
 [dependencies]
 byteorder = "1.3"

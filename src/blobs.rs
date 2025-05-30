@@ -9,12 +9,16 @@
 
 use std::iter;
 
+#[cfg(feature = "full-metadata")]
+use crate::blocks::OsmObjInfos as OsmBlockObjInfos;
 use crate::blocks::{
     self, Nodes as BlockNodes, OsmObjs as OsmBlockObjs, Relations as BlockRelations,
     Ways as BlockWays,
 };
 use crate::fileformat::Blob;
 use crate::objects::OsmObj;
+#[cfg(feature = "full-metadata")]
+use crate::objects::OsmObjInfo;
 use crate::osmformat::PrimitiveBlock;
 
 macro_rules! wrap {
@@ -40,6 +44,8 @@ macro_rules! wrap {
 }
 
 wrap!(OsmBlobObjs, OsmBlockObjs => OsmObj);
+#[cfg(feature = "full-metadata")]
+wrap!(OsmBlobObjInfos, OsmBlockObjInfos => OsmObjInfo);
 wrap!(OsmBlobRelations, BlockRelations => super::Relation);
 wrap!(OsmBlobWays, BlockWays => super::Way);
 wrap!(OsmBlobNodes, BlockNodes => super::Node);
@@ -70,6 +76,41 @@ pub fn result_blob_into_iter(result: crate::Result<Blob>) -> OsmObjs<OsmBlobObjs
             OsmBlobObjs::new(block, blocks::iter).map(Ok),
         )),
         Err(e) => OsmObjs(OsmObjsImpl::ErrIter(iter::once(Err(e)))),
+    }
+}
+
+/// An iterator on `Result<OsmObjInfo>`.
+#[cfg(feature = "full-metadata")]
+pub struct OsmObjInfos<T: Iterator>(OsmObjInfosImpl<T>);
+
+#[allow(clippy::type_complexity)]
+#[cfg(feature = "full-metadata")]
+enum OsmObjInfosImpl<T: Iterator> {
+    OkIter(iter::Map<T, fn(<T as Iterator>::Item) -> crate::Result<<T as Iterator>::Item>>),
+    ErrIter(iter::Once<crate::Result<<T as Iterator>::Item>>),
+}
+
+#[cfg(feature = "full-metadata")]
+impl<T: Iterator> Iterator for OsmObjInfos<T> {
+    type Item = crate::Result<<T as Iterator>::Item>;
+    fn next(&mut self) -> Option<Self::Item> {
+        match self.0 {
+            OsmObjInfosImpl::OkIter(ref mut iter) => iter.next(),
+            OsmObjInfosImpl::ErrIter(ref mut iter) => iter.next(),
+        }
+    }
+}
+
+/// Transforms a `Result<blob>` into a `Iterator<Item = Result<OsmObjInfo>>`.
+#[cfg(feature = "full-metadata")]
+pub fn result_blob_into_iter_with_metadata(
+    result: crate::Result<Blob>,
+) -> OsmObjInfos<OsmBlobObjInfos> {
+    match result.and_then(|b| crate::reader::primitive_block_from_blob(&b)) {
+        Ok(block) => OsmObjInfos(OsmObjInfosImpl::OkIter(
+            OsmBlobObjInfos::new(block, blocks::iter_with_metadata).map(Ok),
+        )),
+        Err(e) => OsmObjInfos(OsmObjInfosImpl::ErrIter(iter::once(Err(e)))),
     }
 }
 
