@@ -1,7 +1,6 @@
 # osmpbfreader-rs [![](https://img.shields.io/crates/v/osmpbfreader.svg)](https://crates.io/crates/osmpbfreader) [![](https://docs.rs/osmpbfreader/badge.svg)](https://docs.rs/osmpbfreader)
 
-Read [OpenStreetMap PBF
-files](http://wiki.openstreetmap.org/wiki/PBF_Format) with
+Read [OpenStreetMap PBF files](http://wiki.openstreetmap.org/wiki/PBF_Format) with
 [rust](http://www.rust-lang.org) in an easy and effective way.
 The main inspiration of this library is
 [libosmpbfreader](https://github.com/CanalTP/libosmpbfreader).
@@ -16,26 +15,38 @@ This crate works with Cargo and is on
 [crates.io](https://crates.io/crates/osmpbfreader). The package is regularly
 updated.
 
-For complete example, you can see the [examples](examples/).
+For a complete example, you can see the [examples](examples/).
 
 You can find OSM PBF files at [Geofabrik's free download server](http://download.geofabrik.de/).
 
-## Performances
+## Installation 
 
-Using the different examples compiled in release mode:
+```bash
+cargo build --release --examples
 ```
+
+## Performance
+
+Download a PBF file first, then run these commands.
+Using the different examples compiled in release mode:
+
+```bash
 $ grep CPU /proc/cpuinfo | uniq -c
-      8 model name	: Intel(R) Core(TM) i7-4702HQ CPU @ 2.20GHz
+8 model name	: Intel(R) Core(TM) i7-4702HQ CPU @ 2.20GHz
+
 $ rustc --version
 rustc 1.14.0 (e8a012324 2016-12-16)
+
 $ ls -sh france-latest.osm.pbf
 3,3G france-latest.osm.pbf
+
 $ time ./target/release/examples/tutorial france-latest.osm.pbf
 416483839 objects in "france-latest.osm.pbf"
 
 real	4m24.784s
 user	4m18.476s
 sys	0m6.164s
+
 $ time ./target/release/examples/count france-latest.osm.pbf admin_level 8
 counting objects with tags["admin_level"] = "8"...
 53 nodes, mean coord: 46.25862766415095, 2.9082348867924517.
@@ -45,6 +56,7 @@ counting objects with tags["admin_level"] = "8"...
 real	1m10.117s
 user	8m16.164s
 sys	0m23.120s
+
 $ time ./target/release/examples/count_with_deps france-latest.osm.pbf admin_level 8
 counting objects with tags["admin_level"] = "8" and their depedencies...
 9497221 nodes, mean coord: 46.69071931974348, 2.2632424769587915.
