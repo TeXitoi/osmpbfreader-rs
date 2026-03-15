@@ -17,7 +17,7 @@ pub_iterator_type! {
     OsmObjs['a] = Box<dyn Iterator<Item = OsmObj> + 'a + Send>
 }
 
-pub fn iter(block: &PrimitiveBlock) -> OsmObjs {
+pub fn iter(block: &PrimitiveBlock) -> OsmObjs<'_> {
     let f = move |g| groups::iter(g, block);
     OsmObjs(Box::new(block.primitivegroup.iter().flat_map(f)))
 }
@@ -27,7 +27,7 @@ pub_iterator_type! {
     Nodes['a] = Box<dyn Iterator<Item = Node> + 'a + Send>
 }
 
-pub fn nodes(block: &PrimitiveBlock) -> Nodes {
+pub fn nodes(block: &PrimitiveBlock) -> Nodes<'_> {
     let f = move |g| groups::nodes(g, block);
     Nodes(Box::new(block.primitivegroup.iter().flat_map(f)))
 }
@@ -37,7 +37,7 @@ pub_iterator_type! {
     Ways['a] = Box<dyn Iterator<Item = Way> + 'a + Send>
 }
 
-pub fn ways(block: &PrimitiveBlock) -> Ways {
+pub fn ways(block: &PrimitiveBlock) -> Ways<'_> {
     let f = move |g| groups::ways(g, block);
     Ways(Box::new(block.primitivegroup.iter().flat_map(f)))
 }
@@ -47,7 +47,7 @@ pub_iterator_type! {
     Relations['a] = Box<dyn Iterator<Item = Relation> + 'a + Send>
 }
 
-pub fn relations(block: &PrimitiveBlock) -> Relations {
+pub fn relations(block: &PrimitiveBlock) -> Relations<'_> {
     let f = move |g| groups::relations(g, block);
     Relations(Box::new(block.primitivegroup.iter().flat_map(f)))
 }

@@ -66,7 +66,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     ///     println!("{:?}", obj);
     /// }
     /// ```
-    pub fn iter(&mut self) -> Iter<R> {
+    pub fn iter(&mut self) -> Iter<'_, R> {
         Iter(self.blobs().flat_map(blobs::result_blob_into_iter))
     }
 
@@ -89,7 +89,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     }
 
     /// Returns an iterator on the Node of the pbf file.
-    pub fn iter_nodes(&mut self) -> NodeIter<R> {
+    pub fn iter_nodes(&mut self) -> NodeIter<'_, R> {
         NodeIter(self.blobs().flat_map(blobs::result_blob_into_node_iter))
     }
 
@@ -103,7 +103,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     }
 
     /// Returns an iterator on the Way of the pbf file.
-    pub fn iter_ways(&mut self) -> WayIter<R> {
+    pub fn iter_ways(&mut self) -> WayIter<'_, R> {
         WayIter(self.blobs().flat_map(blobs::result_blob_into_way_iter))
     }
 
@@ -117,7 +117,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     }
 
     /// Returns an iterator on the Relation of the pbf file.
-    pub fn iter_relations(&mut self) -> RelationIter<R> {
+    pub fn iter_relations(&mut self) -> RelationIter<'_, R> {
         RelationIter(self.blobs().flat_map(blobs::result_blob_into_relation_iter))
     }
 
@@ -234,11 +234,11 @@ impl<R: io::Read> OsmPbfReader<R> {
         self.r
     }
     /// Returns an iterator on the blobs of the pbf file.
-    pub fn blobs(&mut self) -> Blobs<R> {
+    pub fn blobs(&mut self) -> Blobs<'_, R> {
         Blobs { opr: self }
     }
     /// Returns an iterator on the blocks of the pbf file.
-    pub fn primitive_blocks(&mut self) -> PrimitiveBlocks<R> {
+    pub fn primitive_blocks(&mut self) -> PrimitiveBlocks<'_, R> {
         fn and_then_primitive_block(blob_res: Result<Blob>) -> Result<PrimitiveBlock> {
             blob_res.and_then(|b| primitive_block_from_blob(&b))
         }
