@@ -12,7 +12,7 @@ extern crate osmpbfreader;
 
 fn count<F: Fn(&osmpbfreader::Tags) -> bool>(filter: F, filename: &std::ffi::OsStr) {
     let r = std::fs::File::open(std::path::Path::new(filename)).unwrap();
-    let mut pbf = osmpbfreader::OsmPbfReader::new(r);
+    let mut pbf = osmpbfreader::Reader::new(r);
     let objs = pbf.get_objs_and_deps(|obj| filter(obj.tags())).unwrap();
     let mut nb_nodes = 0;
     let mut sum_lon = 0.;

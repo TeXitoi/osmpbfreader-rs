@@ -12,7 +12,7 @@ use crate::error::{Error, Result};
 use crate::fileformat::{Blob, BlobHeader};
 use crate::objects::{OsmId, OsmObj};
 use crate::osmformat::PrimitiveBlock;
-use par_map::{self, ParMap};
+use crate::store_objs::StoreObjs;
 use protobuf::Message;
 use pub_iterator_type::pub_iterator_type;
 use std::collections::btree_map::BTreeMap;
@@ -21,35 +21,17 @@ use std::convert::From;
 use std::io::{self, Read};
 use std::iter;
 
-/// Trait to allow generic objects (not just BTreeMap) in some methods.
-pub trait StoreObjs {
-    /// Insert given object at given key index.
-    fn insert(&mut self, key: OsmId, value: OsmObj);
-    /// Check if object contains the given key.
-    fn contains_key(&self, key: &OsmId) -> bool;
-}
-
-impl StoreObjs for BTreeMap<OsmId, OsmObj> {
-    fn insert(&mut self, key: OsmId, value: OsmObj) {
-        self.insert(key, value);
-    }
-
-    fn contains_key(&self, key: &OsmId) -> bool {
-        self.contains_key(key)
-    }
-}
-
 /// The object to manage a pbf file.
-pub struct OsmPbfReader<R> {
+pub struct Reader<R> {
     buf: Vec<u8>,
     r: R,
     finished: bool,
 }
 
-impl<R: io::Read> OsmPbfReader<R> {
+impl<R: io::Read> Reader<R> {
     /// Creates an OsmPbfReader from a Read object.
-    pub fn new(r: R) -> OsmPbfReader<R> {
-        OsmPbfReader {
+    pub fn new(r: R) -> Reader<R> {
+        Reader {
             buf: vec![],
             r,
             finished: false,
@@ -61,7 +43,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     /// # Example
     ///
     /// ```
-    /// let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
+    /// let mut pbf = osmpbfreader::Reader::new(std::io::empty());
     /// for obj in pbf.iter().map(Result::unwrap) {
     ///     println!("{:?}", obj);
     /// }
@@ -70,36 +52,9 @@ impl<R: io::Read> OsmPbfReader<R> {
         Iter(self.blobs().flat_map(blobs::result_blob_into_iter))
     }
 
-    /// Returns a parallel iterator on the OsmObj of the pbf file.
-    ///
-    /// Several threads decode in parallel the file.  The memory and
-    /// CPU usage are guaranteed to be bounded even if the caller stop
-    /// consuming items.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
-    /// for obj in pbf.par_iter().map(Result::unwrap) {
-    ///     println!("{:?}", obj);
-    /// }
-    /// ```
-    pub fn par_iter(&mut self) -> ParIter<'_, R> {
-        ParIter(self.blobs().par_flat_map(blobs::result_blob_into_iter))
-    }
-
     /// Returns an iterator on the Node of the pbf file.
     pub fn iter_nodes(&mut self) -> NodeIter<'_, R> {
         NodeIter(self.blobs().flat_map(blobs::result_blob_into_node_iter))
-    }
-
-    /// Returns a parallel iterator on the Node of the pbf file.
-    ///
-    /// Several threads decode in parallel the file.  The memory and
-    /// CPU usage are guaranteed to be bounded even if the caller stop
-    /// consuming items.
-    pub fn par_iter_nodes(&mut self) -> NodeParIter<'_, R> {
-        NodeParIter(self.blobs().par_flat_map(blobs::result_blob_into_node_iter))
     }
 
     /// Returns an iterator on the Way of the pbf file.
@@ -107,33 +62,12 @@ impl<R: io::Read> OsmPbfReader<R> {
         WayIter(self.blobs().flat_map(blobs::result_blob_into_way_iter))
     }
 
-    /// Returns a parallel iterator on the Way of the pbf file.
-    ///
-    /// Several threads decode in parallel the file.  The memory and
-    /// CPU usage are guaranteed to be bounded even if the caller stop
-    /// consuming items.
-    pub fn par_iter_ways(&mut self) -> WayParIter<'_, R> {
-        WayParIter(self.blobs().par_flat_map(blobs::result_blob_into_way_iter))
-    }
-
     /// Returns an iterator on the Relation of the pbf file.
     pub fn iter_relations(&mut self) -> RelationIter<'_, R> {
         RelationIter(self.blobs().flat_map(blobs::result_blob_into_relation_iter))
     }
 
-    /// Returns a parallel iterator on the Relation of the pbf file.
-    ///
-    /// Several threads decode in parallel the file.  The memory and
-    /// CPU usage are guaranteed to be bounded even if the caller stop
-    /// consuming items.
-    pub fn par_iter_relations(&mut self) -> RelationParIter<'_, R> {
-        RelationParIter(
-            self.blobs()
-                .par_flat_map(blobs::result_blob_into_relation_iter),
-        )
-    }
-
-    /// Rewinds the pbf file to the begining.
+    /// Rewinds the pbf file to the beginning.
     ///
     /// Useful if you want to read several consecutive times the same
     /// file.
@@ -143,7 +77,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     /// ```
     /// let mut cursor = std::io::Cursor::new([0, 0, 0]);
     /// cursor.set_position(2);
-    /// let mut pbf = osmpbfreader::OsmPbfReader::new(cursor);
+    /// let mut pbf = osmpbfreader::Reader::new(cursor);
     /// pbf.rewind().unwrap();
     /// assert_eq!(pbf.into_inner().position(), 0);
     /// ```
@@ -169,7 +103,7 @@ impl<R: io::Read> OsmPbfReader<R> {
         while !finished {
             self.rewind()?;
             finished = true;
-            for obj in self.par_iter() {
+            for obj in self.iter() {
                 let obj = obj?;
                 if (!first_pass || !pred(&obj)) && !deps.contains(&obj.id()) {
                     continue;
@@ -196,8 +130,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     }
 
     /// This function give you the ability to find all the objects
-    /// validating a predicate and all their dependencies. The file
-    /// will be decoded in parallel.
+    /// validating a predicate and all their dependencies.
     ///
     /// # Example
     ///
@@ -210,7 +143,7 @@ impl<R: io::Read> OsmPbfReader<R> {
     ///     obj.is_relation() && obj.tags().contains("boundary", "administrative")
     /// }
     ///
-    /// let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::Cursor::new([]));
+    /// let mut pbf = osmpbfreader::Reader::new(std::io::Cursor::new([]));
     /// let objs = pbf.get_objs_and_deps(is_admin).unwrap();
     /// for (id, obj) in &objs {
     ///     println!("{:?}: {:?}", id, obj);
@@ -297,7 +230,7 @@ impl<R: io::Read> OsmPbfReader<R> {
 
 /// Iterator on the blobs of a file.
 pub struct Blobs<'a, R: 'a> {
-    opr: &'a mut OsmPbfReader<R>,
+    opr: &'a mut Reader<R>,
 }
 impl<R: io::Read> Iterator for Blobs<'_, R> {
     type Item = Result<Blob>;
@@ -333,24 +266,8 @@ pub_iterator_type! {
 }
 
 pub_iterator_type! {
-    #[doc="Parallel iterator on the `OsmObj` of the pbf file."]
-    ParIter['a, R] = par_map::FlatMap<Blobs<'a, R>,
-                                      blobs::OsmObjs<blobs::OsmBlobObjs>,
-                                      fn(Result<Blob>) -> blobs::OsmObjs<blobs::OsmBlobObjs>>
-    where R: io::Read + 'a
-}
-
-pub_iterator_type! {
     #[doc="Iterator on the `OsmObj` of the pbf file."]
     NodeIter['a, R] = iter::FlatMap<Blobs<'a, R>, blobs::OsmObjs<blobs::OsmBlobNodes>, fn(Result<Blob>) -> blobs::OsmObjs<blobs::OsmBlobNodes>>
-    where R: io::Read + 'a
-}
-
-pub_iterator_type! {
-    #[doc="Parallel iterator on the `OsmObj` of the pbf file."]
-    NodeParIter['a, R] = par_map::FlatMap<Blobs<'a, R>,
-                                      blobs::OsmObjs<blobs::OsmBlobNodes>,
-                                      fn(Result<Blob>) -> blobs::OsmObjs<blobs::OsmBlobNodes>>
     where R: io::Read + 'a
 }
 
@@ -361,23 +278,7 @@ pub_iterator_type! {
 }
 
 pub_iterator_type! {
-    #[doc="Parallel iterator on the `OsmObj` of the pbf file."]
-    WayParIter['a, R] = par_map::FlatMap<Blobs<'a, R>,
-                                      blobs::OsmObjs<blobs::OsmBlobWays>,
-                                      fn(Result<Blob>) -> blobs::OsmObjs<blobs::OsmBlobWays>>
-    where R: io::Read + 'a
-}
-
-pub_iterator_type! {
     #[doc="Iterator on the `OsmObj` of the pbf file."]
     RelationIter['a, R] = iter::FlatMap<Blobs<'a, R>, blobs::OsmObjs<blobs::OsmBlobRelations>, fn(Result<Blob>) -> blobs::OsmObjs<blobs::OsmBlobRelations>>
-    where R: io::Read + 'a
-}
-
-pub_iterator_type! {
-    #[doc="Parallel iterator on the `OsmObj` of the pbf file."]
-    RelationParIter['a, R] = par_map::FlatMap<Blobs<'a, R>,
-                                      blobs::OsmObjs<blobs::OsmBlobRelations>,
-                                      fn(Result<Blob>) -> blobs::OsmObjs<blobs::OsmBlobRelations>>
     where R: io::Read + 'a
 }

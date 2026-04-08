@@ -18,7 +18,7 @@
 //! availlable.
 //!
 //! ```rust
-//! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::Cursor::new([]));
+//! let mut pbf = osmpbfreader::Reader::new(std::io::Cursor::new([]));
 //! let objs = pbf.get_objs_and_deps(|obj| {
 //!     obj.is_way() && obj.tags().contains_key("highway")
 //! })
@@ -35,7 +35,7 @@
 //!
 //! ```rust
 //! use std::process::exit;
-//! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
+//! let mut pbf = osmpbfreader::Reader::new(std::io::empty());
 //! for obj in pbf.iter() {
 //!     // error handling:
 //!     let obj = obj.unwrap_or_else(|e| {println!("{:?}", e); exit(1)});
@@ -49,8 +49,8 @@
 //!
 //! ```rust
 //! use std::process::exit;
-//! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
-//! for obj in pbf.par_iter() {
+//! let mut pbf = osmpbfreader::ParReader::new(std::io::empty());
+//! for obj in pbf.iter() {
 //!     // error handling:
 //!     let obj = obj.unwrap_or_else(|e| {println!("{:?}", e); exit(1)});
 //!
@@ -67,7 +67,7 @@
 //!
 //! ```rust
 //! use osmpbfreader::{primitive_block_from_blob, groups};
-//! let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
+//! let mut pbf = osmpbfreader::Reader::new(std::io::empty());
 //! for block in pbf.blobs().map(|b| primitive_block_from_blob(&b.unwrap())) {
 //!     let block = block.unwrap();
 //!     for group in block.primitivegroup.iter() {
@@ -98,10 +98,12 @@
 pub use error::Error;
 pub use error::Result;
 pub use objects::*;
-pub use reader::{primitive_block_from_blob, OsmPbfReader, StoreObjs};
+pub use par_reader::ParReader;
+pub use reader::{primitive_block_from_blob, Reader};
 
 pub mod blobs;
 pub mod objects;
+pub mod par_reader;
 pub mod reader;
 
 #[allow(missing_docs)]
@@ -110,6 +112,7 @@ pub mod blocks;
 pub mod error;
 #[allow(missing_docs)]
 pub mod groups;
+mod store_objs;
 
 mod pbf {
     include!(concat!(env!("OUT_DIR"), "/mod.rs"));
