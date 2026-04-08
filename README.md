@@ -15,7 +15,7 @@ This crate works with Cargo and is on
 [crates.io](https://crates.io/crates/osmpbfreader). The package is regularly
 updated.
 
-For a complete example, you can see the [examples](examples/).
+For complete examples, you can see the [examples](examples/).
 
 You can find OSM PBF files at [Geofabrik's free download server](http://download.geofabrik.de/).
 
