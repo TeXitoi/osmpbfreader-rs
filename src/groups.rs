@@ -52,15 +52,21 @@ pub struct SimpleNodes<'a> {
     block: &'a PrimitiveBlock,
 }
 
-impl Iterator for SimpleNodes<'_> {
-    type Item = Node;
-    fn next(&mut self) -> Option<Node> {
-        self.iter.next().map(|n| Node {
+impl<'a> SimpleNodes<'a> {
+    fn make_node(&self, n: &osmformat::Node) -> Node {
+        Node {
             id: NodeId(n.id()),
             decimicro_lat: make_lat(n.lat(), self.block),
             decimicro_lon: make_lon(n.lon(), self.block),
             tags: make_tags(&n.keys, &n.vals, self.block),
-        })
+        }
+    }
+}
+
+impl Iterator for SimpleNodes<'_> {
+    type Item = Node;
+    fn next(&mut self) -> Option<Node> {
+        self.iter.next().map(|n| self.make_node(n))
     }
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.iter.size_hint()
@@ -137,25 +143,29 @@ pub struct Ways<'a> {
     block: &'a PrimitiveBlock,
 }
 
+impl<'a> Ways<'a> {
+    fn make_way(&self, w: &osmformat::Way) -> Way {
+        let mut n = 0;
+        let nodes = w
+            .refs
+            .iter()
+            .map(|&dn| {
+                n += dn;
+                NodeId(n)
+            })
+            .collect();
+        Way {
+            id: WayId(w.id()),
+            nodes,
+            tags: make_tags(&w.keys, &w.vals, self.block),
+        }
+    }
+}
+
 impl Iterator for Ways<'_> {
     type Item = Way;
     fn next(&mut self) -> Option<Way> {
-        self.iter.next().map(|w| {
-            let mut n = 0;
-            let nodes = w
-                .refs
-                .iter()
-                .map(|&dn| {
-                    n += dn;
-                    NodeId(n)
-                })
-                .collect();
-            Way {
-                id: WayId(w.id()),
-                nodes,
-                tags: make_tags(&w.keys, &w.vals, self.block),
-            }
-        })
+        self.iter.next().map(|w| self.make_way(w))
     }
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.iter.size_hint()
@@ -173,35 +183,39 @@ pub struct Relations<'a> {
     block: &'a PrimitiveBlock,
 }
 
+impl<'a> Relations<'a> {
+    fn make_relation(&self, rel: &osmformat::Relation) -> Relation {
+        use osmformat::relation::MemberType::{NODE, RELATION, WAY};
+        let mut m = 0;
+        let refs = rel
+            .memids
+            .iter()
+            .zip(rel.types.iter())
+            .zip(rel.roles_sid.iter())
+            .flat_map(|((&dm, &t), &role)| {
+                m += dm;
+                t.enum_value().map(|t| Ref {
+                    member: match t {
+                        NODE => NodeId(m).into(),
+                        WAY => WayId(m).into(),
+                        RELATION => RelationId(m).into(),
+                    },
+                    role: make_string(role as usize, self.block),
+                })
+            })
+            .collect();
+        Relation {
+            id: RelationId(rel.id()),
+            refs,
+            tags: make_tags(&rel.keys, &rel.vals, self.block),
+        }
+    }
+}
+
 impl Iterator for Relations<'_> {
     type Item = Relation;
     fn next(&mut self) -> Option<Relation> {
-        use osmformat::relation::MemberType::{NODE, RELATION, WAY};
-        self.iter.next().map(|rel| {
-            let mut m = 0;
-            let refs = rel
-                .memids
-                .iter()
-                .zip(rel.types.iter())
-                .zip(rel.roles_sid.iter())
-                .flat_map(|((&dm, &t), &role)| {
-                    m += dm;
-                    t.enum_value().map(|t| Ref {
-                        member: match t {
-                            NODE => NodeId(m).into(),
-                            WAY => WayId(m).into(),
-                            RELATION => RelationId(m).into(),
-                        },
-                        role: make_string(role as usize, self.block),
-                    })
-                })
-                .collect();
-            Relation {
-                id: RelationId(rel.id()),
-                refs,
-                tags: make_tags(&rel.keys, &rel.vals, self.block),
-            }
-        })
+        self.iter.next().map(|rel| self.make_relation(rel))
     }
     fn size_hint(&self) -> (usize, Option<usize>) {
         self.iter.size_hint()
