@@ -9,12 +9,16 @@
 
 use std::iter;
 
+#[cfg(feature = "full-metadata")]
+use crate::blocks::OsmObjsWithInfo as OsmBlockObjsWithInfo;
 use crate::blocks::{
     self, Nodes as BlockNodes, OsmObjs as OsmBlockObjs, Relations as BlockRelations,
     Ways as BlockWays,
 };
 use crate::fileformat::Blob;
 use crate::objects::OsmObj;
+#[cfg(feature = "full-metadata")]
+use crate::objects::WithInfo;
 use crate::osmformat::PrimitiveBlock;
 
 macro_rules! wrap {
@@ -43,6 +47,9 @@ wrap!(OsmBlobObjs, OsmBlockObjs => OsmObj);
 wrap!(OsmBlobRelations, BlockRelations => super::Relation);
 wrap!(OsmBlobWays, BlockWays => super::Way);
 wrap!(OsmBlobNodes, BlockNodes => super::Node);
+
+#[cfg(feature = "full-metadata")]
+wrap!(OsmBlobObjsWithInfo, OsmBlockObjsWithInfo => WithInfo<OsmObj>);
 
 /// An iterator on `Result<OsmObj>`.
 pub struct OsmObjs<T: Iterator>(OsmObjsImpl<T>);
@@ -98,6 +105,19 @@ pub fn result_blob_into_relation_iter(result: crate::Result<Blob>) -> OsmObjs<Os
     match result.and_then(|b| crate::reader::primitive_block_from_blob(&b)) {
         Ok(block) => OsmObjs(OsmObjsImpl::OkIter(
             OsmBlobRelations::new(block, blocks::relations).map(Ok),
+        )),
+        Err(e) => OsmObjs(OsmObjsImpl::ErrIter(iter::once(Err(e)))),
+    }
+}
+
+/// Transforms a `Result<blob>` into a `Iterator<Item = Result<WithInfo<OsmObj>>>`.
+#[cfg(feature = "full-metadata")]
+pub fn result_blob_into_iter_with_info(
+    result: crate::Result<Blob>,
+) -> OsmObjs<OsmBlobObjsWithInfo> {
+    match result.and_then(|b| crate::reader::primitive_block_from_blob(&b)) {
+        Ok(block) => OsmObjs(OsmObjsImpl::OkIter(
+            OsmBlobObjsWithInfo::new(block, blocks::iter_with_info).map(Ok),
         )),
         Err(e) => OsmObjs(OsmObjsImpl::ErrIter(iter::once(Err(e)))),
     }

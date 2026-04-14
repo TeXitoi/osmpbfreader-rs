@@ -122,6 +122,7 @@ impl Iterator for DenseNodes<'_> {
             tags.insert(k, v);
         }
         tags.shrink_to_fit();
+
         Some(Node {
             id: NodeId(self.cur_id),
             decimicro_lat: make_lat(self.cur_lat, self.block),
@@ -248,4 +249,230 @@ fn make_tags(keys: &[u32], vals: &[u32], b: &PrimitiveBlock) -> Tags {
         .collect();
     tags.shrink_to_fit();
     tags
+}
+
+#[cfg(feature = "full-metadata")]
+use protobuf::MessageField;
+
+#[cfg(feature = "full-metadata")]
+fn make_info(info: &MessageField<osmformat::Info>, b: &PrimitiveBlock) -> Option<Info> {
+    if info.has_timestamp() {
+        let user = info
+            .user_sid
+            .map(|user_sid| make_string(user_sid as usize, b));
+        Some(Info {
+            version: info.version,
+            timestamp: info.timestamp,
+            changeset: info.changeset,
+            uid: info.uid,
+            user,
+            visible: info.visible.unwrap_or(true),
+        })
+    } else {
+        None
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+pub_iterator_type! {
+    #[doc="Iterator on the `WithInfo<OsmObj>` of a `PrimitiveGroup`."]
+    OsmObjsWithInfo['a] = Chain<Chain<Map<NodesWithInfo<'a>, fn(WithInfo<Node>) -> WithInfo<OsmObj>>,
+                                      Map<WithInfo<Ways<'a>>, fn(WithInfo<Way>) -> WithInfo<OsmObj>>>,
+                                Map<WithInfo<Relations<'a>>, fn(WithInfo<Relation>) -> WithInfo<OsmObj>>>
+}
+
+#[cfg(feature = "full-metadata")]
+pub fn iter_with_info<'a>(g: &'a PrimitiveGroup, b: &'a PrimitiveBlock) -> OsmObjsWithInfo<'a> {
+    let iter = nodes_with_info(g, b)
+        .map(From::from as fn(WithInfo<Node>) -> WithInfo<OsmObj>)
+        .chain(ways_with_info(g, b).map(From::from as fn(WithInfo<Way>) -> WithInfo<OsmObj>))
+        .chain(
+            relations_with_info(g, b).map(From::from as fn(WithInfo<Relation>) -> WithInfo<OsmObj>),
+        );
+    OsmObjsWithInfo(iter)
+}
+
+#[cfg(feature = "full-metadata")]
+pub_iterator_type! {
+    #[doc="Iterator on the `WithInfo<Node>` of a `PrimitiveGroup`."]
+    NodesWithInfo['a] = Chain<WithInfo<SimpleNodes<'a>>, DenseNodesWithInfo<'a>>
+}
+
+#[cfg(feature = "full-metadata")]
+pub fn nodes_with_info<'a>(g: &'a PrimitiveGroup, b: &'a PrimitiveBlock) -> NodesWithInfo<'a> {
+    NodesWithInfo(simple_nodes_with_info(g, b).chain(dense_nodes_with_info(g, b)))
+}
+
+#[cfg(feature = "full-metadata")]
+pub fn simple_nodes_with_info<'a>(
+    group: &'a PrimitiveGroup,
+    block: &'a PrimitiveBlock,
+) -> WithInfo<SimpleNodes<'a>> {
+    WithInfo::<SimpleNodes> {
+        obj: simple_nodes(group, block),
+        info: None,
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+impl Iterator for WithInfo<SimpleNodes<'_>> {
+    type Item = WithInfo<Node>;
+    fn next(&mut self) -> Option<WithInfo<Node>> {
+        self.obj.iter.next().map(|n| WithInfo::<Node> {
+            obj: self.obj.make_node(n),
+            info: make_info(&n.info, self.obj.block),
+        })
+    }
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.obj.iter.size_hint()
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+pub struct DenseInfo<'a> {
+    block: &'a PrimitiveBlock,
+    version: slice::Iter<'a, i32>,
+    dtimestamp: slice::Iter<'a, i64>,
+    dchangeset: slice::Iter<'a, i64>,
+    duid: slice::Iter<'a, i32>,
+    duser_sid: slice::Iter<'a, i32>,
+    visible: slice::Iter<'a, bool>,
+    // Note that version and visible are not delta-coded
+    cur_timestamp: i64,
+    cur_changeset: i64,
+    cur_uid: i32,
+    cur_user_sid: i32,
+}
+
+#[cfg(feature = "full-metadata")]
+pub struct DenseNodesWithInfo<'a> {
+    nodes: DenseNodes<'a>,
+    infos: DenseInfo<'a>,
+}
+
+#[cfg(feature = "full-metadata")]
+pub fn dense_nodes_with_info<'a>(
+    group: &'a PrimitiveGroup,
+    block: &'a PrimitiveBlock,
+) -> DenseNodesWithInfo<'a> {
+    let dense = &group.dense;
+    DenseNodesWithInfo {
+        nodes: dense_nodes(group, block),
+        infos: DenseInfo {
+            block,
+            version: dense.denseinfo.version.iter(),
+            dtimestamp: dense.denseinfo.timestamp.iter(),
+            dchangeset: dense.denseinfo.changeset.iter(),
+            duid: dense.denseinfo.uid.iter(),
+            duser_sid: dense.denseinfo.user_sid.iter(),
+            visible: dense.denseinfo.visible.iter(),
+            cur_timestamp: 0,
+            cur_changeset: 0,
+            cur_uid: 0,
+            cur_user_sid: 0,
+        },
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+impl Iterator for DenseNodesWithInfo<'_> {
+    type Item = WithInfo<Node>;
+    fn next(&mut self) -> Option<WithInfo<Node>> {
+        let obj = self.nodes.next();
+        if obj.is_none() {
+            return None;
+        }
+        let obj = obj.unwrap();
+        let info = {
+            match (
+                self.infos.version.next(),
+                self.infos.dtimestamp.next(),
+                self.infos.dchangeset.next(),
+                self.infos.duid.next(),
+                self.infos.duser_sid.next(),
+                self.infos.visible.next(),
+            ) {
+                (
+                    Some(&version),
+                    Some(&dtimestamp),
+                    Some(&dchangeset),
+                    Some(&duid),
+                    Some(&duser_sid),
+                    visible,
+                ) => {
+                    self.infos.cur_timestamp += dtimestamp;
+                    self.infos.cur_changeset += dchangeset;
+                    self.infos.cur_uid += duid;
+                    self.infos.cur_user_sid += duser_sid;
+
+                    let user = Some(make_string(
+                        self.infos.cur_user_sid as usize,
+                        self.infos.block,
+                    ));
+
+                    Some(Info {
+                        version: Some(version),
+                        timestamp: Some(self.infos.cur_timestamp),
+                        changeset: Some(self.infos.cur_changeset),
+                        uid: Some(self.infos.cur_uid),
+                        user,
+                        visible: *visible.unwrap_or(&true),
+                    })
+                }
+                _ => None,
+            }
+        };
+
+        Some(WithInfo::<Node> { obj, info })
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+pub fn ways_with_info<'a>(
+    group: &'a PrimitiveGroup,
+    block: &'a PrimitiveBlock,
+) -> WithInfo<Ways<'a>> {
+    WithInfo::<Ways> {
+        obj: ways(group, block),
+        info: None,
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+impl Iterator for WithInfo<Ways<'_>> {
+    type Item = WithInfo<Way>;
+    fn next(&mut self) -> Option<WithInfo<Way>> {
+        self.obj.iter.next().map(|w| WithInfo::<Way> {
+            obj: self.obj.make_way(w),
+            info: make_info(&w.info, self.obj.block),
+        })
+    }
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.obj.iter.size_hint()
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+pub fn relations_with_info<'a>(
+    group: &'a PrimitiveGroup,
+    block: &'a PrimitiveBlock,
+) -> WithInfo<Relations<'a>> {
+    WithInfo::<Relations> {
+        obj: relations(group, block),
+        info: None,
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+impl Iterator for WithInfo<Relations<'_>> {
+    type Item = WithInfo<Relation>;
+    fn next(&mut self) -> Option<WithInfo<Relation>> {
+        self.obj.iter.next().map(|rel| WithInfo::<Relation> {
+            obj: self.obj.make_relation(rel),
+            info: make_info(&rel.info, self.obj.block),
+        })
+    }
+    fn size_hint(&self) -> (usize, Option<usize>) {
+        self.obj.iter.size_hint()
+    }
 }

@@ -273,6 +273,37 @@ pub struct Relation {
     pub refs: Vec<Ref>,
 }
 
+/// Additional metadata about a Node, Way or Relation.
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg(feature = "full-metadata")]
+pub struct Info {
+    /// The version of the object.
+    pub version: Option<i32>,
+    /// The timestamp when the object was last modified.
+    pub timestamp: Option<i64>,
+    /// The changeset id of the last modification.
+    pub changeset: Option<i64>,
+    /// The user id of the last user who modified this object.
+    pub uid: Option<i32>,
+    /// The user name of the last user who modified this object.
+    pub user: Option<String>,
+    /// Wether the object should be considered a currently valid object. Being false hints to it
+    /// being a historic version that is not uptodate anymore. Defaults to true.
+    pub visible: bool,
+}
+
+/// An OpenStreetMap object with additional info.
+#[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Clone, Hash)]
+#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg(feature = "full-metadata")]
+pub struct WithInfo<T> {
+    /// OpenStreetMap object
+    pub obj: T,
+    /// Additional metadata
+    pub info: Option<Info>,
+}
+
 impl ::std::convert::From<NodeId> for OsmId {
     fn from(n: NodeId) -> Self {
         OsmId::Node(n)
@@ -306,5 +337,35 @@ impl ::std::convert::From<Way> for OsmObj {
 impl ::std::convert::From<Relation> for OsmObj {
     fn from(r: Relation) -> Self {
         OsmObj::Relation(r)
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+impl ::std::convert::From<WithInfo<Node>> for WithInfo<OsmObj> {
+    fn from(n: WithInfo<Node>) -> Self {
+        WithInfo::<OsmObj> {
+            obj: OsmObj::Node(n.obj),
+            info: n.info,
+        }
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+impl ::std::convert::From<WithInfo<Way>> for WithInfo<OsmObj> {
+    fn from(w: WithInfo<Way>) -> Self {
+        WithInfo::<OsmObj> {
+            obj: OsmObj::Way(w.obj),
+            info: w.info,
+        }
+    }
+}
+
+#[cfg(feature = "full-metadata")]
+impl ::std::convert::From<WithInfo<Relation>> for WithInfo<OsmObj> {
+    fn from(r: WithInfo<Relation>) -> Self {
+        WithInfo::<OsmObj> {
+            obj: OsmObj::Relation(r.obj),
+            info: r.info,
+        }
     }
 }
