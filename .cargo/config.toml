@@ -1,0 +1,2 @@
+[alias]
+profiler = "bench --bench reader --profile profiling -- --profile-time 10"

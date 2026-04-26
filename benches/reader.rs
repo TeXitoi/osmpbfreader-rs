@@ -1,4 +1,5 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use pprof::criterion::{Output, PProfProfiler};
 use std::fs;
 use std::io::Cursor;
 
@@ -103,5 +104,9 @@ fn bench_highway(c: &mut Criterion) {
     });
 }
 
-criterion_group!(benches, bench_iter, bench_par_iter, bench_highway);
+criterion_group! {
+    name = benches;
+    config = Criterion::default().with_profiler(PProfProfiler::new(100, Output::Flamegraph(None)));
+    targets = bench_iter, bench_par_iter, bench_highway
+}
 criterion_main!(benches);
