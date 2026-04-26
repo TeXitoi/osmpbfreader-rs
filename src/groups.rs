@@ -10,7 +10,6 @@ use crate::osmformat;
 use crate::osmformat::{PrimitiveBlock, PrimitiveGroup};
 use pub_iterator_type::pub_iterator_type;
 use smartstring::alias::String;
-use std::borrow::Cow;
 use std::convert::From;
 use std::iter::Chain;
 use std::iter::Map;
@@ -103,7 +102,7 @@ impl Iterator for DenseNodes<'_> {
             }
             _ => return None,
         }
-        let mut tags = Tags::new();
+        let mut pairs = Vec::new();
         loop {
             let k = match self.keys_vals.next() {
                 None | Some(&0) => break,
@@ -113,8 +112,9 @@ impl Iterator for DenseNodes<'_> {
                 None => break,
                 Some(v) => make_string(*v as usize, self.block),
             };
-            tags.insert(k, v);
+            pairs.push((k, v));
         }
+        let mut tags: Tags = pairs.into_iter().collect();
         tags.shrink_to_fit();
         Some(Node {
             id: NodeId(self.cur_id),
@@ -209,10 +209,10 @@ impl Iterator for Relations<'_> {
 }
 
 fn make_string(k: usize, block: &osmformat::PrimitiveBlock) -> String {
-    let cow = std::string::String::from_utf8_lossy(&block.stringtable.s[k]);
-    match cow {
-        Cow::Borrowed(s) => String::from(s),
-        Cow::Owned(s) => String::from(s),
+    let bytes = &block.stringtable.s[k];
+    match std::str::from_utf8(bytes) {
+        Ok(s) => String::from(s),
+        Err(_) => String::from(&*std::string::String::from_utf8_lossy(bytes)),
     }
 }
 

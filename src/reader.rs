@@ -16,10 +16,23 @@ use par_map::{self, ParMap};
 use protobuf::Message;
 use pub_iterator_type::pub_iterator_type;
 use std::collections::btree_map::BTreeMap;
+#[cfg(not(feature = "fast-hash"))]
 use std::collections::BTreeSet;
+#[cfg(feature = "fast-hash")]
+use std::collections::HashMap;
 use std::convert::From;
 use std::io::{self, Read};
 use std::iter;
+
+#[cfg(feature = "fast-hash")]
+type DepSet = rustc_hash::FxHashSet<OsmId>;
+#[cfg(not(feature = "fast-hash"))]
+type DepSet = BTreeSet<OsmId>;
+
+#[cfg(feature = "fast-hash")]
+type StagingMap = rustc_hash::FxHashMap<OsmId, OsmObj>;
+#[cfg(not(feature = "fast-hash"))]
+type StagingMap = BTreeMap<OsmId, OsmObj>;
 
 /// Trait to allow generic objects (not just BTreeMap) in some methods.
 pub trait StoreObjs {
@@ -30,6 +43,17 @@ pub trait StoreObjs {
 }
 
 impl StoreObjs for BTreeMap<OsmId, OsmObj> {
+    fn insert(&mut self, key: OsmId, value: OsmObj) {
+        self.insert(key, value);
+    }
+
+    fn contains_key(&self, key: &OsmId) -> bool {
+        self.contains_key(key)
+    }
+}
+
+#[cfg(feature = "fast-hash")]
+impl<S: std::hash::BuildHasher> StoreObjs for HashMap<OsmId, OsmObj, S> {
     fn insert(&mut self, key: OsmId, value: OsmObj) {
         self.insert(key, value);
     }
@@ -164,7 +188,7 @@ impl<R: io::Read> OsmPbfReader<R> {
         T: StoreObjs,
     {
         let mut finished = false;
-        let mut deps = BTreeSet::new();
+        let mut deps = DepSet::default();
         let mut first_pass = true;
         while !finished {
             self.rewind()?;
@@ -221,11 +245,9 @@ impl<R: io::Read> OsmPbfReader<R> {
         R: io::Seek,
         F: FnMut(&OsmObj) -> bool,
     {
-        let mut objects = BTreeMap::new();
-        match self.get_objs_and_deps_store(pred, &mut objects) {
-            Ok(_) => Ok(objects),
-            Err(e) => Err(e),
-        }
+        let mut objects: StagingMap = StagingMap::default();
+        self.get_objs_and_deps_store(pred, &mut objects)?;
+        Ok(objects.into_iter().collect())
     }
     /// Extract the Read object.
     ///

@@ -11,52 +11,143 @@
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
+#[cfg(all(feature = "serde", feature = "fast-tags"))]
+use serde::{Deserializer, Serializer};
 use smartstring::alias::String;
 use std::iter::FromIterator;
-use std::ops::{Deref, DerefMut};
+
+#[cfg(feature = "fast-tags")]
+type TagStore = smallvec::SmallVec<[(String, String); 4]>;
+#[cfg(not(feature = "fast-tags"))]
+type TagStore = ::flat_map::FlatMap<String, String>;
 
 /// Tags represents the features of the objects.  See the
 /// [OpenStreetMap wiki page about
 /// tags](http://wiki.openstreetmap.org/wiki/Tags) for more
 /// information.
 #[derive(Debug, Default, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
-pub struct Tags(::flat_map::FlatMap<String, String>);
+#[cfg_attr(
+    all(feature = "serde", not(feature = "fast-tags")),
+    derive(Serialize, Deserialize)
+)]
+pub struct Tags(TagStore);
+
+#[cfg(all(feature = "serde", feature = "fast-tags"))]
+impl Serialize for Tags {
+    fn serialize<S: Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        use serde::ser::SerializeMap;
+        let mut map = serializer.serialize_map(Some(self.len()))?;
+        for (k, v) in self.iter() {
+            map.serialize_entry(k, v)?;
+        }
+        map.end()
+    }
+}
+
+#[cfg(all(feature = "serde", feature = "fast-tags"))]
+impl<'de> Deserialize<'de> for Tags {
+    fn deserialize<D: Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let pairs = std::collections::HashMap::<String, String>::deserialize(deserializer)?;
+        Ok(Tags(smallvec::SmallVec::from_iter(pairs)))
+    }
+}
 
 impl Tags {
     /// Creates a new, empty `Tags` object.
     pub fn new() -> Tags {
-        Tags(::flat_map::FlatMap::new())
+        Tags(TagStore::new())
     }
 
     /// Returns if it contains a tag with the given `key` and `value`.
     pub fn contains(&self, key: &str, value: &str) -> bool {
-        self.0.get(key).is_some_and(|v| v.as_str() == value)
+        self.get(key).is_some_and(|v| v.as_str() == value)
     }
 
-    /// Consume tags into inner FlatMap representation
+    /// Returns the value associated with the given key, if any.
+    pub fn get(&self, key: &str) -> Option<&String> {
+        #[cfg(feature = "fast-tags")]
+        {
+            self.0
+                .iter()
+                .find(|(k, _)| k.as_str() == key)
+                .map(|(_, v)| v)
+        }
+        #[cfg(not(feature = "fast-tags"))]
+        {
+            self.0.get(key)
+        }
+    }
+
+    /// Inserts a key-value pair, returning the old value if the key existed.
+    pub fn insert(&mut self, key: String, value: String) -> Option<String> {
+        #[cfg(feature = "fast-tags")]
+        {
+            if let Some(pos) = self.0.iter().position(|(k, _)| k.as_str() == key.as_str()) {
+                let (_, old) = self.0.get_mut(pos).unwrap();
+                let prev = ::std::mem::replace(old, value);
+                Some(prev)
+            } else {
+                self.0.push((key, value));
+                None
+            }
+        }
+        #[cfg(not(feature = "fast-tags"))]
+        {
+            self.0.insert(key, value)
+        }
+    }
+
+    /// Returns true if the tags contain the given key.
+    pub fn contains_key(&self, key: &str) -> bool {
+        self.get(key).is_some()
+    }
+
+    /// Returns the number of tags.
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+
+    /// Returns true if there are no tags.
+    pub fn is_empty(&self) -> bool {
+        self.len() == 0
+    }
+
+    /// Returns an iterator over the key-value pairs.
+    pub fn iter(&self) -> impl Iterator<Item = (&String, &String)> {
+        self.0.iter().map(|(k, v)| (k, v))
+    }
+
+    /// Shrinks the capacity of the underlying storage.
+    pub fn shrink_to_fit(&mut self) {
+        self.0.shrink_to_fit();
+    }
+
+    /// Consume tags into inner `FlatMap` representation.
     pub fn into_inner(self) -> ::flat_map::FlatMap<String, String> {
-        self.0
-    }
-}
-
-impl Deref for Tags {
-    type Target = ::flat_map::FlatMap<String, String>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl DerefMut for Tags {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
+        #[cfg(feature = "fast-tags")]
+        {
+            self.0.into_iter().collect()
+        }
+        #[cfg(not(feature = "fast-tags"))]
+        {
+            self.0
+        }
     }
 }
 
 impl FromIterator<(String, String)> for Tags {
     fn from_iter<T: IntoIterator<Item = (String, String)>>(iter: T) -> Self {
-        Tags(iter.into_iter().collect())
+        let mut pairs: Vec<(String, String)> = iter.into_iter().collect();
+        pairs.sort_by(|a, b| a.0.cmp(&b.0));
+        pairs.dedup_by(|a, b| a.0 == b.0);
+        #[cfg(feature = "fast-tags")]
+        {
+            Tags(smallvec::SmallVec::from_iter(pairs))
+        }
+        #[cfg(not(feature = "fast-tags"))]
+        {
+            Tags(::flat_map::FlatMap::from_iter(pairs))
+        }
     }
 }
 
