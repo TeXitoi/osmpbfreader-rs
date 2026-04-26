@@ -14,6 +14,11 @@ edition = "2021"
 [features]
 # Enables serde serialization/deserialization for all OpenStreetMap data structures
 serde = ["dep:serde", "flat_map/serde1", "smartstring/serde"]
+# Swap BTreeSet/BTreeMap for FxHashSet/FxHashMap in reader internals
+fast-hash = ["dep:rustc-hash"]
+# Swap flat_map::FlatMap for SmallVec-backed linear map in Tags
+fast-tags = ["dep:smallvec"]
+default = ["fast-hash", "fast-tags"]
 
 [dependencies]
 byteorder = "1.3"
@@ -25,10 +30,22 @@ pub-iterator-type = "0.1"
 self_cell = "1.0.2"
 serde = { version = "1.0", features = ["derive"], optional = true }
 smartstring = "1.0.1"
+rustc-hash = { version = "2", optional = true }
+smallvec   = { version = "1", optional = true, features = ["union"] }
 
 [dev-dependencies]
+criterion = "0.5"
 log = "0.4"
 env_logger = "0.9.0"
+pprof = { version = "0.15", features = ["flamegraph", "criterion"] }
+
+[[bench]]
+name = "reader"
+harness = false
 
 [build-dependencies]
 protobuf-codegen = "3"
+
+[profile.profiling]
+inherits = "release"
+debug = true
