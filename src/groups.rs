@@ -14,6 +14,8 @@ use std::borrow::Cow;
 use std::convert::From;
 use std::iter::Chain;
 use std::iter::Map;
+#[cfg(feature = "full-metadata")]
+use std::num::NonZero;
 use std::slice;
 
 pub_iterator_type! {
@@ -261,10 +263,10 @@ fn make_info(info: &MessageField<osmformat::Info>, b: &PrimitiveBlock) -> Option
             .user_sid
             .map(|user_sid| make_string(user_sid as usize, b));
         Some(Info {
-            version: info.version,
-            timestamp: info.timestamp,
-            changeset: info.changeset,
-            uid: info.uid,
+            version: info.version.and_then(NonZero::new),
+            timestamp: info.timestamp.and_then(NonZero::new),
+            changeset: info.changeset.and_then(NonZero::new),
+            uid: info.uid.and_then(NonZero::new),
             user,
             visible: info.visible.unwrap_or(true),
         })
@@ -411,10 +413,10 @@ impl Iterator for DenseNodesWithInfo<'_> {
                     ));
 
                     Some(Info {
-                        version: Some(version),
-                        timestamp: Some(self.infos.cur_timestamp),
-                        changeset: Some(self.infos.cur_changeset),
-                        uid: Some(self.infos.cur_uid),
+                        version: NonZero::new(version),
+                        timestamp: NonZero::new(self.infos.cur_timestamp),
+                        changeset: NonZero::new(self.infos.cur_changeset),
+                        uid: NonZero::new(self.infos.cur_uid),
                         user,
                         visible: *visible.unwrap_or(&true),
                     })

@@ -1,5 +1,7 @@
 use osmpbfreader;
 use std::fs::File;
+#[cfg(feature = "full-metadata")]
+use std::num::NonZero;
 
 #[derive(Debug, Default, PartialEq)]
 struct Stats {
@@ -133,16 +135,16 @@ fn read_pbf_full_metadata() {
                 stats.sum_nodes_ids += n.id.0;
 
                 let info = obj.info.unwrap();
-                assert_ne!(info.version, Some(0));
+                assert_ne!(info.version, None);
                 if n.id.0 == 1724610081 {
                     node_found = true;
                     // Note that the tested pbf file has incomplete information, which is why we
                     // uid/user/changeset are compared to 0.
-                    assert_eq!(info.version, Some(1));
-                    assert_eq!(info.timestamp, Some(1334956915));
-                    assert_eq!(info.uid, Some(0));
+                    assert_eq!(info.version, NonZero::new(1));
+                    assert_eq!(info.timestamp, NonZero::new(1334956915));
+                    assert_eq!(info.uid, None);
                     assert_eq!(info.user.unwrap(), "");
-                    assert_eq!(info.changeset, Some(0));
+                    assert_eq!(info.changeset, None);
                 }
             }
             osmpbfreader::OsmObj::Way(w) => {
@@ -150,14 +152,14 @@ fn read_pbf_full_metadata() {
                 stats.sum_ways_ids += w.id.0;
 
                 let info = obj.info.unwrap();
-                assert_ne!(info.version, Some(0));
+                assert_ne!(info.version, None);
                 if w.id.0 == 160415456 {
                     way_found = true;
-                    assert_eq!(info.version, Some(46));
-                    assert_eq!(info.timestamp, Some(1743278237));
-                    assert_eq!(info.uid, Some(0));
+                    assert_eq!(info.version, NonZero::new(46));
+                    assert_eq!(info.timestamp, NonZero::new(1743278237));
+                    assert_eq!(info.uid, None);
                     assert_eq!(info.user.unwrap(), "");
-                    assert_eq!(info.changeset, Some(0));
+                    assert_eq!(info.changeset, None);
                 }
             }
             osmpbfreader::OsmObj::Relation(r) => {
@@ -165,14 +167,14 @@ fn read_pbf_full_metadata() {
                 stats.sum_relations_ids += r.id.0;
 
                 let info = obj.info.unwrap();
-                assert_ne!(info.version, Some(0));
+                assert_ne!(info.version, None);
                 if r.id.0 == 957715 {
                     relation_found = true;
-                    assert_eq!(info.version, Some(7));
-                    assert_eq!(info.timestamp, Some(1485088421));
-                    assert_eq!(info.uid, Some(0));
+                    assert_eq!(info.version, NonZero::new(7));
+                    assert_eq!(info.timestamp, NonZero::new(1485088421));
+                    assert_eq!(info.uid, None);
                     assert_eq!(info.user.unwrap(), "");
-                    assert_eq!(info.changeset, Some(0));
+                    assert_eq!(info.changeset, None);
                 }
             }
         }

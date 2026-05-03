@@ -13,6 +13,8 @@
 use serde::{Deserialize, Serialize};
 use smartstring::alias::String;
 use std::iter::FromIterator;
+#[cfg(feature = "full-metadata")]
+use std::num::NonZero;
 use std::ops::{Deref, DerefMut};
 
 /// Tags represents the features of the objects.  See the
@@ -279,13 +281,13 @@ pub struct Relation {
 #[cfg(feature = "full-metadata")]
 pub struct Info {
     /// The version of the object.
-    pub version: Option<i32>,
+    pub version: Option<NonZero<i32>>,
     /// The timestamp when the object was last modified.
-    pub timestamp: Option<i64>,
+    pub timestamp: Option<NonZero<i64>>,
     /// The changeset id of the last modification.
-    pub changeset: Option<i64>,
+    pub changeset: Option<NonZero<i64>>,
     /// The user id of the last user who modified this object.
-    pub uid: Option<i32>,
+    pub uid: Option<NonZero<i32>>,
     /// The user name of the last user who modified this object.
     pub user: Option<String>,
     /// Wether the object should be considered a currently valid object. Being false hints to it
