@@ -133,6 +133,46 @@ impl<R: io::Read> OsmPbfReader<R> {
         )
     }
 
+    /// Returns an iterator on the OsmObj with Info of the pbf file.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
+    /// for obj in pbf.iter_with_info().map(Result::unwrap) {
+    ///     println!("{:?}", obj);
+    /// }
+    /// ```
+    #[cfg(feature = "full-metadata")]
+    pub fn iter_with_info(&mut self) -> IterWithInfo<'_, R> {
+        IterWithInfo(
+            self.blobs()
+                .flat_map(blobs::result_blob_into_iter_with_info),
+        )
+    }
+
+    /// Returns a parallel iterator on the OsmObj with Info of the pbf file.
+    ///
+    /// Several threads decode in parallel the file.  The memory and
+    /// CPU usage are guaranteed to be bounded even if the caller stop
+    /// consuming items.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// let mut pbf = osmpbfreader::OsmPbfReader::new(std::io::empty());
+    /// for obj in pbf.par_iter_with_info().map(Result::unwrap) {
+    ///     println!("{:?}", obj);
+    /// }
+    /// ```
+    #[cfg(feature = "full-metadata")]
+    pub fn par_iter_with_info(&mut self) -> ParIterWithInfo<'_, R> {
+        ParIterWithInfo(
+            self.blobs()
+                .par_flat_map(blobs::result_blob_into_iter_with_info),
+        )
+    }
+
     /// Rewinds the pbf file to the begining.
     ///
     /// Useful if you want to read several consecutive times the same
@@ -379,5 +419,23 @@ pub_iterator_type! {
     RelationParIter['a, R] = par_map::FlatMap<Blobs<'a, R>,
                                       blobs::OsmObjs<blobs::OsmBlobRelations>,
                                       fn(Result<Blob>) -> blobs::OsmObjs<blobs::OsmBlobRelations>>
+    where R: io::Read + 'a
+}
+
+#[cfg(feature = "full-metadata")]
+pub_iterator_type! {
+    #[doc="Iterator on the `WithInfo<OsmObj>` of the pbf file."]
+    IterWithInfo['a, R] = iter::FlatMap<Blobs<'a, R>,
+                                        blobs::OsmObjs<blobs::OsmBlobObjsWithInfo>,
+                                        fn(Result<Blob>) -> blobs::OsmObjs<blobs::OsmBlobObjsWithInfo>>
+    where R: io::Read + 'a
+}
+
+#[cfg(feature = "full-metadata")]
+pub_iterator_type! {
+    #[doc="Parallel iterator on the `WithInfo<OsmObj>` of the pbf file."]
+    ParIterWithInfo['a, R] = par_map::FlatMap<Blobs<'a, R>,
+                                      blobs::OsmObjs<blobs::OsmBlobObjsWithInfo>,
+                                      fn(Result<Blob>) -> blobs::OsmObjs<blobs::OsmBlobObjsWithInfo>>
     where R: io::Read + 'a
 }
