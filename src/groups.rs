@@ -257,21 +257,17 @@ fn make_tags(keys: &[u32], vals: &[u32], b: &PrimitiveBlock) -> Tags {
 use protobuf::MessageField;
 
 #[cfg(feature = "full-metadata")]
-fn make_info(info: &MessageField<osmformat::Info>, b: &PrimitiveBlock) -> Option<Info> {
-    if info.has_timestamp() {
-        let user = info
-            .user_sid
-            .map(|user_sid| make_string(user_sid as usize, b));
-        Some(Info {
-            version: info.version.and_then(NonZero::new),
-            timestamp: info.timestamp.and_then(NonZero::new),
-            changeset: info.changeset.and_then(NonZero::new),
-            uid: info.uid.and_then(NonZero::new),
-            user,
-            visible: info.visible.unwrap_or(true),
-        })
-    } else {
-        None
+fn make_info(info: &MessageField<osmformat::Info>, b: &PrimitiveBlock) -> Info {
+    let user = info
+        .user_sid
+        .map(|user_sid| make_string(user_sid as usize, b));
+    Info {
+        version: info.version.and_then(NonZero::new),
+        timestamp: info.timestamp.and_then(NonZero::new),
+        changeset: info.changeset.and_then(NonZero::new),
+        uid: info.uid.and_then(NonZero::new),
+        user,
+        visible: info.visible.unwrap_or(true),
     }
 }
 
@@ -312,7 +308,14 @@ pub fn simple_nodes_with_info<'a>(
 ) -> WithInfo<SimpleNodes<'a>> {
     WithInfo::<SimpleNodes> {
         obj: simple_nodes(group, block),
-        info: None,
+        info: Info {
+            version: None,
+            timestamp: None,
+            changeset: None,
+            uid: None,
+            user: None,
+            visible: true,
+        },
     }
 }
 
@@ -412,16 +415,23 @@ impl Iterator for DenseNodesWithInfo<'_> {
                         self.infos.block,
                     ));
 
-                    Some(Info {
+                    Info {
                         version: NonZero::new(version),
                         timestamp: NonZero::new(self.infos.cur_timestamp),
                         changeset: NonZero::new(self.infos.cur_changeset),
                         uid: NonZero::new(self.infos.cur_uid),
                         user,
                         visible: *visible.unwrap_or(&true),
-                    })
+                    }
                 }
-                _ => None,
+                _ => Info {
+                    version: None,
+                    timestamp: None,
+                    changeset: None,
+                    uid: None,
+                    user: None,
+                    visible: true,
+                },
             }
         };
 
@@ -436,7 +446,14 @@ pub fn ways_with_info<'a>(
 ) -> WithInfo<Ways<'a>> {
     WithInfo::<Ways> {
         obj: ways(group, block),
-        info: None,
+        info: Info {
+            version: None,
+            timestamp: None,
+            changeset: None,
+            uid: None,
+            user: None,
+            visible: true,
+        },
     }
 }
 
@@ -461,7 +478,14 @@ pub fn relations_with_info<'a>(
 ) -> WithInfo<Relations<'a>> {
     WithInfo::<Relations> {
         obj: relations(group, block),
-        info: None,
+        info: Info {
+            version: None,
+            timestamp: None,
+            changeset: None,
+            uid: None,
+            user: None,
+            visible: true,
+        },
     }
 }
 

@@ -303,7 +303,7 @@ pub struct WithInfo<T> {
     /// OpenStreetMap object
     pub obj: T,
     /// Additional metadata
-    pub info: Option<Info>,
+    pub info: Info,
 }
 
 impl ::std::convert::From<NodeId> for OsmId {

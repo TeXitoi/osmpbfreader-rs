@@ -134,7 +134,7 @@ fn read_pbf_full_metadata() {
                 stats.num_nodes += 1;
                 stats.sum_nodes_ids += n.id.0;
 
-                let info = obj.info.unwrap();
+                let info = obj.info;
                 assert_ne!(info.version, None);
                 if n.id.0 == 1724610081 {
                     node_found = true;
@@ -151,7 +151,7 @@ fn read_pbf_full_metadata() {
                 stats.num_ways += 1;
                 stats.sum_ways_ids += w.id.0;
 
-                let info = obj.info.unwrap();
+                let info = obj.info;
                 assert_ne!(info.version, None);
                 if w.id.0 == 160415456 {
                     way_found = true;
@@ -166,7 +166,7 @@ fn read_pbf_full_metadata() {
                 stats.num_relations += 1;
                 stats.sum_relations_ids += r.id.0;
 
-                let info = obj.info.unwrap();
+                let info = obj.info;
                 assert_ne!(info.version, None);
                 if r.id.0 == 957715 {
                     relation_found = true;
